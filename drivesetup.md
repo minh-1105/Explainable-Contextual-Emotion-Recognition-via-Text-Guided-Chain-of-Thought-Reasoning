@@ -1,173 +1,44 @@
 # Google Drive Desktop Setup
 
-## Purpose
-
-This project keeps source code, configuration, documentation, and the EMOTIC dataset on the local machine. Google Drive is used only for artifacts that must remain available across Colab sessions and local development:
-
-- Colab notebooks;
-- training checkpoints;
-- exported trained models.
-
-The Git repository itself is not stored in Google Drive. In particular, `.git`, `src`, `configs`, and `data` remain local.
-
-## Directory mapping
-
-Google Drive for desktop exposes the project at:
+The Git repository lives on the local machine. Colab notebooks read and write the Drive project:
 
 ```text
 G:\My Drive\Colab Notebooks\Contextual Emotion Recognition
 ```
 
-The local repository is located at:
+which Colab sees as `/content/drive/MyDrive/Colab Notebooks/Contextual Emotion Recognition`. Its layout is described in `workflow.md`.
 
-```text
-C:\Explainable Contextual Emotion Recognition via Text-Guided Chain-of-Thought Reasoning
-```
+## Directory mapping
 
-The following Windows directory junctions connect the repository to Drive:
+Windows directory junctions in the local repository point at the same Drive folders the notebooks use:
 
-| Local path | Google Drive target | Purpose |
+| Local path | Google Drive target | Contents |
 |---|---|---|
-| `notebooks` | `notebooks` | Colab notebooks |
-| `outputs/checkpoints` | `checkpoints` | Resumable and best checkpoints |
-| `models` | `models` | Final exported models |
+| `notebooks` | `notebooks` | Colab notebooks (tracked by Git) |
+| `outputs` | `outputs` | `runs/` training runs and checkpoints, `vlm_pilot/` pilot runs |
+| `models` | `models` | Exported models |
 
-Everything else remains local.
+`data/` stays local; the EMOTIC annotations and image zips used by Colab are separate copies under the Drive `data/` folder. `.git` and `src/` stay local and must not be placed in Drive.
 
-## Resulting structure
+A junction is not a copy: saving or deleting a file through either path changes the same Drive-managed file.
 
-```text
-Local repository/
-├── data/                       # Local only
-├── src/                        # Local and versioned by Git
-├── configs/                    # Local and versioned by Git
-├── notebooks/                  # Junction to Google Drive
-├── outputs/
-│   ├── checkpoints/            # Junction to Google Drive
-│   ├── figures/                # Local only
-│   ├── logs/                   # Local only
-│   └── predictions/            # Local only
-└── models/                     # Junction to Google Drive
+## Git
 
-Google Drive project/
-├── notebooks/
-├── checkpoints/
-└── models/
-```
-
-## Synchronization behavior
-
-When a notebook is saved in Colab:
-
-```text
-Colab saves the notebook
-    ↓
-Google Drive stores the new version
-    ↓
-Google Drive for desktop updates the G: drive
-    ↓
-The change appears at <local repository>\notebooks
-```
-
-The local path is not a second copy. It points to the same Drive-managed directory through a junction.
-
-The same behavior applies to files saved under `outputs/checkpoints` and `models`.
-
-## Colab paths
-
-Use the following paths after mounting Google Drive in Colab:
-
-```python
-from pathlib import Path
-
-DRIVE_ROOT = Path(
-    "/content/drive/MyDrive/Colab Notebooks/Contextual Emotion Recognition"
-)
-
-NOTEBOOK_ROOT = DRIVE_ROOT / "notebooks"
-CHECKPOINT_ROOT = DRIVE_ROOT / "checkpoints"
-MODEL_ROOT = DRIVE_ROOT / "models"
-
-for path in (NOTEBOOK_ROOT, CHECKPOINT_ROOT, MODEL_ROOT):
-    path.mkdir(parents=True, exist_ok=True)
-```
-
-Recommended checkpoint names:
-
-```text
-checkpoints/<experiment_name>/<run_id>/last.pt
-checkpoints/<experiment_name>/<run_id>/best.pt
-```
-
-Recommended model export layout:
-
-```text
-models/<model_name>/<version>/
-├── model.pt
-├── config.json
-├── label_map.json
-├── metrics.json
-└── README.md
-```
-
-## Local training paths
-
-Local training code can continue using repository-relative paths:
-
-```python
-from pathlib import Path
-
-REPO_ROOT = Path.cwd()
-CHECKPOINT_ROOT = REPO_ROOT / "outputs" / "checkpoints"
-MODEL_ROOT = REPO_ROOT / "models"
-```
-
-The junctions redirect writes to Google Drive automatically.
-
-## Git policy
-
-The following directories are ignored by Git:
-
-```gitignore
-notebooks/
-outputs/
-models/
-```
-
-This prevents notebooks, checkpoints, and trained models from being committed or uploaded through Git LFS. Source code and project documentation continue to use normal Git version control.
+`.gitignore` excludes `data/`, `outputs/`, `models/`, weights (`*.pt`, `*.pth`, `*.t7`) and archives (`*.zip`, `*.tar`, `*.tar.bz2`). Notebooks are committed normally.
 
 ## Verification
-
-Run the following command from PowerShell:
 
 ```powershell
 $repoRoot = "C:\Explainable Contextual Emotion Recognition via Text-Guided Chain-of-Thought Reasoning"
 
-Get-Item `
-  "$repoRoot\notebooks", `
-  "$repoRoot\outputs\checkpoints", `
-  "$repoRoot\models" |
+Get-Item "$repoRoot\notebooks", "$repoRoot\outputs", "$repoRoot\models" |
 Select-Object FullName, LinkType, Target
 ```
 
-All three entries must report `LinkType` as `Junction` and display a target under `G:\My Drive`.
+All three must report `LinkType` `Junction` with a target under `G:\My Drive`.
 
 ## Operating notes
 
-- Google Drive for desktop must be running for streamed files to remain accessible.
-- Mark the project folder as **Available offline** if checkpoints or models must remain accessible without a network connection.
-- Wait for Drive synchronization to finish before shutting down the computer or disconnecting a Colab runtime.
-- Do not edit the same notebook simultaneously in Colab and a local editor.
-- Deleting a file through either the local junction or the Drive folder deletes the same Drive-managed file.
-- Do not place `.git` or the entire repository inside Google Drive.
-
-## Local backups created during setup
-
-The original empty local directories are retained as:
-
-```text
-notebooks.local-backup-20261014
-outputs/checkpoints.local-backup-20261014
-```
-
-They can be removed after the junctions have been verified. They contain no project files at the time of setup.
+- Google Drive for desktop must be running for streamed files to be accessible; mark the folder **Available offline** to use checkpoints without a network.
+- Wait for Drive to finish syncing before shutting down or disconnecting a Colab runtime.
+- Do not edit the same notebook in Colab and a local editor at the same time.

@@ -6,7 +6,7 @@
 
 - Initialized the repository for **Explainable Contextual Emotion Recognition via Text-Guided Chain-of-Thought Reasoning**.
 - Added the dependencies required for image processing, MATLAB annotation loading, PyTorch, visualization, configuration, and evaluation to `requirements.txt`.
-- Configured `.gitignore` and `.gitattributes` for the repository.
+- Configured `.gitignore` for the repository.
 
 ### EMOTIC data preparation
 
@@ -35,7 +35,7 @@
 - Used the notebook to verify the real structure of the original EMOTIC annotations instead of assuming a preprocessed schema.
 - Verified that the PAMI and CVPR annotation files expose the expected `train`, `val`, and `test` splits.
 - Counted image records and person annotations in each split to confirm that one image may contain multiple annotated target people.
-- Checked whether every annotation record can be resolved to an existing image from the available EMOTIC image sources.
+- Checked that the first 100 annotation records of each split resolve to an existing image in the configured image roots.
 - Inspected target-person bounding boxes, categorical emotion annotations, and continuous VAD annotations.
 - Visualized a source image with every target-person bounding box drawn on it so annotation coordinates can be checked against the actual image.
 - Kept this notebook focused on inspection and validation; it does not train a model or generate processed training data.
@@ -63,3 +63,28 @@
 - Designed the per-run output convention covering configuration, logs, metrics, predictions, figures, and checkpoints.
 - Defined `last.pt` as the resumable training checkpoint and `best.pt` as the best validation checkpoint.
 - Added guidance for resuming training and exporting a finalized model for inference.
+
+## 2026-10-15
+
+### Visual baseline notebook
+
+- Added `02_Train_Visual_Baseline.ipynb`: ResNet-50 `person_only`, `context_only`, and `person_context` baselines trained with `BCEWithLogitsLoss`, AdamW, a cosine schedule, and AMP.
+- Each run writes its configuration, environment, per-epoch history, latest validation metrics and predictions, `last.pt`, and `best.pt` (selected by validation mAP) to `outputs/runs/<experiment_name>/<run_id>/`.
+- Added resuming from `last.pt` with a configuration compatibility check, and export of the best model to `models/`.
+
+## 2026-10-19
+
+### Faster image loading on Colab
+
+- Stored the EMOTIC images on Drive as `pami_emotic.zip` and `cvpr_emotic.zip`; notebooks extract them to `/content/emotic` once per runtime and check the file counts.
+
+### VLM pilot
+
+- Added `04_VLM_Pilot.ipynb`, comparing direct prompting (D) with structured reasoning (E) on 300 PAMI validation people using `Qwen/Qwen2.5-VL-3B-Instruct`.
+- The target person is marked with a red box; both modes share the model, image, label list, token limit, and greedy decoding.
+- Answers are saved per sample to JSONL so an interrupted run can continue; metrics include macro/micro/sample F1, parse, schema, and truncation rates, and an image-level paired bootstrap CI for the E − D macro-F1 difference.
+- Illustration examples are picked by a fixed rule: the best and worst schema-valid E answers by sample F1, ties broken by the shorter answer.
+
+## 2026-10-31
+
+- Updated `README.md`, `SETUP.md`, `workflow.md`, and `drivesetup.md` to match the notebooks and Drive layout in use.

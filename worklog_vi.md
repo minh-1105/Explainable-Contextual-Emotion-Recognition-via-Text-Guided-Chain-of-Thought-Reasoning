@@ -6,7 +6,7 @@
 
 - Khởi tạo kho mã nguồn cho dự án **Nhận diện cảm xúc theo ngữ cảnh có khả năng giải thích bằng suy luận chuỗi tư duy được định hướng bởi văn bản** (*Explainable Contextual Emotion Recognition via Text-Guided Chain-of-Thought Reasoning*).
 - Bổ sung vào `requirements.txt` các thư viện cần thiết cho xử lý ảnh, đọc tệp chú thích MATLAB, PyTorch, trực quan hóa, cấu hình và đánh giá.
-- Cấu hình `.gitignore` và `.gitattributes` cho kho mã nguồn.
+- Cấu hình `.gitignore` cho kho mã nguồn.
 
 ### Chuẩn bị dữ liệu EMOTIC
 
@@ -35,7 +35,7 @@
 - Sử dụng notebook để xác minh cấu trúc thực tế của chú thích EMOTIC gốc thay vì giả định một lược đồ đã được tiền xử lý.
 - Xác minh rằng các tệp chú thích PAMI và CVPR có đầy đủ các tập `train`, `val` và `test` như dự kiến.
 - Đếm số bản ghi ảnh và số chú thích người trong từng tập để xác nhận rằng một ảnh có thể chứa nhiều người mục tiêu được chú thích.
-- Kiểm tra khả năng ánh xạ từng bản ghi chú thích tới một ảnh hiện có trong các nguồn ảnh EMOTIC sẵn có.
+- Kiểm tra 100 bản ghi chú thích đầu tiên của mỗi tập có ánh xạ được tới một ảnh hiện có trong các thư mục ảnh đã cấu hình.
 - Kiểm tra hộp giới hạn của người mục tiêu, chú thích cảm xúc phân loại và chú thích VAD liên tục.
 - Trực quan hóa ảnh nguồn cùng toàn bộ hộp giới hạn của người mục tiêu để đối chiếu tọa độ chú thích với ảnh thực tế.
 - Giữ notebook tập trung vào việc kiểm tra và xác thực; notebook này không huấn luyện mô hình hoặc tạo dữ liệu huấn luyện đã qua xử lý.
@@ -63,3 +63,28 @@
 - Thiết kế quy ước đầu ra cho mỗi lần chạy, bao gồm cấu hình, nhật ký, chỉ số, dự đoán, hình minh họa và checkpoint.
 - Quy định `last.pt` là checkpoint dùng để tiếp tục huấn luyện và `best.pt` là checkpoint tốt nhất trên tập validation.
 - Bổ sung hướng dẫn tiếp tục huấn luyện và xuất mô hình hoàn chỉnh để suy luận.
+
+## 2026-10-15
+
+### Notebook visual baseline
+
+- Thêm `02_Train_Visual_Baseline.ipynb`: ba mô hình cơ sở ResNet-50 `person_only`, `context_only` và `person_context`, huấn luyện bằng `BCEWithLogitsLoss`, AdamW, lịch cosine và AMP.
+- Mỗi lần chạy ghi cấu hình, môi trường, lịch sử theo epoch, chỉ số và dự đoán validation mới nhất, `last.pt` và `best.pt` (chọn theo mAP validation) vào `outputs/runs/<experiment_name>/<run_id>/`.
+- Bổ sung tiếp tục huấn luyện từ `last.pt` có kiểm tra tương thích cấu hình, và xuất mô hình tốt nhất vào `models/`.
+
+## 2026-10-19
+
+### Tăng tốc đọc ảnh trên Colab
+
+- Lưu ảnh EMOTIC trên Drive dưới dạng `pami_emotic.zip` và `cvpr_emotic.zip`; notebook giải nén vào `/content/emotic` một lần mỗi runtime và kiểm số file.
+
+### Pilot VLM
+
+- Thêm `04_VLM_Pilot.ipynb`, so sánh hỏi thẳng (D) với suy luận có cấu trúc (E) trên 300 người thuộc tập validation PAMI, dùng `Qwen/Qwen2.5-VL-3B-Instruct`.
+- Người mục tiêu được đánh dấu bằng khung đỏ; hai cấu hình dùng chung model, ảnh, danh sách nhãn, giới hạn token và giải mã greedy.
+- Câu trả lời được ghi theo từng mẫu vào JSONL để chạy tiếp khi bị ngắt; chỉ số gồm F1 macro/micro/theo mẫu, tỉ lệ parse, đúng schema, bị cắt cụt, và khoảng tin cậy bootstrap ghép cặp theo ảnh cho chênh lệch macro F1 E − D.
+- Ví dụ minh họa được chọn theo quy tắc cố định: câu trả lời E đúng schema có F1 theo mẫu cao nhất và thấp nhất, hòa thì lấy câu trả lời ngắn hơn.
+
+## 2026-10-31
+
+- Cập nhật `README.md`, `SETUP.md`, `workflow.md` và `drivesetup.md` cho khớp với notebook và layout Drive đang dùng.
