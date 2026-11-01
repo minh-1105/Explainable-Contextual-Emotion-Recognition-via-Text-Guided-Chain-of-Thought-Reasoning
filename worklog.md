@@ -95,4 +95,4 @@
 - Added validation-only per-label threshold selection, union/majority sensitivity analysis, test mAP/AP/F1/precision/recall, a validation-selected constant top-k baseline, evaluation without `Engagement`, and F1 grouped by the number of annotated people in an image.
 - Added image-level paired bootstrap comparisons among A/B/C, region ablations for the `person_context` model, and target-swap evaluation on multi-person images with an explicit swap-accuracy definition.
 - Added reusable multi-label metrics and bootstrap utilities under `src/evaluation/`; Notebook 03 writes versioned configs, environment details, predictions, metrics, and figures to `outputs/resnet_evaluation/<run_id>/`.
-- Notebook 03 is implemented and syntax-checked locally but still requires a Colab GPU run to produce test results.
+- Completed Notebook 03 on a Colab Tesla T4. Run `20261101-034030` is stored on Drive under `outputs/resnet_evaluation/` with 27 artifacts and source commit `0e4b81fc`.

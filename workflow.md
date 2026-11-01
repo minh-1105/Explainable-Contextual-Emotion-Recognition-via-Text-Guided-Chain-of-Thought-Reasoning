@@ -30,11 +30,11 @@ Each notebook extracts both zips into `/content/emotic/{PAMI,CVPR}` once per run
 |---|---|---|
 | `01_Inspect.ipynb` | done | Loads PAMI and CVPR annotations, counts images and people per split, checks that the first 100 records of each split resolve to an image, draws every person's bbox on one sample and prints its categories and VAD. |
 | `02_Train_Visual_Baseline.ipynb` | done | Trains one visual baseline per run (`person_only`, `context_only`, `person_context`), selects `best.pt` by validation mAP, exports the best model. |
-| `03_Evaluate_Visual_Baseline.ipynb` | implemented; awaiting Colab run | Loads the three exported models, fixes thresholds and constant top-k on validation, then runs test metrics, union/majority sensitivity analysis, image-level paired bootstrap, region ablation, and target swap. |
+| `03_Evaluate_Visual_Baseline.ipynb` | done | Loads the three exported models, fixes thresholds and constant top-k on validation, then runs test metrics, union/majority sensitivity analysis, image-level paired bootstrap, region ablation, and target swap. |
 | `04_VLM_Pilot.ipynb` | done | Pilot of D (direct) vs E (structured) prompting on 300 PAMI val people with `Qwen/Qwen2.5-VL-3B-Instruct`. |
 | full D / E runs, result analysis, LoRA | planned | LoRA only after D and E zero-shot results are stable. |
 
-Notebook 03 contains the first test-set path, but the repository does not contain a completed evaluation run yet. Test results exist only after the team runs Notebook 03 on Colab.
+Notebook 03 contains the first test-set path. The completed Colab T4 run `20261101-034030` is stored on Drive under `outputs/resnet_evaluation/` and records source commit `0e4b81fc`.
 
 Notebook 03 writes `outputs/resnet_evaluation/<run_id>/`: `config.json`, `environment.txt`, `selected_models.json`, `run_summary.json`, compressed validation/test/ablation/swap predictions, metric JSON/CSV files, and a comparison figure. It accepts finalized `model.pt` exports from either `models/` or the current Drive `checkpoints/` directory; optimizer state is not required for evaluation.
 
