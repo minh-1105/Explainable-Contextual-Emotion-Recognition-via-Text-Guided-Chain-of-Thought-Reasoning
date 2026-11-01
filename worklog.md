@@ -88,3 +88,11 @@
 ## 2026-10-31
 
 - Updated `README.md`, `SETUP.md`, `workflow.md`, and `drivesetup.md` to match the notebooks and Drive layout in use.
+
+### Visual baseline evaluation notebook
+
+- Added `03_Evaluate_Visual_Baseline.ipynb`, loading the finalized `model.pt` exports for `person_only`, `context_only`, and `person_context` from either `models/` or the current Drive `checkpoints/` directory.
+- Added validation-only per-label threshold selection, union/majority sensitivity analysis, test mAP/AP/F1/precision/recall, a validation-selected constant top-k baseline, evaluation without `Engagement`, and F1 grouped by the number of annotated people in an image.
+- Added image-level paired bootstrap comparisons among A/B/C, region ablations for the `person_context` model, and target-swap evaluation on multi-person images with an explicit swap-accuracy definition.
+- Added reusable multi-label metrics and bootstrap utilities under `src/evaluation/`; Notebook 03 writes versioned configs, environment details, predictions, metrics, and figures to `outputs/resnet_evaluation/<run_id>/`.
+- Notebook 03 is implemented and syntax-checked locally but still requires a Colab GPU run to produce test results.

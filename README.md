@@ -10,7 +10,7 @@ Nhận diện cảm xúc theo ngữ cảnh trên EMOTIC: ba visual baseline ResN
 
 ## Nội dung repo
 
-- `notebooks/`: điểm chạy trên Colab (`01_Inspect`, `02_Train_Visual_Baseline`, `04_VLM_Pilot`).
+- `notebooks/`: điểm chạy trên Colab (`01_Inspect`, `02_Train_Visual_Baseline`, `03_Evaluate_Visual_Baseline`, `04_VLM_Pilot`).
 - `src/datasets/emotic_dataset.py`: `EmoticDataset`, mỗi người được chú thích là một mẫu; trả ảnh toàn cảnh, crop người, nhãn multi-hot 26 lớp và VAD.
 - `SETUP.md`: chuẩn bị Drive và chạy notebook.
 - `workflow.md`: layout dữ liệu, output của từng notebook, các thí nghiệm đã có và còn lại.
