@@ -1,6 +1,6 @@
 # Explainable Contextual Emotion Recognition
 
-Nhận diện cảm xúc theo ngữ cảnh trên EMOTIC: ba visual baseline ResNet-50 và pilot so sánh VLM hỏi thẳng (D) với VLM suy luận có cấu trúc (E).
+Nhận diện cảm xúc theo ngữ cảnh trên EMOTIC: ba visual baseline ResNet-50 và prototype giải thích kết hợp Qwen3-VL, BERT, ViT, Graph Transformer và Multimodal Transformer.
 
 ## Bắt đầu
 
@@ -10,7 +10,7 @@ Nhận diện cảm xúc theo ngữ cảnh trên EMOTIC: ba visual baseline ResN
 
 ## Nội dung repo
 
-- `notebooks/`: điểm chạy trên Colab (`01_Inspect`, `02_Train_Visual_Baseline`, `03_Evaluate_Visual_Baseline`, `04_VLM_Pilot`).
+- `notebooks/`: điểm chạy trên Colab (`01_Inspect`, `02_Train_Visual_Baseline`, `03_Evaluate_Visual_Baseline`, `04_VLM_Pilot`). Notebook 04 trích cue bằng Qwen3-VL, mã hóa cue bằng BERT, hợp nhất với feature ViT và sinh explanation từ evidence của mô hình.
 - `src/datasets/emotic_dataset.py`: `EmoticDataset`, mỗi người được chú thích là một mẫu; trả ảnh toàn cảnh, crop người, nhãn multi-hot 26 lớp và VAD.
 - `src/evaluation/`: metric đa nhãn, chọn ngưỡng, baseline hằng số top-k và paired bootstrap.
 - `SETUP.md`: chuẩn bị Drive và chạy notebook.

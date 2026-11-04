@@ -89,6 +89,13 @@
 
 - Cập nhật `README.md`, `SETUP.md`, `workflow.md` và `drivesetup.md` cho khớp với notebook và layout Drive đang dùng.
 
+### Hướng phát triển mô hình
+
+- Bổ sung model giải thích
+- Tìm model phù hợp: Qwen3VL
+- Bổ sung Graph Transformer
+- ViT + Multimodal Transformer
+
 ### Notebook đánh giá visual baseline
 
 - Thêm `03_Evaluate_Visual_Baseline.ipynb`, nạp các bản export `model.pt` của `person_only`, `context_only` và `person_context` từ `models/` hoặc thư mục `checkpoints/` hiện có trên Drive.
@@ -96,3 +103,14 @@
 - Bổ sung so sánh paired bootstrap theo ảnh giữa A/B/C, che vùng cho model `person_context`, và target swap trên ảnh nhiều người.
 - Thêm các hàm metric đa nhãn và bootstrap dùng lại được trong `src/evaluation/`; Notebook 03 ghi cấu hình, môi trường, dự đoán, chỉ số và hình vào `outputs/resnet_evaluation/<run_id>/`.
 - Chạy xong Notebook 03 trên Colab Tesla T4. Run `20261101-034030` lưu trên Drive tại `outputs/resnet_evaluation/`, gồm 27 artifact, source commit `0e4b81fc`.
+
+## 2026-11-04
+
+### Prototype đa phương thức có khả năng giải thích
+
+- Chuyển `04_VLM_Pilot.ipynb` thành prototype kết hợp Qwen3-VL 4B, BERT, ViT, Graph Transformer và Multimodal Transformer trên 300 người thuộc validation PAMI.
+- Bổ sung chia train/dev/eval theo ảnh, trích cue bằng Qwen không cho thấy danh sách nhãn cảm xúc, cache feature BERT/ViT đóng băng, chọn checkpoint và threshold chỉ trên dev, rồi báo cáo trên phần validation giữ lại.
+- Bổ sung evidence package từ modality ablation và bước Qwen3-VL riêng để diễn đạt explanation chỉ từ evidence do emotion model tạo ra.
+- Thêm `transformers>=4.57,<6` vào dependency Colab và cập nhật tài liệu workflow. Notebook 04 mới đã được kiểm tra cú pháp ở local nhưng vẫn cần chạy đầy đủ trên Colab GPU.
+- Đồng bộ cell clone/cài đặt dùng chung ở Notebook 02 và 04, đồng thời xóa dấu gạch ngang thừa trong URL GitHub của Notebook 02.
+- Mở rộng Notebook 04 từ pilot 300 người sang huấn luyện tối đa: toàn bộ 23.706 người của PAMI train; toàn bộ 3.334 người của PAMI val được chia theo ảnh thành dev/eval. Notebook vẫn không dùng test và có thể resume bước sinh Qwen cue qua nhiều phiên Colab.

@@ -2,7 +2,7 @@
 
 Notebooks are the entry points: each one mounts Drive; `02`, `03`, and `04` also clone this repository into `/content/contextual-emotion-reasoning`, install `requirements.txt`, and import shared code from `src/`. Drive holds data, notebooks, and results; `/content` holds the code and the extracted images and is lost when the runtime resets.
 
-Research question: does structured text-guided reasoning improve contextual emotion recognition and the quality of its explanations?
+Research question: can visual, contextual and semantic-relation evidence improve contextual emotion recognition, and can a VLM verbalize model-derived evidence without inventing unsupported reasons?
 
 ## Drive layout
 
@@ -32,8 +32,8 @@ Each notebook extracts both zips into `/content/emotic/{PAMI,CVPR}` once per run
 | `01_Inspect.ipynb` | done | Loads PAMI and CVPR annotations, counts images and people per split, checks that the first 100 records of each split resolve to an image, draws every person's bbox on one sample and prints its categories and VAD. |
 | `02_Train_Visual_Baseline.ipynb` | done | Trains one visual baseline per run (`person_only`, `context_only`, `person_context`), selects `best.pt` by validation mAP, exports the best model. |
 | `03_Evaluate_Visual_Baseline.ipynb` | done | Loads the three exported models, fixes thresholds and constant top-k on validation, then runs test metrics, union/majority sensitivity analysis, image-level paired bootstrap, region ablation, and target swap. |
-| `04_VLM_Pilot.ipynb` | done | Pilot of D (direct) vs E (structured) prompting on 300 PAMI val people with `Qwen/Qwen2.5-VL-3B-Instruct`. |
-| full D / E runs, result analysis, LoRA | planned | LoRA only after D and E zero-shot results are stable. |
+| `04_VLM_Pilot.ipynb` | implemented; Colab run pending | Trains on all 23,706 PAMI train people; splits all 3,334 PAMI val people by image into dev/eval. Qwen3-VL extracts visible cues, BERT encodes a semantic graph, ViT encodes person/context, and Graph/Multimodal Transformers predict emotions. |
+| architecture ablations, groundedness review, region/relation attribution | planned | Compare ViT-only/text/graph/full variants, manually review cue and explanation grounding, then add region occlusion, Integrated Gradients and relation ablation. |
 
 Notebook 03 contains the first test-set path. The completed Colab T4 run `20261101-034030` is stored on Drive under `outputs/resnet_evaluation/` and records source commit `0e4b81fc`.
 
@@ -62,14 +62,16 @@ predictions/val_predictions_latest.npz
 
 Run the three configurations one after another, restarting the runtime between them.
 
-## VLM pilot (`04`)
+## Explainable multimodal prototype (`04`)
 
-- The target person is marked with a red box on the full image; both prompts use the same model, image, label list, token limit (384), and greedy decoding.
-- D asks for `{"emotions": [...]}`. E asks for one object with keys `person_cues`, `context_cues`, `situation`, `emotions`, in that order.
-- Each answer is appended to `predictions_<mode>.jsonl` as soon as it is generated; re-running with the same `RUN_ID` skips finished samples and refuses a changed config or prompt.
-- Metrics: unparsable answers count as empty predictions; macro F1 over labels present in the sample; `schema_rate` checks form only; 95% CI of the E − D macro-F1 difference from a paired bootstrap that resamples images (2,000 draws).
+- Uses all 23,706 PAMI train people for training. All 3,334 PAMI val people are divided by image into dev/eval, so people from the same validation image cannot cross partitions. It never reads the test split.
+- Qwen3-VL 4B receives the full image with the target marked by a red box and extracts visible person cues, context cues, relations and a situation without seeing the emotion label list.
+- Frozen BERT encodes those semantic nodes; frozen ViT-B/16 encodes the person crop and full image. A trainable Graph Transformer and Multimodal Transformer predict the 26 labels.
+- The best checkpoint and per-label thresholds are selected only on the internal dev partition. Reported `eval` metrics refer to a held-out part of PAMI val, not EMOTIC test.
+- Person, context and graph tokens are ablated one at a time to create a preliminary evidence package. Qwen3-VL then verbalizes only this model-derived evidence. Token-zero ablation is a prototype intervention and does not replace region/relation attribution.
+- Cue generation for approximately 27,040 train+val people is resumable through JSONL; BERT and ViT features are cached. Resume refuses a changed config, prompt or `git_commit`. Integer sample limits remain available only for smoke tests; the official configuration uses `None` to select every person.
 
-Run directory `outputs/vlm_pilot/<run_id>/`: `config.json`, `samples.json`, `prompts.json`, `environment.txt`, `predictions_direct.jsonl`, `predictions_structured.jsonl`, `metrics.json`, `examples.json`.
+Run directory `outputs/qwen3_multimodal/<run_id>/`: `config.json`, `samples.json`, `prompts.json`, `environment.txt`, `qwen_cues.jsonl`, `bert_graph_features.npz`, `vit_features.npz`, `model.pt`, `metrics.json`, `predictions_eval.npz`, `evidence_packages.json`, `explanations.jsonl`.
 
 ## Experiment matrix
 
@@ -78,5 +80,6 @@ Run directory `outputs/vlm_pilot/<run_id>/`: `config.json`, `samples.json`, `pro
 | A — Person only | ✓ |  |  |  |
 | B — Context only |  | ✓ |  |  |
 | C — Person + Context | ✓ | ✓ |  |  |
-| D — Direct VLM | ✓ | ✓ | ✓ |  |
-| E — Structured VLM | ✓ | ✓ | ✓ | ✓ |
+| D — Qwen3 cue graph | ✓ | ✓ | ✓ | ✓ |
+| E — ViT + BERT + Graph/Multimodal Transformer | ✓ | ✓ | ✓ | ✓ |
+| F — Evidence-grounded explanation | ✓ | ✓ | ✓ | ✓ |

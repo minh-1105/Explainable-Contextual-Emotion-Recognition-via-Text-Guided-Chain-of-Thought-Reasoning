@@ -96,3 +96,14 @@
 - Added image-level paired bootstrap comparisons among A/B/C, region ablations for the `person_context` model, and target-swap evaluation on multi-person images with an explicit swap-accuracy definition.
 - Added reusable multi-label metrics and bootstrap utilities under `src/evaluation/`; Notebook 03 writes versioned configs, environment details, predictions, metrics, and figures to `outputs/resnet_evaluation/<run_id>/`.
 - Completed Notebook 03 on a Colab Tesla T4. Run `20261101-034030` is stored on Drive under `outputs/resnet_evaluation/` with 27 artifacts and source commit `0e4b81fc`.
+
+## 2026-11-04
+
+### Explainable multimodal prototype
+
+- Reworked `04_VLM_Pilot.ipynb` into a Qwen3-VL 4B, BERT, ViT, Graph Transformer, and Multimodal Transformer prototype on 300 PAMI validation people.
+- Added image-grouped train/dev/eval splitting, resumable Qwen cue extraction without emotion-label leakage, cached frozen BERT/ViT features, dev-only checkpoint and threshold selection, and held-out validation metrics.
+- Added modality-ablation evidence packages and a separate Qwen3-VL explanation stage constrained to model-derived evidence.
+- Added `transformers>=4.57,<6` to the Colab dependencies and updated the workflow documentation. The new Notebook 04 implementation is syntax-checked locally but still needs a complete Colab GPU run.
+- Synchronized the shared clone/setup cell in Notebooks 02 and 04 and removed an erroneous leading hyphen from Notebook 02's GitHub repository URL.
+- Expanded Notebook 04 from the 300-person pilot to maximum training: all 23,706 PAMI train people, with all 3,334 PAMI val people split by image into dev/eval. Test remains untouched, and Qwen cue generation remains resumable across Colab sessions.
