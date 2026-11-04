@@ -1,6 +1,6 @@
 # Workflow
 
-Notebooks are the entry points: each one mounts Drive, clones this repository into `/content/contextual-emotion-reasoning`, installs `requirements.txt`, and imports shared code from `src/`. Drive holds data, notebooks, and results; `/content` holds the code and the extracted images and is lost when the runtime resets.
+Notebooks are the entry points: each one mounts Drive; `02`, `03`, and `04` also clone this repository into `/content/contextual-emotion-reasoning`, install `requirements.txt`, and import shared code from `src/`. Drive holds data, notebooks, and results; `/content` holds the code and the extracted images and is lost when the runtime resets.
 
 Research question: does structured text-guided reasoning improve contextual emotion recognition and the quality of its explanations?
 
@@ -18,11 +18,12 @@ Research question: does structured text-guided reasoning improve contextual emot
 ├── notebooks/
 ├── outputs/
 │   ├── runs/<experiment_name>/<run_id>/
+│   ├── resnet_evaluation/<run_id>/
 │   └── vlm_pilot/<run_id>/
 └── models/<model_name>/<run_id>/
 ```
 
-Each notebook extracts both zips into `/content/emotic/{PAMI,CVPR}` once per runtime (marker file `.extracted`) and asserts the file counts above. Reading tens of thousands of small images directly from Drive starves the GPU. Training and the pilot read the PAMI annotations and resolve images across both extracted roots.
+Each notebook extracts both zips into `/content/emotic/{PAMI,CVPR}` once per runtime (marker file `.extracted`) and asserts the file counts above. Reading tens of thousands of small images directly from Drive starves the GPU. Training, evaluation, and the pilot read the PAMI annotations and resolve images across both extracted roots.
 
 ## Notebooks
 

@@ -12,6 +12,7 @@ Nhận diện cảm xúc theo ngữ cảnh trên EMOTIC: ba visual baseline ResN
 
 - `notebooks/`: điểm chạy trên Colab (`01_Inspect`, `02_Train_Visual_Baseline`, `03_Evaluate_Visual_Baseline`, `04_VLM_Pilot`).
 - `src/datasets/emotic_dataset.py`: `EmoticDataset`, mỗi người được chú thích là một mẫu; trả ảnh toàn cảnh, crop người, nhãn multi-hot 26 lớp và VAD.
+- `src/evaluation/`: metric đa nhãn, chọn ngưỡng, baseline hằng số top-k và paired bootstrap.
 - `SETUP.md`: chuẩn bị Drive và chạy notebook.
 - `workflow.md`: layout dữ liệu, output của từng notebook, các thí nghiệm đã có và còn lại.
 - `AGENTS.md`: môi trường chạy, những thứ không được phá và quy ước khi sửa code.

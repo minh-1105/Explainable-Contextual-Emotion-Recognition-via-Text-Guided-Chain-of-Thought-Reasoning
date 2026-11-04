@@ -88,3 +88,11 @@
 ## 2026-10-31
 
 - Cập nhật `README.md`, `SETUP.md`, `workflow.md` và `drivesetup.md` cho khớp với notebook và layout Drive đang dùng.
+
+### Notebook đánh giá visual baseline
+
+- Thêm `03_Evaluate_Visual_Baseline.ipynb`, nạp các bản export `model.pt` của `person_only`, `context_only` và `person_context` từ `models/` hoặc thư mục `checkpoints/` hiện có trên Drive.
+- Bổ sung chọn ngưỡng từng nhãn chỉ trên validation, phân tích độ nhạy union/majority, mAP/AP/F1/precision/recall trên test, baseline hằng số top-k chọn trên validation, đánh giá khi bỏ `Engagement`, và F1 theo số người được chú thích trong ảnh.
+- Bổ sung so sánh paired bootstrap theo ảnh giữa A/B/C, che vùng cho model `person_context`, và target swap trên ảnh nhiều người.
+- Thêm các hàm metric đa nhãn và bootstrap dùng lại được trong `src/evaluation/`; Notebook 03 ghi cấu hình, môi trường, dự đoán, chỉ số và hình vào `outputs/resnet_evaluation/<run_id>/`.
+- Chạy xong Notebook 03 trên Colab Tesla T4. Run `20261101-034030` lưu trên Drive tại `outputs/resnet_evaluation/`, gồm 27 artifact, source commit `0e4b81fc`.
