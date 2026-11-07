@@ -27,7 +27,7 @@ Kết quả đã lưu trên Drive phụ thuộc vào những thứ sau; đổi c
 - `sample_id` dạng `<split>:<image_index>:<person_index>`: 04 dùng nó để resume cue Qwen và để mọi biến thể chạy đúng cùng một tập người.
 - Khóa của checkpoint và các trường mà 02 so khi resume (`experiment_name`, `backbone`, `image_size`, `category_policy`, `crop_padding`).
 - 04 từ chối resume khi `MODEL_CONFIG` (trừ `git_commit`) hoặc `prompts.json` khác run cũ; commit mới thì ghi thêm toàn bộ môi trường hiện tại vào `environment.txt`. Đổi prompt hoặc cấu hình nghĩa là run mới (`RUN_ID = None`).
-- Chọn model, ngưỡng và `k` theo validation. Hiện chỉ `03_Evaluate_Visual_Baseline.ipynb` dùng test set, và đã chạy xong cho ResNet; không chỉnh cấu hình theo số test rồi chạy lại.
+- Chọn model, ngưỡng và `k` theo validation. Test set chỉ dùng ở `03_Evaluate_Visual_Baseline.ipynb` (đã chạy xong cho ResNet) và mục 13 của 04 (chấm một lần pipeline đã chốt trên dev); không chỉnh cấu hình theo số test rồi chạy lại.
 
 ## Quy ước
 
