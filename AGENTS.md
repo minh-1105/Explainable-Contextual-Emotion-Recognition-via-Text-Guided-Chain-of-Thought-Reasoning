@@ -15,7 +15,7 @@ python -c "import ast, glob, json; [ast.parse(''.join(c['source'])) for p in glo
 
 ## Cấu trúc
 
-- `notebooks/`: điểm chạy. Hàm `extract_images` và các đường dẫn EMOTIC lặp lại ở 01, 02, 03 và 04; cell clone repo lặp lại ở 02, 03 và 04. Sửa ở một notebook thì sửa ở tất cả các notebook còn lại.
+- `notebooks/`: điểm chạy. `notebooks/runs/` chứa bản đã chạy trên Colab của các run không nằm trong notebook chính (giữ nguyên như lúc chạy, không sửa); `02` mang output của run `person_only` `20261019-091248`. Hàm `extract_images` và các đường dẫn EMOTIC lặp lại ở 01, 02, 03 và 04; cell clone repo lặp lại ở 02, 03 và 04. Sửa ở một notebook thì sửa ở tất cả các notebook còn lại.
 - `src/datasets/emotic_dataset.py`: code dùng chung, 02, 03 và 04 import.
 - `src/evaluation/`: metric đa nhãn, chọn ngưỡng, baseline hằng số top-k và paired bootstrap; 03 import.
 
