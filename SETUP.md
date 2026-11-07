@@ -35,9 +35,11 @@ modal volume put ecer-nb04 cvpr_emotic.zip /data/raw/raw/emotic/CVPR/cvpr_emotic
 modal volume put ecer-nb04 <thư mục run> /outputs/qwen3_multimodal/<RUN_ID>
 modal run --detach cloud/modal_nb04.py::run --branch main
 modal volume get ecer-nb04 /outputs/qwen3_multimodal/<RUN_ID> <thư mục local>
+modal volume get ecer-nb04 /outputs/modal_executions/<giờ bắt đầu>/04_VLM_Pilot.ipynb <file local>
+python cloud/attach_outputs.py <file local>
 ```
 
-Bước `put` thư mục run chỉ cần khi tiếp tục một run có sẵn; `RUN_ID` lấy theo cell cấu hình của notebook. Script chạy trên H100, ghi toàn bộ output kèm timestamp UTC vào `logs/modal_<giờ bắt đầu>.log` trong thư mục run (training log để nộp), tự commit volume 5 phút một lần và sau mỗi cell; mất kết nối thì Modal chạy lại hàm, notebook resume từ cue đã có. Kết quả nằm trên volume, phải tự tải về và đưa lên Drive.
+Bước `put` thư mục run chỉ cần khi tiếp tục một run có sẵn; `RUN_ID` lấy theo cell cấu hình của notebook. Script chạy chính notebook bằng papermill trên H100: hai cell mount Drive được thay bằng cell trỏ vào volume, notebook đã chạy (kèm output, hình và thời gian từng cell) cùng `run.log` có timestamp nằm ở `/outputs/modal_executions/<giờ bắt đầu UTC>/`. `cloud/attach_outputs.py` chép output đó vào `notebooks/04_VLM_Pilot.ipynb` để commit, giữ nguyên code Colab. Script tự commit volume 5 phút một lần và sau mỗi cell; mất kết nối thì Modal chạy lại hàm, notebook resume từ cue đã có. Kết quả nằm trên volume, phải tự tải về và đưa lên Drive.
 
 ## 3. Thứ tự
 
