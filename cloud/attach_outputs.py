@@ -1,4 +1,3 @@
-import copy
 import json
 import sys
 from pathlib import Path
@@ -11,7 +10,7 @@ executed_path = Path(sys.argv[1])
 repo_path = Path(__file__).resolve().parent.parent / NOTEBOOK
 repo = json.loads(repo_path.read_text(encoding="utf-8"))
 executed = json.loads(executed_path.read_text(encoding="utf-8"))
-expected = modal_notebook(nbformat.from_dict(copy.deepcopy(repo)))
+expected = modal_notebook(nbformat.reads(repo_path.read_text(encoding="utf-8"), as_version=4))
 
 repo_code = [cell for cell in repo["cells"] if cell["cell_type"] == "code"]
 executed_code = [cell for cell in executed["cells"] if cell["cell_type"] == "code"]
