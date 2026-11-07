@@ -15,7 +15,7 @@ Windows directory junctions in the local repository point at the same Drive fold
 | Local path | Google Drive target | Contents |
 |---|---|---|
 | `notebooks` | `notebooks` | Colab notebooks (tracked by Git) |
-| `outputs` | `outputs` | `runs/` training runs and checkpoints, `resnet_evaluation/` baseline evaluations, `vlm_pilot/` pilot runs |
+| `outputs` | `outputs` | `runs/` training runs and checkpoints, `resnet_evaluation/` baseline evaluations, `qwen3_multimodal/` notebook 04 runs |
 | `models` | `models` | Exported models |
 
 `data/` stays local; the EMOTIC annotations and image zips used by Colab are separate copies under the Drive `data/` folder. `.git` and `src/` stay local and must not be placed in Drive.
