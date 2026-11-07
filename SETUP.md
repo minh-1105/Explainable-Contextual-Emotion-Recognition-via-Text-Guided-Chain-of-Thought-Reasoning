@@ -28,6 +28,6 @@ Sau khi runtime reset, chạy lại từ cell đầu; dữ liệu và kết qu�
 1. `01_Inspect.ipynb`: kiểm annotation, đường dẫn ảnh và bbox.
 2. `02_Train_Visual_Baseline.ipynb`: lần lượt `person_only`, `context_only`, `person_context`; restart runtime giữa các lần.
 3. `03_Evaluate_Visual_Baseline.ipynb`: chấm ba baseline trên test, chọn ngưỡng trên validation.
-4. `04_VLM_Pilot.ipynb`: prototype Qwen3-VL 4B + BERT + ViT + Graph/Multimodal Transformer. Cấu hình chính thức dùng toàn bộ 23.706 người của PAMI train và 3.334 người của PAMI val; Qwen cue được ghi JSONL để có thể resume qua nhiều phiên Colab.
+4. `04_VLM_Pilot.ipynb`: prototype Qwen3-VL 4B + BERT + ViT + Graph/Multimodal Transformer. Qwen sinh cue cho toàn bộ 23.706 người PAMI train và 3.334 người PAMI val; cell cue dừng ngay nếu dự kiến vượt `CUE_BUDGET_HOURS`. Cue ghi JSONL để resume qua nhiều phiên Colab với cùng `RUN_ID`.
 
 Kết quả ghi vào `outputs/` và `models/` trên Drive; cấu trúc chi tiết trong `workflow.md`.
