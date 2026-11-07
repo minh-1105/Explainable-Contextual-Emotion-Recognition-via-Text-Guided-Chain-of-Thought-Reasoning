@@ -4,7 +4,8 @@
 
 ## Môi trường chạy
 
-- Notebook chỉ chạy trên Colab (02, 03 và 04 cần GPU). Đường dẫn cứng là `/content/drive/MyDrive/Colab Notebooks/Contextual Emotion Recognition` (Drive) và `/content` (runtime); máy local không có dữ liệu ở đó, nên agent không chạy được notebook. Người trong team chạy trên Colab và gửi lại output hoặc file kết quả.
+- Notebook chạy trên Colab (02, 03 và 04 cần GPU). Đường dẫn cứng là `/content/drive/MyDrive/Colab Notebooks/Contextual Emotion Recognition` (Drive) và `/content` (runtime); máy local không có dữ liệu ở đó. Người trong team chạy trên Colab và gửi lại output hoặc file kết quả.
+- 04 còn chạy được trên Modal bằng `cloud/modal_nb04.py` (xem `SETUP.md`): script clone repo, thay cell mount Drive bằng volume `ecer-nb04` có cùng layout với Drive, rồi chạy lần lượt các code cell của notebook. Agent có Modal token thì tự chạy được. Đổi thứ tự hoặc nội dung ba code cell đầu của 04 thì sửa script theo.
 - Cell đầu của 02, 03 và 04 clone hoặc `git pull --ff-only` nhánh `main` của repo này vào `/content/contextual-emotion-reasoning`, và ghi `git_commit` vào `environment.txt` của run. Thay đổi trong `src/` chưa lên `main` thì Colab không thấy.
 - Kiểm tra được ở local, chạy sau mỗi lần sửa:
 
@@ -25,7 +26,7 @@ Kết quả đã lưu trên Drive phụ thuộc vào những thứ sau; đổi c
 - Thứ tự 26 nhãn trong `EMOTION_LABELS`: `label_map.json`, `class_names` trong checkpoint, vector multi-hot và metric của 04 đều theo thứ tự này.
 - `sample_id` dạng `<split>:<image_index>:<person_index>`: 04 dùng nó để resume cue Qwen và để mọi biến thể chạy đúng cùng một tập người.
 - Khóa của checkpoint và các trường mà 02 so khi resume (`experiment_name`, `backbone`, `image_size`, `category_policy`, `crop_padding`).
-- 04 từ chối resume khi `MODEL_CONFIG` (trừ `git_commit`) hoặc `prompts.json` khác run cũ; commit mới chỉ được ghi thêm vào `environment.txt`. Đổi prompt hoặc cấu hình nghĩa là run mới (`RUN_ID = None`).
+- 04 từ chối resume khi `MODEL_CONFIG` (trừ `git_commit`) hoặc `prompts.json` khác run cũ; commit mới thì ghi thêm toàn bộ môi trường hiện tại vào `environment.txt`. Đổi prompt hoặc cấu hình nghĩa là run mới (`RUN_ID = None`).
 - Chọn model, ngưỡng và `k` theo validation. Hiện chỉ `03_Evaluate_Visual_Baseline.ipynb` dùng test set, và đã chạy xong cho ResNet; không chỉnh cấu hình theo số test rồi chạy lại.
 
 ## Quy ước

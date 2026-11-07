@@ -23,6 +23,22 @@ Giữ ảnh ở dạng zip. Notebook tự giải nén vào `/content/emotic` m�
 
 Sau khi runtime reset, chạy lại từ cell đầu; dữ liệu và kết quả trên Drive vẫn còn.
 
+## 2b. Chạy notebook 04 trên Modal
+
+Cần `pip install modal` và token Modal (`modal token new`). Dùng PowerShell; Git Bash đổi đường dẫn `/data/...` thành đường dẫn Windows.
+
+```powershell
+modal volume create ecer-nb04
+modal volume put ecer-nb04 Annotations.mat /data/raw/raw/emotic/PAMI/Annotations/Annotations/Annotations.mat
+modal volume put ecer-nb04 pami_emotic.zip /data/raw/raw/emotic/PAMI/pami_emotic.zip
+modal volume put ecer-nb04 cvpr_emotic.zip /data/raw/raw/emotic/CVPR/cvpr_emotic.zip
+modal volume put ecer-nb04 <thư mục run> /outputs/qwen3_multimodal/<RUN_ID>
+modal run --detach cloud/modal_nb04.py::run --branch main
+modal volume get ecer-nb04 /outputs/qwen3_multimodal/<RUN_ID> <thư mục local>
+```
+
+Bước `put` thư mục run chỉ cần khi tiếp tục một run có sẵn; `RUN_ID` lấy theo cell cấu hình của notebook. Script chạy trên H100, tự commit volume 5 phút một lần và sau mỗi cell; mất kết nối thì Modal chạy lại hàm, notebook resume từ cue đã có. Kết quả nằm trên volume, phải tự tải về và đưa lên Drive.
+
 ## 3. Thứ tự
 
 1. `01_Inspect.ipynb`: kiểm annotation, đường dẫn ảnh và bbox.
