@@ -1,2 +1,0 @@
-[val/majority] pairs=2017 one_empty=454 (22.5%) overlap_nonempty=805 (39.9%) both_empty=45 (2.2%) identical_nonempty=379 (18.8%) disjoint_nonempty=334 (16.6%)
-[test/majority] pairs=4994 one_empty=1463 (29.3%) overlap_nonempty=1411 (28.3%) identical_nonempty=786 (15.7%) disjoint_nonempty=996 (19.9%) both_empty=338 (6.8%)

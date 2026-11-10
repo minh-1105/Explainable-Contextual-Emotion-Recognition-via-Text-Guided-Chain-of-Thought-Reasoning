@@ -1,0 +1,506 @@
+{
+  "emotic": {
+    "arxiv": "2003.13401",
+    "url": "https://arxiv.org/abs/2003.13401",
+    "title": "Context Based Emotion Recognition using EMOTIC Dataset",
+    "authors": [
+      "Kosti, Ronak",
+      "Alvarez, Jose M.",
+      "Recasens, Adria",
+      "Lapedriza, Agata"
+    ],
+    "date": "2020/03/30",
+    "abstract": "In our everyday lives and social interactions we often try to perceive the emotional states of people. There has been a lot of research in providing machines with a similar capacity of recognizing emotions. From a computer vision perspective, most of the previous efforts have been focusing in analyzing the facial expressions and, in some cases, also the body pose. Some of these methods work remarkably well in specific settings. However, their performance is limited in natural, unconstrained environments. Psychological studies show that the scene context, in addition to facial expression and body pose, provides important information to our perception of people's emotions. However, the processing of the context for automatic emotion recognition has not been explored in depth, partly due to the lack of proper data. In this paper we present EMOTIC, a dataset of images of people in a diverse set of natural situations, annotated with their apparent emotion. The EMOTIC dataset combines two different types of emotion representation: (1) a set of 26 discrete categories, and (2) the continuous dimensions Valence, Arousal, and Dominance. We also present a detailed statistical and algorithmic analysis of the dataset along with annotators' agreement analysis. Using the EMOTIC dataset we train different CNN models for emotion recognition, combining the information of the bounding box containing the person with the contextual information extracted from the scene. Our results show how scene context provides important information to automatically recognize emotional states and motivate further research in this direction. Dataset and code is open-sourced and available at: this https URL and link for the peer-reviewed published article: this https URL"
+  },
+  "caer": {
+    "arxiv": "1908.05913",
+    "url": "https://arxiv.org/abs/1908.05913",
+    "title": "Context-Aware Emotion Recognition Networks",
+    "authors": [
+      "Lee, Jiyoung",
+      "Kim, Seungryong",
+      "Kim, Sunok",
+      "Park, Jungin",
+      "Sohn, Kwanghoon"
+    ],
+    "date": "2019/08/16",
+    "abstract": "Traditional techniques for emotion recognition have focused on the facial expression analysis only, thus providing limited ability to encode context that comprehensively represents the emotional responses. We present deep networks for context-aware emotion recognition, called CAER-Net, that exploit not only human facial expression but also context information in a joint and boosting manner. The key idea is to hide human faces in a visual scene and seek other contexts based on an attention mechanism. Our networks consist of two sub-networks, including two-stream encoding networks to seperately extract the features of face and context regions, and adaptive fusion networks to fuse such features in an adaptive fashion. We also introduce a novel benchmark for context-aware emotion recognition, called CAER, that is more appropriate than existing benchmarks both qualitatively and quantitatively. On several benchmarks, CAER-Net proves the effect of context for emotion recognition. Our dataset is available at this http URL ."
+  },
+  "emoticon": {
+    "arxiv": "2003.06692",
+    "url": "https://arxiv.org/abs/2003.06692",
+    "title": "EmotiCon: Context-Aware Multimodal Emotion Recognition using Frege's Principle",
+    "authors": [
+      "Mittal, Trisha",
+      "Guhan, Pooja",
+      "Bhattacharya, Uttaran",
+      "Chandra, Rohan",
+      "Bera, Aniket",
+      "Manocha, Dinesh"
+    ],
+    "date": "2020/03/14",
+    "abstract": "We present EmotiCon, a learning-based algorithm for context-aware perceived human emotion recognition from videos and images. Motivated by Frege's Context Principle from psychology, our approach combines three interpretations of context for emotion recognition. Our first interpretation is based on using multiple modalities(e.g. faces and gaits) for emotion recognition. For the second interpretation, we gather semantic context from the input image and use a self-attention-based CNN to encode this information. Finally, we use depth maps to model the third interpretation related to socio-dynamic interactions and proximity among agents. We demonstrate the efficiency of our network through experiments on EMOTIC, a benchmark dataset. We report an Average Precision (AP) score of 35.48 across 26 classes, which is an improvement of 7-8 over prior methods. We also introduce a new dataset, GroupWalk, which is a collection of videos captured in multiple real-world settings of people walking. We report an AP of 65.83 across 4 categories on GroupWalk, which is also an improvement over prior methods."
+  },
+  "arbee": {
+    "arxiv": "1808.09568",
+    "url": "https://arxiv.org/abs/1808.09568",
+    "title": "ARBEE: Towards Automated Recognition of Bodily Expression of Emotion In the Wild",
+    "authors": [
+      "Luo, Yu",
+      "Ye, Jianbo",
+      "Adams, Jr., Reginald B.",
+      "Li, Jia",
+      "Newman, Michelle G.",
+      "Wang, James Z."
+    ],
+    "date": "2018/08/28",
+    "abstract": "Humans are arguably innately prepared to comprehend others' emotional expressions from subtle body movements. If robots or computers can be empowered with this capability, a number of robotic applications become possible. Automatically recognizing human bodily expression in unconstrained situations, however, is daunting given the incomplete understanding of the relationship between emotional expressions and body movements. The current research, as a multidisciplinary effort among computer and information sciences, psychology, and statistics, proposes a scalable and reliable crowdsourcing approach for collecting in-the-wild perceived emotion data for computers to learn to recognize body languages of humans. To accomplish this task, a large and growing annotated dataset with 9,876 video clips of body movements and 13,239 human characters, named BoLD (Body Language Dataset), has been created. Comprehensive statistical analysis of the dataset revealed many interesting insights. A system to model the emotional expressions based on bodily movements, named ARBEE (Automated Recognition of Bodily Expression of Emotion), has also been developed and evaluated. Our analysis shows the effectiveness of Laban Movement Analysis (LMA) features in characterizing arousal, and our experiments using LMA features further demonstrate computability of bodily expression. We report and compare results of several other baseline methods which were developed for action recognition based on two different modalities, body skeleton, and raw image. The dataset and findings presented in this work will likely serve as a launchpad for future discoveries in body language understanding that will enable future robots to interact and collaborate more effectively with humans."
+  },
+  "emotionclip": {
+    "arxiv": "2305.13500",
+    "url": "https://arxiv.org/abs/2305.13500",
+    "title": "Learning Emotion Representations from Verbal and Nonverbal Communication",
+    "authors": [
+      "Zhang, Sitao",
+      "Pan, Yimu",
+      "Wang, James Z."
+    ],
+    "date": "2023/05/22",
+    "abstract": "Emotion understanding is an essential but highly challenging component of artificial general intelligence. The absence of extensively annotated datasets has significantly impeded advancements in this field. We present EmotionCLIP, the first pre-training paradigm to extract visual emotion representations from verbal and nonverbal communication using only uncurated data. Compared to numerical labels or descriptions used in previous methods, communication naturally contains emotion information. Furthermore, acquiring emotion representations from communication is more congruent with the human learning process. We guide EmotionCLIP to attend to nonverbal emotion cues through subject-aware context encoding and verbal emotion cues using sentiment-guided contrastive learning. Extensive experiments validate the effectiveness and transferability of EmotionCLIP. Using merely linear-probe evaluation protocol, EmotionCLIP outperforms the state-of-the-art supervised visual emotion recognition methods and rivals many multimodal approaches across various benchmarks. We anticipate that the advent of EmotionCLIP will address the prevailing issue of data scarcity in emotion understanding, thereby fostering progress in related domains. The code and pre-trained models are available at this https URL ."
+  },
+  "debias": {
+    "arxiv": "2403.05963",
+    "url": "https://arxiv.org/abs/2403.05963",
+    "title": "Robust Emotion Recognition in Context Debiasing",
+    "authors": [
+      "Yang, Dingkang",
+      "Yang, Kun",
+      "Li, Mingcheng",
+      "Wang, Shunli",
+      "Wang, Shuaibing",
+      "Zhang, Lihua"
+    ],
+    "date": "2024/03/09",
+    "abstract": "Context-aware emotion recognition (CAER) has recently boosted the practical applications of affective computing techniques in unconstrained environments. Mainstream CAER methods invariably extract ensemble representations from diverse contexts and subject-centred characteristics to perceive the target person's emotional state. Despite advancements, the biggest challenge remains due to context bias interference. The harmful bias forces the models to rely on spurious correlations between background contexts and emotion labels in likelihood estimation, causing severe performance bottlenecks and confounding valuable context priors. In this paper, we propose a counterfactual emotion inference (CLEF) framework to address the above issue. Specifically, we first formulate a generalized causal graph to decouple the causal relationships among the variables in CAER. Following the causal graph, CLEF introduces a non-invasive context branch to capture the adverse direct effect caused by the context bias. During the inference, we eliminate the direct context effect from the total causal effect by comparing factual and counterfactual outcomes, resulting in bias mitigation and robust prediction. As a model-agnostic framework, CLEF can be readily integrated into existing methods, bringing consistent performance gains."
+  },
+  "decoupled": {
+    "arxiv": "2404.17205",
+    "url": "https://arxiv.org/abs/2404.17205",
+    "title": "Two in One Go: Single-stage Emotion Recognition with Decoupled Subject-context Transformer",
+    "authors": [
+      "Li, Xinpeng",
+      "Wang, Teng",
+      "Zhao, Jian",
+      "Mao, Shuyi",
+      "Wang, Jinbao",
+      "Zheng, Feng",
+      "Peng, Xiaojiang",
+      "Li, Xuelong"
+    ],
+    "date": "2024/04/26",
+    "abstract": "Emotion recognition aims to discern the emotional state of subjects within an image, relying on subject-centric and contextual visual cues. Current approaches typically follow a two-stage pipeline: first localize subjects by off-the-shelf detectors, then perform emotion classification through the late fusion of subject and context features. However, the complicated paradigm suffers from disjoint training stages and limited interaction between fine-grained subject-context elements. To address the challenge, we present a single-stage emotion recognition approach, employing a Decoupled Subject-Context Transformer (DSCT), for simultaneous subject localization and emotion classification. Rather than compartmentalizing training stages, we jointly leverage box and emotion signals as supervision to enrich subject-centric feature learning. Furthermore, we introduce DSCT to facilitate interactions between fine-grained subject-context cues in a decouple-then-fuse manner. The decoupled query token--subject queries and context queries--gradually intertwine across layers within DSCT, during which spatial and semantic relations are exploited and aggregated. We evaluate our single-stage framework on two widely used context-aware emotion recognition datasets, CAER-S and EMOTIC. Our approach surpasses two-stage alternatives with fewer parameter numbers, achieving a 3.39% accuracy improvement and a 6.46% average precision gain on CAER-S and EMOTIC datasets, respectively."
+  },
+  "captions": {
+    "arxiv": "2309.13136",
+    "url": "https://arxiv.org/abs/2309.13136",
+    "title": "Contextual Emotion Estimation from Image Captions",
+    "authors": [
+      "Yang, Vera",
+      "Srivastava, Archita",
+      "Etesam, Yasaman",
+      "Zhang, Chuxuan",
+      "Lim, Angelica"
+    ],
+    "date": "2023/09/22",
+    "abstract": "Emotion estimation in images is a challenging task, typically using computer vision methods to directly estimate people's emotions using face, body pose and contextual cues. In this paper, we explore whether Large Language Models (LLMs) can support the contextual emotion estimation task, by first captioning images, then using an LLM for inference. First, we must understand: how well do LLMs perceive human emotions? And which parts of the information enable them to determine emotions? One initial challenge is to construct a caption that describes a person within a scene with information relevant for emotion perception. Towards this goal, we propose a set of natural language descriptors for faces, bodies, interactions, and environments. We use them to manually generate captions and emotion annotations for a subset of 331 images from the EMOTIC dataset. These captions offer an interpretable representation for emotion estimation, towards understanding how elements of a scene affect emotion perception in LLMs and beyond. Secondly, we test the capability of a large language model to infer an emotion from the resulting image captions. We find that GPT-3.5, specifically the text-davinci-003 model, provides surprisingly reasonable emotion predictions consistent with human annotations, but accuracy can depend on the emotion concept. Overall, the results suggest promise in the image captioning and LLM approach."
+  },
+  "etom": {
+    "arxiv": "2310.19995",
+    "url": "https://arxiv.org/abs/2310.19995",
+    "title": "Emotional Theory of Mind: Bridging Fast Visual Processing with Slow Linguistic Reasoning",
+    "authors": [
+      "Etesam, Yasaman",
+      "Yalçın, Özge Nilay",
+      "Zhang, Chuxuan",
+      "Lim, Angelica"
+    ],
+    "date": "2023/10/30",
+    "abstract": "The emotional theory of mind problem requires facial expressions, body pose, contextual information and implicit commonsense knowledge to reason about the person's emotion and its causes, making it currently one of the most difficult problems in affective computing. In this work, we propose multiple methods to incorporate the emotional reasoning capabilities by constructing \"narrative captions\" relevant to emotion perception, that includes contextual and physical signal descriptors that focuses on \"Who\", \"What\", \"Where\" and \"How\" questions related to the image and emotions of the individual. We propose two distinct ways to construct these captions using zero-shot classifiers (CLIP) and fine-tuning visual-language models (LLaVA) over human generated descriptors. We further utilize these captions to guide the reasoning of language (GPT-4) and vision-language models (LLaVa, GPT-Vision). We evaluate the use of the resulting models in an image-to-language-to-emotion task. Our experiments showed that combining the \"Fast\" narrative descriptors and \"Slow\" reasoning of language models is a promising way to achieve emotional theory of mind."
+  },
+  "contextvlm": {
+    "arxiv": "2405.08992",
+    "url": "https://arxiv.org/abs/2405.08992",
+    "title": "Contextual Emotion Recognition using Large Vision Language Models",
+    "authors": [
+      "Etesam, Yasaman",
+      "Yalçın, Özge Nilay",
+      "Zhang, Chuxuan",
+      "Lim, Angelica"
+    ],
+    "date": "2024/05/14",
+    "abstract": "\"How does the person in the bounding box feel?\" Achieving human-level recognition of the apparent emotion of a person in real world situations remains an unsolved task in computer vision. Facial expressions are not enough: body pose, contextual knowledge, and commonsense reasoning all contribute to how humans perform this emotional theory of mind task. In this paper, we examine two major approaches enabled by recent large vision language models: 1) image captioning followed by a language-only LLM, and 2) vision language models, under zero-shot and fine-tuned setups. We evaluate the methods on the Emotions in Context (EMOTIC) dataset and demonstrate that a vision language model, fine-tuned even on a small dataset, can significantly outperform traditional baselines. The results of this work aim to help robots and agents perform emotionally sensitive decision-making and interaction in the future."
+  },
+  "lei": {
+    "arxiv": "2407.11300",
+    "url": "https://arxiv.org/abs/2407.11300",
+    "title": "Large Vision-Language Models as Emotion Recognizers in Context Awareness",
+    "authors": [
+      "Lei, Yuxuan",
+      "Yang, Dingkang",
+      "Chen, Zhaoyu",
+      "Chen, Jiawei",
+      "Zhai, Peng",
+      "Zhang, Lihua"
+    ],
+    "date": "2024/07/16",
+    "abstract": "Context-aware emotion recognition (CAER) is a complex and significant task that requires perceiving emotions from various contextual cues. Previous approaches primarily focus on designing sophisticated architectures to extract emotional cues from images. However, their knowledge is confined to specific training datasets and may reflect the subjective emotional biases of the annotators. Furthermore, acquiring large amounts of labeled data is often challenging in real-world applications. In this paper, we systematically explore the potential of leveraging Large Vision-Language Models (LVLMs) to empower the CAER task from three paradigms: 1) We fine-tune LVLMs on two CAER datasets, which is the most common way to transfer large models to downstream tasks. 2) We design zero-shot and few-shot patterns to evaluate the performance of LVLMs in scenarios with limited data or even completely unseen. In this case, a training-free framework is proposed to fully exploit the In-Context Learning (ICL) capabilities of LVLMs. Specifically, we develop an image similarity-based ranking algorithm to retrieve examples; subsequently, the instructions, retrieved examples, and the test example are combined to feed LVLMs to obtain the corresponding sentiment judgment. 3) To leverage the rich knowledge base of LVLMs, we incorporate Chain-of-Thought (CoT) into our framework to enhance the model's reasoning ability and provide interpretable results. Extensive experiments and analyses demonstrate that LVLMs achieve competitive performance in the CAER task across different paradigms. Notably, the superior performance in few-shot settings indicates the feasibility of LVLMs for accomplishing specific tasks without extensive training."
+  },
+  "visualprompt": {
+    "arxiv": "2410.02244",
+    "url": "https://arxiv.org/abs/2410.02244",
+    "title": "Visual Prompting in LLMs for Enhancing Emotion Recognition",
+    "authors": [
+      "Zhang, Qixuan",
+      "Wang, Zhifeng",
+      "Zhang, Dylan",
+      "Niu, Wenjia",
+      "Caldwell, Sabrina",
+      "Gedeon, Tom",
+      "Liu, Yang",
+      "Qin, Zhenyue"
+    ],
+    "date": "2024/10/03",
+    "abstract": "Vision Large Language Models (VLLMs) are transforming the intersection of computer vision and natural language processing. Nonetheless, the potential of using visual prompts for emotion recognition in these models remains largely unexplored and untapped. Traditional methods in VLLMs struggle with spatial localization and often discard valuable global context. To address this problem, we propose a Set-of-Vision prompting (SoV) approach that enhances zero-shot emotion recognition by using spatial information, such as bounding boxes and facial landmarks, to mark targets precisely. SoV improves accuracy in face count and emotion categorization while preserving the enriched image context. Through a battery of experimentation and analysis of recent commercial or open-source VLLMs, we evaluate the SoV model's ability to comprehend facial expressions in natural environments. Our findings demonstrate the effectiveness of integrating spatial visual prompts into VLLMs for improving emotion recognition performance."
+  },
+  "evaluatevlm": {
+    "arxiv": "2502.05660",
+    "url": "https://arxiv.org/abs/2502.05660",
+    "title": "Evaluating Vision-Language Models for Emotion Recognition",
+    "authors": [
+      "Bhattacharyya, Sree",
+      "Wang, James Z."
+    ],
+    "date": "2025/02/08",
+    "abstract": "Large Vision-Language Models (VLMs) have achieved unprecedented success in several objective multimodal reasoning tasks. However, to further enhance their capabilities of empathetic and effective communication with humans, improving how VLMs process and understand emotions is crucial. Despite significant research attention on improving affective understanding, there is a lack of detailed evaluations of VLMs for emotion-related tasks, which can potentially help inform downstream fine-tuning efforts. In this work, we present the first comprehensive evaluation of VLMs for recognizing evoked emotions from images. We create a benchmark for the task of evoked emotion recognition and study the performance of VLMs for this task, from perspectives of correctness and robustness. Through several experiments, we demonstrate important factors that emotion recognition performance depends on, and also characterize the various errors made by VLMs in the process. Finally, we pinpoint potential causes for errors through a human evaluation study. We use our experimental results to inform recommendations for the future of emotion research in the context of VLMs."
+  },
+  "commonsense": {
+    "arxiv": "2404.07078",
+    "url": "https://arxiv.org/abs/2404.07078",
+    "title": "VLLMs Provide Better Context for Emotion Understanding Through Common Sense Reasoning",
+    "authors": [
+      "Xenos, Alexandros",
+      "Foteinopoulou, Niki Maria",
+      "Ntinou, Ioanna",
+      "Patras, Ioannis",
+      "Tzimiropoulos, Georgios"
+    ],
+    "date": "2024/04/10",
+    "abstract": "Recognising emotions in context involves identifying an individual's apparent emotions while considering contextual cues from the surrounding scene. Previous approaches to this task have typically designed explicit scene-encoding architectures or incorporated external scene-related information, such as captions. However, these methods often utilise limited contextual information or rely on intricate training pipelines to decouple noise from relevant information. In this work, we leverage the capabilities of Vision-and-Large-Language Models (VLLMs) to enhance in-context emotion classification in a more straightforward manner. Our proposed method follows a simple yet effective two-stage approach. First, we prompt VLLMs to generate natural language descriptions of the subject's apparent emotion in relation to the visual context. Second, the descriptions, along with the visual input, are used to train a transformer-based architecture that fuses text and visual features before the final classification task. This method not only simplifies the training process but also significantly improves performance. Experimental results demonstrate that the textual descriptions effectively guide the model to constrain the noisy visual input, allowing our fused architecture to outperform individual modalities. Our approach achieves state-of-the-art performance across three datasets, BoLD, EMOTIC, and CAER-S, without bells and whistles. The code will be made publicly available on github: this https URL"
+  },
+  "emotionllama": {
+    "arxiv": "2406.11161",
+    "url": "https://arxiv.org/abs/2406.11161",
+    "title": "Emotion-LLaMA: Multimodal Emotion Recognition and Reasoning with Instruction Tuning",
+    "authors": [
+      "Cheng, Zebang",
+      "Cheng, Zhi-Qi",
+      "He, Jun-Yan",
+      "Sun, Jingdong",
+      "Wang, Kai",
+      "Lin, Yuxiang",
+      "Lian, Zheng",
+      "Peng, Xiaojiang",
+      "Hauptmann, Alexander"
+    ],
+    "date": "2024/06/17",
+    "abstract": "Accurate emotion perception is crucial for various applications, including human-computer interaction, education, and counseling. However, traditional single-modality approaches often fail to capture the complexity of real-world emotional expressions, which are inherently multimodal. Moreover, existing Multimodal Large Language Models (MLLMs) face challenges in integrating audio and recognizing subtle facial micro-expressions. To address this, we introduce the MERR dataset, containing 28,618 coarse-grained and 4,487 fine-grained annotated samples across diverse emotional categories. This dataset enables models to learn from varied scenarios and generalize to real-world applications. Furthermore, we propose Emotion-LLaMA, a model that seamlessly integrates audio, visual, and textual inputs through emotion-specific encoders. By aligning features into a shared space and employing a modified LLaMA model with instruction tuning, Emotion-LLaMA significantly enhances both emotional recognition and reasoning capabilities. Extensive evaluations show Emotion-LLaMA outperforms other MLLMs, achieving top scores in Clue Overlap (7.83) and Label Overlap (6.25) on EMER, an F1 score of 0.9036 on MER2023-SEMI challenge, and the highest UAR (45.59) and WAR (59.37) in zero-shot evaluations on DFEW dataset."
+  },
+  "emollm": {
+    "arxiv": "2406.16442",
+    "url": "https://arxiv.org/abs/2406.16442",
+    "title": "EmoLLM: Multimodal Emotional Understanding Meets Large Language Models",
+    "authors": [
+      "Yang, Qu",
+      "Ye, Mang",
+      "Du, Bo"
+    ],
+    "date": "2024/06/24",
+    "abstract": "Multi-modal large language models (MLLMs) have achieved remarkable performance on objective multimodal perception tasks, but their ability to interpret subjective, emotionally nuanced multimodal content remains largely unexplored. Thus, it impedes their ability to effectively understand and react to the intricate emotions expressed by humans through multimodal media. To bridge this gap, we introduce EmoBench, the first comprehensive benchmark designed specifically to evaluate the emotional capabilities of MLLMs across five popular emotional tasks, using a diverse dataset of 287k images and videos paired with corresponding textual instructions. Meanwhile, we propose EmoLLM, a novel model for multimodal emotional understanding, incorporating with two core techniques. 1) Multi-perspective Visual Projection, it captures diverse emotional cues from visual data from multiple perspectives. 2) EmoPrompt, it guides MLLMs to reason about emotions in the correct direction. Experimental results demonstrate that EmoLLM significantly elevates multimodal emotional understanding performance, with an average improvement of 12.1% across multiple foundation models on EmoBench. Our work contributes to the advancement of MLLMs by facilitating a deeper and more nuanced comprehension of intricate human emotions, paving the way for the development of artificial emotional intelligence capabilities with wide-ranging applications in areas such as human-computer interaction, mental health support, and empathetic AI systems. Code, data, and model will be released."
+  },
+  "emer": {
+    "arxiv": "2306.15401",
+    "url": "https://arxiv.org/abs/2306.15401",
+    "title": "Explainable Multimodal Emotion Recognition",
+    "authors": [
+      "Lian, Zheng",
+      "Sun, Haiyang",
+      "Sun, Licai",
+      "Gu, Hao",
+      "Wen, Zhuofan",
+      "Zhang, Siyuan",
+      "Chen, Shun",
+      "Xu, Mingyu",
+      "Xu, Ke",
+      "Chen, Kang",
+      "Chen, Lan",
+      "Liang, Shan",
+      "Li, Ya",
+      "Yi, Jiangyan",
+      "Liu, Bin",
+      "Tao, Jianhua"
+    ],
+    "date": "2023/06/27",
+    "abstract": "Multimodal emotion recognition is an important research topic in artificial intelligence, whose main goal is to integrate multimodal clues to identify human emotional states. Current works generally assume accurate labels for benchmark datasets and focus on developing more effective architectures. However, emotion annotation relies on subjective judgment. To obtain more reliable labels, existing datasets usually restrict the label space to some basic categories, then hire plenty of annotators and use majority voting to select the most likely label. However, this process may result in some correct but non-candidate or non-majority labels being ignored. To ensure reliability without ignoring subtle emotions, we propose a new task called ``Explainable Multimodal Emotion Recognition (EMER)''. Unlike traditional emotion recognition, EMER takes a step further by providing explanations for these predictions. Through this task, we can extract relatively reliable labels since each label has a certain basis. Meanwhile, we borrow large language models (LLMs) to disambiguate unimodal clues and generate more complete multimodal explanations. From them, we can extract richer emotions in an open-vocabulary manner. This paper presents our initial attempt at this task, including introducing a new dataset, establishing baselines, and defining evaluation metrics. In addition, EMER can serve as a benchmark task to evaluate the audio-video-text understanding performance of multimodal LLMs."
+  },
+  "r1omni": {
+    "arxiv": "2503.05379",
+    "url": "https://arxiv.org/abs/2503.05379",
+    "title": "R1-Omni: Explainable Omni-Multimodal Emotion Recognition with Reinforcement Learning",
+    "authors": [
+      "Zhao, Jiaxing",
+      "Wei, Xihan",
+      "Bo, Liefeng"
+    ],
+    "date": "2025/03/07",
+    "abstract": "In this work, we present the first application of Reinforcement Learning with Verifiable Reward (RLVR) to an Omni-multimodal large language model in the context of emotion recognition, a task where both visual and audio modalities play crucial roles. We leverage RLVR to optimize the Omni model, significantly enhancing its performance in three key aspects: reasoning capability, emotion recognition accuracy, and generalization ability. The introduction of RLVR not only improves the model's overall performance on in-distribution data but also demonstrates superior robustness when evaluated on out-of-distribution datasets. More importantly, the improved reasoning capability enables clear analysis of the contributions of different modalities, particularly visual and audio information, in the emotion recognition process. This provides valuable insights into the optimization of multimodal large language models."
+  },
+  "cot": {
+    "arxiv": "2201.11903",
+    "url": "https://arxiv.org/abs/2201.11903",
+    "title": "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+    "authors": [
+      "Wei, Jason",
+      "Wang, Xuezhi",
+      "Schuurmans, Dale",
+      "Bosma, Maarten",
+      "Ichter, Brian",
+      "Xia, Fei",
+      "Chi, Ed",
+      "Le, Quoc",
+      "Zhou, Denny"
+    ],
+    "date": "2022/01/28",
+    "abstract": "We explore how generating a chain of thought -- a series of intermediate reasoning steps -- significantly improves the ability of large language models to perform complex reasoning. In particular, we show how such reasoning abilities emerge naturally in sufficiently large language models via a simple method called chain of thought prompting, where a few chain of thought demonstrations are provided as exemplars in prompting. Experiments on three large language models show that chain of thought prompting improves performance on a range of arithmetic, commonsense, and symbolic reasoning tasks. The empirical gains can be striking. For instance, prompting a 540B-parameter language model with just eight chain of thought exemplars achieves state of the art accuracy on the GSM8K benchmark of math word problems, surpassing even finetuned GPT-3 with a verifier."
+  },
+  "turpin": {
+    "arxiv": "2305.04388",
+    "url": "https://arxiv.org/abs/2305.04388",
+    "title": "Language Models Don't Always Say What They Think: Unfaithful Explanations in Chain-of-Thought Prompting",
+    "authors": [
+      "Turpin, Miles",
+      "Michael, Julian",
+      "Perez, Ethan",
+      "Bowman, Samuel R."
+    ],
+    "date": "2023/05/07",
+    "abstract": "Large Language Models (LLMs) can achieve strong performance on many tasks by producing step-by-step reasoning before giving a final output, often referred to as chain-of-thought reasoning (CoT). It is tempting to interpret these CoT explanations as the LLM's process for solving a task. This level of transparency into LLMs' predictions would yield significant safety benefits. However, we find that CoT explanations can systematically misrepresent the true reason for a model's prediction. We demonstrate that CoT explanations can be heavily influenced by adding biasing features to model inputs--e.g., by reordering the multiple-choice options in a few-shot prompt to make the answer always \"(A)\"--which models systematically fail to mention in their explanations. When we bias models toward incorrect answers, they frequently generate CoT explanations rationalizing those answers. This causes accuracy to drop by as much as 36% on a suite of 13 tasks from BIG-Bench Hard, when testing with GPT-3.5 from OpenAI and Claude 1.0 from Anthropic. On a social-bias task, model explanations justify giving answers in line with stereotypes without mentioning the influence of these social biases. Our findings indicate that CoT explanations can be plausible yet misleading, which risks increasing our trust in LLMs without guaranteeing their safety. Building more transparent and explainable systems will require either improving CoT faithfulness through targeted efforts or abandoning CoT in favor of alternative methods."
+  },
+  "lanham": {
+    "arxiv": "2307.13702",
+    "url": "https://arxiv.org/abs/2307.13702",
+    "title": "Measuring Faithfulness in Chain-of-Thought Reasoning",
+    "authors": [
+      "Lanham, Tamera",
+      "Chen, Anna",
+      "Radhakrishnan, Ansh",
+      "Steiner, Benoit",
+      "Denison, Carson",
+      "Hernandez, Danny",
+      "Li, Dustin",
+      "Durmus, Esin",
+      "Hubinger, Evan",
+      "Kernion, Jackson",
+      "Lukošiūtė, Kamilė",
+      "Nguyen, Karina",
+      "Cheng, Newton",
+      "Joseph, Nicholas",
+      "Schiefer, Nicholas",
+      "Rausch, Oliver",
+      "Larson, Robin",
+      "McCandlish, Sam",
+      "Kundu, Sandipan",
+      "Kadavath, Saurav",
+      "Yang, Shannon",
+      "Henighan, Thomas",
+      "Maxwell, Timothy",
+      "Telleen-Lawton, Timothy",
+      "Hume, Tristan",
+      "Hatfield-Dodds, Zac",
+      "Kaplan, Jared",
+      "Brauner, Jan",
+      "Bowman, Samuel R.",
+      "Perez, Ethan"
+    ],
+    "date": "2023/07/17",
+    "abstract": "Large language models (LLMs) perform better when they produce step-by-step, \"Chain-of-Thought\" (CoT) reasoning before answering a question, but it is unclear if the stated reasoning is a faithful explanation of the model's actual reasoning (i.e., its process for answering the question). We investigate hypotheses for how CoT reasoning may be unfaithful, by examining how the model predictions change when we intervene on the CoT (e.g., by adding mistakes or paraphrasing it). Models show large variation across tasks in how strongly they condition on the CoT when predicting their answer, sometimes relying heavily on the CoT and other times primarily ignoring it. CoT's performance boost does not seem to come from CoT's added test-time compute alone or from information encoded via the particular phrasing of the CoT. As models become larger and more capable, they produce less faithful reasoning on most tasks we study. Overall, our results suggest that CoT can be faithful if the circumstances such as the model size and task are carefully chosen."
+  },
+  "faithfulnesstests": {
+    "arxiv": "2305.18029",
+    "url": "https://arxiv.org/abs/2305.18029",
+    "title": "Faithfulness Tests for Natural Language Explanations",
+    "authors": [
+      "Atanasova, Pepa",
+      "Camburu, Oana-Maria",
+      "Lioma, Christina",
+      "Lukasiewicz, Thomas",
+      "Simonsen, Jakob Grue",
+      "Augenstein, Isabelle"
+    ],
+    "date": "2023/05/29",
+    "abstract": "Explanations of neural models aim to reveal a model's decision-making process for its predictions. However, recent work shows that current methods giving explanations such as saliency maps or counterfactuals can be misleading, as they are prone to present reasons that are unfaithful to the model's inner workings. This work explores the challenging question of evaluating the faithfulness of natural language explanations (NLEs). To this end, we present two tests. First, we propose a counterfactual input editor for inserting reasons that lead to counterfactual predictions but are not reflected by the NLEs. Second, we reconstruct inputs from the reasons stated in the generated NLEs and check how often they lead to the same predictions. Our tests can evaluate emerging NLE models, proving a fundamental tool in the development of faithful NLEs."
+  },
+  "decoderfaithfulness": {
+    "arxiv": "2404.18624",
+    "url": "https://arxiv.org/abs/2404.18624",
+    "title": "Do Vision & Language Decoders use Images and Text equally? How Self-consistent are their Explanations?",
+    "authors": [
+      "Parcalabescu, Letitia",
+      "Frank, Anette"
+    ],
+    "date": "2024/04/29",
+    "abstract": "Vision and language model (VLM) decoders are currently the best-performing architectures on multimodal tasks. Next to answers, they are able to produce natural language explanations, either in post-hoc or CoT settings. However, it is not clear to what extent they are using the input vision and text modalities when generating answers or explanations. In this work, we investigate if VLMs rely on their input modalities differently when they produce explanations as opposed to answers. We also evaluate the self-consistency of VLM decoders in both post-hoc and CoT explanation settings, by extending existing unimodal tests and measures to VLM decoders. We find that most tested VLMs are less self-consistent than LLMs. Text contributions in all tested VL decoders are more important than image contributions in all examined tasks. However, when comparing explanation generation to answer generation, the contributions of images are significantly stronger for generating explanations compared to answers. This difference is even larger in CoT compared to post-hoc explanations. Lastly, we provide an up-to-date benchmarking of state-of-the-art VL decoders on the VALSE benchmark, which before was restricted to VL encoders. We find that the tested VL decoders still struggle with most phenomena tested by VALSE."
+  },
+  "simulatability": {
+    "arxiv": "2010.04119",
+    "url": "https://arxiv.org/abs/2010.04119",
+    "title": "Leakage-Adjusted Simulatability: Can Models Generate Non-Trivial Explanations of Their Behavior in Natural Language?",
+    "authors": [
+      "Hase, Peter",
+      "Zhang, Shiyue",
+      "Xie, Harry",
+      "Bansal, Mohit"
+    ],
+    "date": "2020/10/08",
+    "abstract": "Data collection for natural language (NL) understanding tasks has increasingly included human explanations alongside data points, allowing past works to introduce models that both perform a task and generate NL explanations for their outputs. Yet to date, model-generated explanations have been evaluated on the basis of surface-level similarities to human explanations, both through automatic metrics like BLEU and human evaluations. We argue that these evaluations are insufficient, since they fail to indicate whether explanations support actual model behavior (faithfulness), rather than simply match what a human would say (plausibility). In this work, we address the problem of evaluating explanations from the model simulatability perspective. Our contributions are as follows: (1) We introduce a leakage-adjusted simulatability (LAS) metric for evaluating NL explanations, which measures how well explanations help an observer predict a model's output, while controlling for how explanations can directly leak the output. We use a model as a proxy for a human observer, and validate this choice with two human subject experiments. (2) Using the CoS-E and e-SNLI datasets, we evaluate two existing generative graphical models and two new approaches; one rationalizing method we introduce achieves roughly human-level LAS scores. (3) Lastly, we frame explanation generation as a multi-agent game and optimize explanations for simulatability while penalizing label leakage, which can improve LAS scores. We provide code for the experiments in this paper at this https URL"
+  },
+  "counterfactual": {
+    "arxiv": "2307.08678",
+    "url": "https://arxiv.org/abs/2307.08678",
+    "title": "Do Models Explain Themselves? Counterfactual Simulatability of Natural Language Explanations",
+    "authors": [
+      "Chen, Yanda",
+      "Zhong, Ruiqi",
+      "Ri, Narutatsu",
+      "Zhao, Chen",
+      "He, He",
+      "Steinhardt, Jacob",
+      "Yu, Zhou",
+      "McKeown, Kathleen"
+    ],
+    "date": "2023/07/17",
+    "abstract": "Large language models (LLMs) are trained to imitate humans to explain human decisions. However, do LLMs explain themselves? Can they help humans build mental models of how LLMs process different inputs? To answer these questions, we propose to evaluate $\\textbf{counterfactual simulatability}$ of natural language explanations: whether an explanation can enable humans to precisely infer the model's outputs on diverse counterfactuals of the explained input. For example, if a model answers \"yes\" to the input question \"Can eagles fly?\" with the explanation \"all birds can fly\", then humans would infer from the explanation that it would also answer \"yes\" to the counterfactual input \"Can penguins fly?\". If the explanation is precise, then the model's answer should match humans' expectations. We implemented two metrics based on counterfactual simulatability: precision and generality. We generated diverse counterfactuals automatically using LLMs. We then used these metrics to evaluate state-of-the-art LLMs (e.g., GPT-4) on two tasks: multi-hop factual reasoning and reward modeling. We found that LLM's explanations have low precision and that precision does not correlate with plausibility. Therefore, naively optimizing human approvals (e.g., RLHF) may not be a sufficient solution."
+  },
+  "interpretability": {
+    "arxiv": "1702.08608",
+    "url": "https://arxiv.org/abs/1702.08608",
+    "title": "Towards A Rigorous Science of Interpretable Machine Learning",
+    "authors": [
+      "Doshi-Velez, Finale",
+      "Kim, Been"
+    ],
+    "date": "2017/02/28",
+    "abstract": "As machine learning systems become ubiquitous, there has been a surge of interest in interpretable machine learning: systems that provide explanation for their outputs. These explanations are often used to qualitatively assess other criteria such as safety or non-discrimination. However, despite the interest in interpretability, there is very little consensus on what interpretable machine learning is and how it should be measured. In this position paper, we first define interpretability and describe when interpretability is needed (and when it is not). Next, we suggest a taxonomy for rigorous evaluation and expose open questions towards a more rigorous science of interpretable machine learning."
+  },
+  "resnet": {
+    "arxiv": "1512.03385",
+    "url": "https://arxiv.org/abs/1512.03385",
+    "title": "Deep Residual Learning for Image Recognition",
+    "authors": [
+      "He, Kaiming",
+      "Zhang, Xiangyu",
+      "Ren, Shaoqing",
+      "Sun, Jian"
+    ],
+    "date": "2015/12/10",
+    "abstract": "Deeper neural networks are more difficult to train. We present a residual learning framework to ease the training of networks that are substantially deeper than those used previously. We explicitly reformulate the layers as learning residual functions with reference to the layer inputs, instead of learning unreferenced functions. We provide comprehensive empirical evidence showing that these residual networks are easier to optimize, and can gain accuracy from considerably increased depth. On the ImageNet dataset we evaluate residual nets with a depth of up to 152 layers---8x deeper than VGG nets but still having lower complexity. An ensemble of these residual nets achieves 3.57% error on the ImageNet test set. This result won the 1st place on the ILSVRC 2015 classification task. We also present analysis on CIFAR-10 with 100 and 1000 layers. The depth of representations is of central importance for many visual recognition tasks. Solely due to our extremely deep representations, we obtain a 28% relative improvement on the COCO object detection dataset. Deep residual nets are foundations of our submissions to ILSVRC & COCO 2015 competitions, where we also won the 1st places on the tasks of ImageNet detection, ImageNet localization, COCO detection, and COCO segmentation."
+  },
+  "bert": {
+    "arxiv": "1810.04805",
+    "url": "https://arxiv.org/abs/1810.04805",
+    "title": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+    "authors": [
+      "Devlin, Jacob",
+      "Chang, Ming-Wei",
+      "Lee, Kenton",
+      "Toutanova, Kristina"
+    ],
+    "date": "2018/10/11",
+    "abstract": "We introduce a new language representation model called BERT, which stands for Bidirectional Encoder Representations from Transformers. Unlike recent language representation models, BERT is designed to pre-train deep bidirectional representations from unlabeled text by jointly conditioning on both left and right context in all layers. As a result, the pre-trained BERT model can be fine-tuned with just one additional output layer to create state-of-the-art models for a wide range of tasks, such as question answering and language inference, without substantial task-specific architecture modifications. BERT is conceptually simple and empirically powerful. It obtains new state-of-the-art results on eleven natural language processing tasks, including pushing the GLUE score to 80.5% (7.7% point absolute improvement), MultiNLI accuracy to 86.7% (4.6% absolute improvement), SQuAD v1.1 question answering Test F1 to 93.2 (1.5 point absolute improvement) and SQuAD v2.0 Test F1 to 83.1 (5.1 point absolute improvement)."
+  },
+  "vit": {
+    "arxiv": "2010.11929",
+    "url": "https://arxiv.org/abs/2010.11929",
+    "title": "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale",
+    "authors": [
+      "Dosovitskiy, Alexey",
+      "Beyer, Lucas",
+      "Kolesnikov, Alexander",
+      "Weissenborn, Dirk",
+      "Zhai, Xiaohua",
+      "Unterthiner, Thomas",
+      "Dehghani, Mostafa",
+      "Minderer, Matthias",
+      "Heigold, Georg",
+      "Gelly, Sylvain",
+      "Uszkoreit, Jakob",
+      "Houlsby, Neil"
+    ],
+    "date": "2020/10/22",
+    "abstract": "While the Transformer architecture has become the de-facto standard for natural language processing tasks, its applications to computer vision remain limited. In vision, attention is either applied in conjunction with convolutional networks, or used to replace certain components of convolutional networks while keeping their overall structure in place. We show that this reliance on CNNs is not necessary and a pure transformer applied directly to sequences of image patches can perform very well on image classification tasks. When pre-trained on large amounts of data and transferred to multiple mid-sized or small image recognition benchmarks (ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent results compared to state-of-the-art convolutional networks while requiring substantially fewer computational resources to train."
+  },
+  "transformer": {
+    "arxiv": "1706.03762",
+    "url": "https://arxiv.org/abs/1706.03762",
+    "title": "Attention Is All You Need",
+    "authors": [
+      "Vaswani, Ashish",
+      "Shazeer, Noam",
+      "Parmar, Niki",
+      "Uszkoreit, Jakob",
+      "Jones, Llion",
+      "Gomez, Aidan N.",
+      "Kaiser, Lukasz",
+      "Polosukhin, Illia"
+    ],
+    "date": "2017/06/12",
+    "abstract": "The dominant sequence transduction models are based on complex recurrent or convolutional neural networks in an encoder-decoder configuration. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely. Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-to-German translation task, improving over the existing best results, including ensembles by over 2 BLEU. On the WMT 2014 English-to-French translation task, our model establishes a new single-model state-of-the-art BLEU score of 41.8 after training for 3.5 days on eight GPUs, a small fraction of the training costs of the best models from the literature. We show that the Transformer generalizes well to other tasks by applying it successfully to English constituency parsing both with large and limited training data."
+  },
+  "adamw": {
+    "arxiv": "1711.05101",
+    "url": "https://arxiv.org/abs/1711.05101",
+    "title": "Decoupled Weight Decay Regularization",
+    "authors": [
+      "Loshchilov, Ilya",
+      "Hutter, Frank"
+    ],
+    "date": "2017/11/14",
+    "abstract": "L$_2$ regularization and weight decay regularization are equivalent for standard stochastic gradient descent (when rescaled by the learning rate), but as we demonstrate this is \\emph{not} the case for adaptive gradient algorithms, such as Adam. While common implementations of these algorithms employ L$_2$ regularization (often calling it \"weight decay\" in what may be misleading due to the inequivalence we expose), we propose a simple modification to recover the original formulation of weight decay regularization by \\emph{decoupling} the weight decay from the optimization steps taken w.r.t. the loss function. We provide empirical evidence that our proposed modification (i) decouples the optimal choice of weight decay factor from the setting of the learning rate for both standard SGD and Adam and (ii) substantially improves Adam's generalization performance, allowing it to compete with SGD with momentum on image classification datasets (on which it was previously typically outperformed by the latter). Our proposed decoupled weight decay has already been adopted by many researchers, and the community has implemented it in TensorFlow and PyTorch; the complete source code for our experiments is available at this https URL"
+  },
+  "eraser": {
+    "arxiv": "1911.03429",
+    "url": "https://arxiv.org/abs/1911.03429",
+    "title": "ERASER: A Benchmark to Evaluate Rationalized NLP Models",
+    "authors": [
+      "DeYoung, Jay",
+      "Jain, Sarthak",
+      "Rajani, Nazneen Fatema",
+      "Lehman, Eric",
+      "Xiong, Caiming",
+      "Socher, Richard",
+      "Wallace, Byron C."
+    ],
+    "date": "2019/11/08",
+    "abstract": "State-of-the-art models in NLP are now predominantly based on deep neural networks that are opaque in terms of how they come to make predictions. This limitation has increased interest in designing more interpretable deep models for NLP that reveal the `reasoning' behind model outputs. But work in this direction has been conducted on different datasets and tasks with correspondingly unique aims and metrics; this makes it difficult to track progress. We propose the Evaluating Rationales And Simple English Reasoning (ERASER) benchmark to advance research on interpretable models in NLP. This benchmark comprises multiple datasets and tasks for which human annotations of \"rationales\" (supporting evidence) have been collected. We propose several metrics that aim to capture how well the rationales provided by models align with human rationales, and also how faithful these rationales are (i.e., the degree to which provided rationales influenced the corresponding predictions). Our hope is that releasing this benchmark facilitates progress on designing more interpretable NLP systems. The benchmark, code, and documentation are available at this https URL"
+  },
+  "faithfulness": {
+    "arxiv": "2004.03685",
+    "url": "https://arxiv.org/abs/2004.03685",
+    "title": "Towards Faithfully Interpretable NLP Systems: How should we define and evaluate faithfulness?",
+    "authors": [
+      "Jacovi, Alon",
+      "Goldberg, Yoav"
+    ],
+    "date": "2020/04/07",
+    "abstract": "With the growing popularity of deep-learning based NLP models, comes a need for interpretable systems. But what is interpretability, and what constitutes a high-quality interpretation? In this opinion piece we reflect on the current state of interpretability evaluation research. We call for more clearly differentiating between different desired criteria an interpretation should satisfy, and focus on the faithfulness criteria. We survey the literature with respect to faithfulness evaluation, and arrange the current approaches around three assumptions, providing an explicit form to how faithfulness is \"defined\" by the community. We provide concrete guidelines on how evaluation of interpretation methods should and should not be conducted. Finally, we claim that the current binary definition for faithfulness sets a potentially unrealistic bar for being considered faithful. We call for discarding the binary notion of faithfulness in favor of a more graded one, which we believe will be of greater practical utility."
+  }
+}

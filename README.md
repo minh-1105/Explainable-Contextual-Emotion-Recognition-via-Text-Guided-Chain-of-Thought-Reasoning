@@ -14,6 +14,7 @@ Nhận diện cảm xúc theo ngữ cảnh trên EMOTIC: ba visual baseline ResN
 - `cloud/`: chạy notebook 04 trên Modal và chép output về notebook trong repo.
 - `src/datasets/emotic_dataset.py`: `EmoticDataset`, mỗi người được chú thích là một mẫu; trả ảnh toàn cảnh, crop người, nhãn multi-hot 26 lớp và VAD.
 - `src/evaluation/`: metric đa nhãn, chọn ngưỡng, baseline hằng số top-k và paired bootstrap.
+- `results/`: file nhỏ của các run mà paper báo cáo (config, metric, training log, hình).
 - `ECER-paper/`: paper IEEE (`main.tex`, `main_vi.tex`) và script kiểm số liệu của paper.
 - `SETUP.md`: chuẩn bị Drive và chạy notebook.
 - `workflow.md`: layout dữ liệu, output của từng notebook, các thí nghiệm đã có và còn lại.

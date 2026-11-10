@@ -1,3 +1,0 @@
-val (excluding pilot) union label rank: ['Engagement', 'Anticipation', 'Happiness', 'Excitement', 'Confidence', 'Pleasure', 'Disconnection', 'Esteem']
-GT=union: top1: macro=0.038 micro=0.268 | top2: macro=0.074 micro=0.455 | top3: macro=0.106 micro=0.557 | top4: macro=0.134 micro=0.618 | top6: macro=0.181 micro=0.664
-GT=majority: top1: macro=0.043 micro=0.463 | top2: macro=0.073 micro=0.529 | top3: macro=0.099 micro=0.533 | top4: macro=0.110 micro=0.474 | top6: macro=0.119 micro=0.369

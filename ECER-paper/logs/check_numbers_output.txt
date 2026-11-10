@@ -1,3 +1,0 @@
-note: metrics.json macro delta CI = [-0.56, 2.92] vs boot.py [-0.6, +3.0]
-checked OK: 66
-all numbers in main.tex match the sources

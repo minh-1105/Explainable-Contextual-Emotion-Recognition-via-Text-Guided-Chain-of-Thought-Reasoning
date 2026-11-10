@@ -20,7 +20,8 @@ python -c "import ast, glob, json; [ast.parse(''.join(c['source'])) for p in glo
 - `notebooks/`: điểm chạy. `notebooks/runs/` chứa bản đã chạy trên Colab của các run không nằm trong notebook chính (giữ nguyên như lúc chạy, không sửa); `02` mang output của run `person_only` `20261019-091248`. Hàm `extract_images` và các đường dẫn EMOTIC lặp lại ở 01, 02, 03 và 04; cell clone repo lặp lại ở 02, 03 và 04. Sửa ở một notebook thì sửa ở tất cả các notebook còn lại.
 - `src/datasets/emotic_dataset.py`: code dùng chung, 02, 03 và 04 import.
 - `src/evaluation/`: metric đa nhãn, chọn ngưỡng, baseline hằng số top-k và paired bootstrap; 03 và 04 import.
-- `ECER-paper/`: paper và script của nó.
+- `results/`: file nhỏ của các run mà paper báo cáo, cùng đường dẫn với `outputs/` trên Drive; `workflow.md` liệt kê. Script trong `ECER-paper/scripts/` đọc số từ đây.
+- `ECER-paper/`: paper và script của nó; `python -B scripts/check_numbers.py` (chạy trong `ECER-paper/`, cần MiKTeX) đối chiếu mọi số trong `main.tex` và `main_vi.tex` với `results/`, output đã lưu của 03 và 04 và `ECER-paper/logs/`, so ba hình với kết quả của `make_figures.py`, rồi biên dịch cả hai bản. Sửa một bản thì sửa bản kia; thêm lệnh LaTeX mới thì thêm vào danh sách cho phép trong script.
 
 ## Không được phá
 

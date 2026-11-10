@@ -1,2 +1,0 @@
-[val] images with >=2 annotated people: 789; people in them: 2035; same-image person pairs: 2017
-[test] images with >=2 annotated people: 1783; people in them: 4674; same-image person pairs: 4994
