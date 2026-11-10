@@ -2,10 +2,12 @@
 
 Đọc `README.md`, rồi `workflow.md` (layout Drive, output của từng notebook, thí nghiệm đã có và còn thiếu). Code là nguồn sự thật: doc lệch code thì sửa doc ngay trong cùng thay đổi.
 
+Sản phẩm nộp của môn là paper IEEE trong `ECER-paper/` và training log của các run (`requirement-for-subject.png`).
+
 ## Môi trường chạy
 
 - Notebook chạy trên Colab (02, 03 và 04 cần GPU). Đường dẫn cứng là `/content/drive/MyDrive/Colab Notebooks/Contextual Emotion Recognition` (Drive) và `/content` (runtime); máy local không có dữ liệu ở đó. Người trong team chạy trên Colab và gửi lại output hoặc file kết quả.
-- 04 còn chạy được trên Modal bằng `cloud/modal_nb04.py` (xem `SETUP.md`): script clone repo, thay hai cell mount Drive bằng cell trỏ vào volume `ecer-nb04` (cùng layout với Drive), chạy notebook bằng papermill và lưu bản đã chạy; `cloud/attach_outputs.py` chép output vào notebook trong repo. Agent có Modal token thì tự chạy được. Đổi thứ tự hoặc nội dung ba code cell đầu của 04 thì sửa script theo.
+- 04 còn chạy được trên Modal bằng `cloud/modal_nb04.py` (xem `SETUP.md`): script clone repo, thay cell mount Drive đầu bằng cell trỏ vào volume `ecer-nb04` (cùng layout với Drive), bỏ trống cell mount thứ hai, chạy notebook bằng papermill và lưu bản đã chạy; `cloud/attach_outputs.py` chép output vào notebook trong repo. Agent có Modal token thì tự chạy được. Đổi thứ tự hoặc nội dung ba code cell đầu của 04 thì sửa script theo.
 - Cell đầu của 02, 03 và 04 clone hoặc `git pull --ff-only` nhánh `main` của repo này vào `/content/contextual-emotion-reasoning`, và ghi `git_commit` vào `environment.txt` của run. Thay đổi trong `src/` chưa lên `main` thì Colab không thấy.
 - Kiểm tra được ở local, chạy sau mỗi lần sửa:
 
@@ -17,7 +19,8 @@ python -c "import ast, glob, json; [ast.parse(''.join(c['source'])) for p in glo
 
 - `notebooks/`: điểm chạy. `notebooks/runs/` chứa bản đã chạy trên Colab của các run không nằm trong notebook chính (giữ nguyên như lúc chạy, không sửa); `02` mang output của run `person_only` `20261019-091248`. Hàm `extract_images` và các đường dẫn EMOTIC lặp lại ở 01, 02, 03 và 04; cell clone repo lặp lại ở 02, 03 và 04. Sửa ở một notebook thì sửa ở tất cả các notebook còn lại.
 - `src/datasets/emotic_dataset.py`: code dùng chung, 02, 03 và 04 import.
-- `src/evaluation/`: metric đa nhãn, chọn ngưỡng, baseline hằng số top-k và paired bootstrap; 03 import.
+- `src/evaluation/`: metric đa nhãn, chọn ngưỡng, baseline hằng số top-k và paired bootstrap; 03 và 04 import.
+- `ECER-paper/`: paper và script của nó.
 
 ## Không được phá
 
@@ -34,5 +37,5 @@ Kết quả đã lưu trên Drive phụ thuộc vào những thứ sau; đổi c
 - Không commit `data/`, `outputs/`, `models/`, weights hay file zip (xem `.gitignore`).
 - Markdown và thông báo trong notebook viết tiếng Việt; tên biến, hàm, docstring trong `src/` viết tiếng Anh.
 - Notebook mới ghi kết quả vào `outputs/<tên>/<run_id>/` (hoặc `outputs/runs/<experiment_name>/<run_id>/` với notebook train), kèm `config.json` và `environment.txt` có `git_commit`, như 02 và 04.
-- Notebook import thư viện mà Colab không có sẵn thì thêm vào `requirements.txt`.
+- Notebook import thư viện mà Colab không có sẵn thì thêm vào `requirements.txt`. Image Modal có danh sách package riêng trong `cloud/modal_nb04.py`; 04 cần thư viện mới thì thêm cả ở đó.
 - Commit message tiếng Anh, một câu mô tả thay đổi hành vi, như các commit trong `git log`.

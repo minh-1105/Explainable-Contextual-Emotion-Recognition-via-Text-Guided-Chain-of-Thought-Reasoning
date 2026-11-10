@@ -25,27 +25,28 @@ Sau khi runtime reset, chạy lại từ cell đầu; dữ liệu và kết qu�
 
 ## 2b. Chạy notebook 04 trên Modal
 
-Cần `pip install modal` và token Modal (`modal token new`). Dùng PowerShell; Git Bash đổi đường dẫn `/data/...` thành đường dẫn Windows.
+Cần `pip install modal nbformat` và token Modal (`modal token new`). Dùng PowerShell; Git Bash đổi đường dẫn `/data/...` thành đường dẫn Windows.
 
 ```powershell
 modal volume create ecer-nb04
 modal volume put ecer-nb04 Annotations.mat /data/raw/raw/emotic/PAMI/Annotations/Annotations/Annotations.mat
 modal volume put ecer-nb04 pami_emotic.zip /data/raw/raw/emotic/PAMI/pami_emotic.zip
 modal volume put ecer-nb04 cvpr_emotic.zip /data/raw/raw/emotic/CVPR/cvpr_emotic.zip
+modal volume put ecer-nb04 <thư mục run ResNet> /outputs/resnet_evaluation/20261101-034030
 modal volume put ecer-nb04 <thư mục run> /outputs/qwen3_multimodal/<RUN_ID>
 modal run --detach cloud/modal_nb04.py::run --branch main
 modal volume get ecer-nb04 /outputs/qwen3_multimodal/<RUN_ID> <thư mục local>
-modal volume get ecer-nb04 /outputs/modal_executions/<giờ bắt đầu>/04_VLM_Pilot.ipynb <file local>
+modal volume get ecer-nb04 /outputs/modal_executions/<giờ bắt đầu>/04_Qwen3_Multimodal.ipynb <file local>
 python cloud/attach_outputs.py <file local>
 ```
 
-Bước `put` thư mục run chỉ cần khi tiếp tục một run có sẵn; `RUN_ID` lấy theo cell cấu hình của notebook. Script chạy chính notebook bằng papermill trên H100: hai cell mount Drive được thay bằng cell trỏ vào volume, notebook đã chạy (kèm output, hình và thời gian từng cell) cùng `run.log` có timestamp nằm ở `/outputs/modal_executions/<giờ bắt đầu UTC>/`. `cloud/attach_outputs.py` chép output đó vào `notebooks/04_VLM_Pilot.ipynb` để commit, giữ nguyên code Colab. Script tự commit volume 5 phút một lần và khi notebook chạy xong; mất kết nối thì Modal chạy lại hàm, notebook resume từ cue đã có. Kết quả nằm trên volume, phải tự tải về và đưa lên Drive.
+Mục 13b của notebook đọc `metrics/thresholds.json` và `predictions/<baseline>_test.npz` của run notebook 03 `20261101-034030`, nên volume phải có thư mục đó. Bước `put` thư mục run của 04 chỉ cần khi tiếp tục một run có sẵn; `RUN_ID` lấy theo cell cấu hình của notebook. Script chạy chính notebook bằng papermill trên H100: cell mount Drive đầu được thay bằng cell trỏ vào volume, cell mount thứ hai bị bỏ trống, notebook đã chạy (kèm output, hình và thời gian từng cell) cùng `run.log` có timestamp nằm ở `/outputs/modal_executions/<giờ bắt đầu UTC>/`. `cloud/attach_outputs.py` chép output đó vào `notebooks/04_Qwen3_Multimodal.ipynb` để commit, giữ nguyên code Colab. Script tự commit volume 5 phút một lần và khi notebook chạy xong; mất kết nối thì Modal chạy lại hàm, notebook resume từ cue đã có. Kết quả nằm trên volume, phải tự tải về và đưa lên Drive.
 
 ## 3. Thứ tự
 
 1. `01_Inspect.ipynb`: kiểm annotation, đường dẫn ảnh và bbox.
 2. `02_Train_Visual_Baseline.ipynb`: lần lượt `person_only`, `context_only`, `person_context`; restart runtime giữa các lần.
 3. `03_Evaluate_Visual_Baseline.ipynb`: chấm ba baseline trên test, chọn ngưỡng trên validation.
-4. `04_VLM_Pilot.ipynb`: prototype Qwen3-VL 4B + BERT + ViT + Graph/Multimodal Transformer. Qwen sinh cue cho toàn bộ 23.706 người PAMI train và 3.334 người PAMI val; cell cue dừng ngay nếu dự kiến vượt `CUE_BUDGET_HOURS`. Cue ghi JSONL để resume qua nhiều phiên Colab với cùng `RUN_ID`.
+4. `04_Qwen3_Multimodal.ipynb`: prototype Qwen3-VL 4B + BERT + ViT + Graph/Multimodal Transformer. Qwen sinh cue cho toàn bộ 23.706 người PAMI train và 3.334 người PAMI val; cell cue dừng ngay nếu dự kiến vượt `CUE_BUDGET_HOURS`. Cue ghi JSONL để resume qua nhiều phiên Colab với cùng `RUN_ID`.
 
 Kết quả ghi vào `outputs/` và `models/` trên Drive; cấu trúc chi tiết trong `workflow.md`.

@@ -10,11 +10,11 @@ Nhận diện cảm xúc theo ngữ cảnh trên EMOTIC: ba visual baseline ResN
 
 ## Nội dung repo
 
-- `notebooks/`: điểm chạy trên Colab (`01_Inspect`, `02_Train_Visual_Baseline`, `03_Evaluate_Visual_Baseline`, `04_VLM_Pilot`). Notebook 04 trích cue bằng Qwen3-VL, mã hóa cue bằng BERT, hợp nhất với feature ViT và sinh explanation từ evidence của mô hình.
+- `notebooks/`: điểm chạy trên Colab (`01_Inspect`, `02_Train_Visual_Baseline`, `03_Evaluate_Visual_Baseline`, `04_Qwen3_Multimodal`). Notebook 04 trích cue bằng Qwen3-VL, mã hóa cue bằng BERT, hợp nhất với feature ViT và cho Qwen3-VL diễn đạt evidence của mô hình thành explanation. `notebooks/runs/` giữ bản đã chạy của các run baseline khác.
+- `cloud/`: chạy notebook 04 trên Modal và chép output về notebook trong repo.
 - `src/datasets/emotic_dataset.py`: `EmoticDataset`, mỗi người được chú thích là một mẫu; trả ảnh toàn cảnh, crop người, nhãn multi-hot 26 lớp và VAD.
 - `src/evaluation/`: metric đa nhãn, chọn ngưỡng, baseline hằng số top-k và paired bootstrap.
+- `ECER-paper/`: paper IEEE (`main.tex`, `main_vi.tex`) và script kiểm số liệu của paper.
 - `SETUP.md`: chuẩn bị Drive và chạy notebook.
 - `workflow.md`: layout dữ liệu, output của từng notebook, các thí nghiệm đã có và còn lại.
 - `AGENTS.md`: môi trường chạy, những thứ không được phá và quy ước khi sửa code.
-- `drivesetup.md`: nối repo trên máy local với Drive.
-- `worklog.md`, `worklog_vi.md`: nhật ký công việc.
