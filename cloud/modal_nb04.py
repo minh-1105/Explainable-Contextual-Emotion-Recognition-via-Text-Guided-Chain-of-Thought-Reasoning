@@ -29,13 +29,15 @@ print("Modal runtime: Drive root", DRIVE_ROOT, "| code root", CODE_ROOT)
 
 
 def modal_notebook(notebook):
+    """Point a Colab notebook (04 by default) at the volume instead of Drive and /content."""
     code = [cell for cell in notebook.cells if cell.cell_type == "code"]
     assert "drive.mount" in code[0].source and "CODE_ROOT" in code[0].source
-    assert code[1].source.strip().startswith("from google.colab import drive")
-    assert code[2].source.count('Path("/content/emotic")') == 1
     code[0].source = PRELUDE
-    code[1].source = ""
-    code[2].source = code[2].source.replace('Path("/content/emotic")', 'Path("/tmp/emotic")')
+    for cell in code[1:]:
+        if cell.source.strip().startswith("from google.colab import drive"):
+            cell.source = ""
+        cell.source = cell.source.replace('Path("/content/emotic")', 'Path("/tmp/emotic")')
+    assert sum('Path("/tmp/emotic")' in cell.source for cell in code) == 1
     assert not any("/content" in cell.source or "google.colab" in cell.source for cell in code)
     notebook.metadata["kernelspec"] = {"name": "python3", "display_name": "Python 3", "language": "python"}
     return notebook
@@ -43,7 +45,7 @@ def modal_notebook(notebook):
 
 @app.function(gpu="H100", cpu=8, memory=65536, timeout=24 * 3600, volumes={"/vol": volume},
               retries=modal.Retries(max_retries=2, initial_delay=10.0))
-def run(branch: str = "main"):
+def run(branch: str = "main", notebook: str = NOTEBOOK):
     import logging
     import subprocess
     import sys
@@ -66,9 +68,9 @@ def run(branch: str = "main"):
     subprocess.run(["git", "clone", "--branch", branch, REPO_URL, "/repo"], check=True)
     commit = subprocess.run(["git", "-C", "/repo", "rev-parse", "HEAD"], check=True,
                             capture_output=True, text=True).stdout.strip()
-    logging.info("branch %s commit %s", branch, commit)
+    logging.info("branch %s commit %s notebook %s", branch, commit, notebook)
     source = out_dir / "input.ipynb"
-    nbformat.write(modal_notebook(nbformat.read(f"/repo/{NOTEBOOK}", as_version=4)), source)
+    nbformat.write(modal_notebook(nbformat.read(f"/repo/{notebook}", as_version=4)), source)
 
     def commit_loop():
         while True:
@@ -76,11 +78,12 @@ def run(branch: str = "main"):
             volume.commit()
 
     threading.Thread(target=commit_loop, daemon=True).start()
+    executed = out_dir / Path(notebook).name
     try:
         papermill.execute_notebook(
-            str(source), str(out_dir / "04_VLM_Pilot.ipynb"), kernel_name="python3", cwd="/repo",
+            str(source), str(executed), kernel_name="python3", cwd="/repo",
             log_output=True, progress_bar=False, request_save_on_cell_execute=True,
         )
     finally:
         volume.commit()
-    logging.info("executed notebook: %s", out_dir / "04_VLM_Pilot.ipynb")
+    logging.info("executed notebook: %s", executed)

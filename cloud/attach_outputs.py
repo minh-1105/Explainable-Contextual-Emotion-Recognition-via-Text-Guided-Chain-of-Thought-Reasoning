@@ -4,10 +4,10 @@ from pathlib import Path
 
 import nbformat
 
-from modal_nb04 import NOTEBOOK, modal_notebook
+from modal_nb04 import NOTEBOOK, PRELUDE, modal_notebook
 
 executed_path = Path(sys.argv[1])
-repo_path = Path(__file__).resolve().parent.parent / NOTEBOOK
+repo_path = Path(__file__).resolve().parent.parent / (sys.argv[2] if len(sys.argv) > 2 else NOTEBOOK)
 repo = json.loads(repo_path.read_text(encoding="utf-8"))
 executed = json.loads(executed_path.read_text(encoding="utf-8"))
 expected = modal_notebook(nbformat.reads(repo_path.read_text(encoding="utf-8"), as_version=4))
@@ -18,7 +18,7 @@ expected_code = [cell for cell in expected.cells if cell.cell_type == "code"]
 assert len(repo_code) == len(executed_code) == len(expected_code)
 for number, (target, run, reference) in enumerate(zip(repo_code, executed_code, expected_code)):
     assert "".join(run["source"]) == reference.source, f"code cell {number + 1} differs from the executed notebook"
-    if number < 2:
+    if reference.source in (PRELUDE, ""):
         target["outputs"], target["execution_count"] = [], None
         continue
     assert not any(output["output_type"] == "error" for output in run["outputs"]), f"code cell {number + 1} failed"
@@ -27,4 +27,4 @@ for number, (target, run, reference) in enumerate(zip(repo_code, executed_code, 
     target.setdefault("metadata", {})["papermill"] = run["metadata"]["papermill"]
 repo["metadata"]["papermill"] = executed["metadata"]["papermill"]
 repo_path.write_text(json.dumps(repo, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-print("attached outputs of", len(repo_code) - 2, "code cells to", repo_path)
+print("attached outputs of", sum(cell.source not in (PRELUDE, "") for cell in expected_code), "code cells to", repo_path)

@@ -114,3 +114,72 @@
 - Thêm `transformers>=4.57,<6` vào dependency Colab và cập nhật tài liệu workflow. Notebook 04 mới đã được kiểm tra cú pháp ở local nhưng vẫn cần chạy đầy đủ trên Colab GPU.
 - Đồng bộ cell clone/cài đặt dùng chung ở Notebook 02 và 04, đồng thời xóa dấu gạch ngang thừa trong URL GitHub của Notebook 02.
 - Mở rộng Notebook 04 từ pilot 300 người sang huấn luyện tối đa: toàn bộ 23.706 người của PAMI train; toàn bộ 3.334 người của PAMI val được chia theo ảnh thành dev/eval. Notebook vẫn không dùng test và có thể resume bước sinh Qwen cue qua nhiều phiên Colab.
+- Bổ sung giới hạn cue cân bằng cho Notebook 04: 3 cue từ người, 3 cue ngữ cảnh, 2 quan hệ và 1 tình huống; giảm Qwen còn 192 token và mỗi node BERT còn 32 token, đồng thời áp dụng cùng giới hạn trong prompt và bước tạo semantic node.
+
+## 2026-11-07
+
+### Kế hoạch Notebook 05 — so sánh công bằng baseline và mô hình đa phương thức
+
+- Đã triển khai `05_Compare_Multimodal_Baselines.ipynb`, thêm kiến trúc checkpoint-compatible trong `src/models/visual_baseline.py`, kiểm tra cú pháp local; chờ chạy Colab GPU. Full gốc và full ba seed được ghi riêng, bootstrap full-vs-C tính mới còn full-vs-ViT-only kế thừa từ run 04. Xuất thêm `people_group_metrics.json`. Nguồn metadata được gắn cờ provisional vì chưa có hash artifact tại thời điểm tạo model.
+
+- Thêm `05_Compare_Multimodal_Baselines.ipynb` làm notebook đánh giá trên Colab; notebook không được huấn luyện hoặc tinh chỉnh theo tập test PAMI.
+- Dùng đúng các `sample_id` của hai phần `dev` và `eval` đã chia theo ảnh và lưu bởi run Notebook 04 hoàn tất, để ba ResNet baseline và các biến thể đa phương thức được đánh giá trên cùng người.
+- Dùng `20261104-071259-h100` làm run Notebook 04 chính thức. Giữ `config.json` ở commit tạo config `cbdb25aa`, chuẩn hóa `environment.txt`, sao lưu bản cũ thành `environment.original.txt` và thêm `source_artifacts.json` để ghi riêng các stage T4/H100 cùng commit `d9c147fa`, `93ecf0c5` và `211b6b25`.
+- Nạp các bản export ResNet `person_only`, `context_only` và `person_context` đã chốt, không huấn luyện lại. Chọn toàn bộ threshold theo lớp và constant top-k chỉ trên `dev`, sau đó áp dụng lựa chọn đã đóng băng đúng một lần trên `eval`.
+- Xuất một bảng chung cho A/B/C, ViT-only, mô hình đa phương thức full và baseline hằng số, gồm mAP, macro/micro/sample F1, precision, recall, AP/F1 theo lớp và số nhãn dự đoán trung bình.
+- So sánh mô hình full với `person_context` và ViT-only bằng paired bootstrap theo ảnh, dùng hàm chung trong `src/evaluation/`; lưu chênh lệch điểm, khoảng tin cậy 95%, số ảnh, số lần lấy mẫu lại và seed.
+- Tái sử dụng prediction, ba seed và ablation ViT/full/no-person/no-context đã lưu bởi Notebook 04. Notebook 05 không gọi Qwen, không train model, không tính lại feature và không lặp cue/explanation/attribution checks.
+- Chỉ bổ sung phân tích so sánh A/B/C với ViT-only/full: mức tăng/giảm theo nhãn, kết quả theo số người trong ảnh và ví dụ lỗi chọn theo quy tắc cố định.
+- Ghi output vào `outputs/multimodal_comparison/<run_id>/`, gồm `config.json`, `environment.txt` chỉ có một `git_commit` rõ ràng, `source_artifacts.json`, `metrics.csv`, `metrics.json`, `bootstrap.json`, kết quả theo lớp, prediction nén và các hình so sánh.
+- Sau khi Notebook 05 hoàn tất so sánh công bằng và team chấp nhận cấu hình full đã khóa từ Notebook 04, mới đánh giá PAMI test đúng một lần. Không dùng kết quả test để chỉnh model, threshold, seed hoặc biến thể.
+
+## 2026-11-09 — Triển khai Notebook 05 trên Modal
+- Thêm cloud/modal_nb05.py: snapshot local, preflight CPU, GPU L4, Volume emotic; lưu notebook đã chạy, trạng thái và hash code; không push main.
+- Thêm uploader chỉ tải 16 artifact cần thiết từ Drive (395.675.697 byte), không ghi đè dữ liệu nguồn.
+- Đã deploy app emotic-nb05, preflight ready=true và khởi chạy nền fc-01M6ZPQBJ0GE3D1S75AVAECASB. Chưa xác nhận hoàn tất đánh giá.
+- Kiểm tra cú pháp tất cả notebook và runner: ok; kiểm tra preflight thiếu file và adapter notebook: ok.
+
+
+### Notebook 05: lưới threshold mở rộng và bootstrap trên mAP
+
+- Run đầu `20261109-083552-102172` cho thấy full hơn ResNet C +0,137 Macro-F1. Mức chênh này chủ yếu do lưới threshold:
+  - threshold chọn trên dev của ResNet kẹt ở đáy lưới 0,05 (A: 26/26 lớp, C: 20/26 lớp);
+  - 33–43% mẫu dương trên dev của A và C có xác suất dưới 1e-4.
+- Thêm vào `src/evaluation/`:
+  - `paired_image_bootstrap(..., metric="map")`; mặc định vẫn là macro-F1;
+  - `mean_average_precision`: khớp sklearn, kể cả khi có điểm bằng nhau;
+  - `threshold_boundary_report`: đếm số lớp có threshold chạm biên lưới.
+- Notebook 05 dùng lưới threshold 1e-8 → 0,95; vẫn tính lưới cũ song song để đối chiếu. Thêm `per_class_ap_delta.csv` và mAP theo số người trong ảnh. Run `20261109-090105-378575` (H100, snapshot `272091817d75…`):
+  - mAP: full 0,405, C 0,406. Full − C: mAP −0,001 [−0,014; 0,014], Macro-F1 +0,017 [0,001; 0,033].
+  - Full − B: mAP +0,018 [0,002; 0,034].
+  - Full hơn C ở 13/26 lớp; chênh lệch AP không tương quan với số mẫu của lớp.
+  - Kết luận: full ngang ResNet C. Full chỉ hơn rõ ViT-only (+0,036 Macro-F1).
+  - Hạn chế còn lại: threshold của full vẫn theo lưới cũ (11/26 lớp ở đáy) vì run 04 không lưu xác suất dev; checkpoint ResNet chọn trên toàn bộ PAMI val; ResNet chỉ có một seed.
+
+### Phân tích nút thắt
+
+- **ResNet (Notebook 02) overfit:** 30 epoch, không augmentation, `BCEWithLogitsLoss` không `pos_weight`. Val BCE ở checkpoint tốt nhất là 1,65–2,06. Train thêm epoch không giúp.
+- **Phần fusion ở Notebook 04 overfit sớm:** dev mAP đạt đỉnh ở epoch 3–7 rồi giảm 0,02–0,03 đến epoch 20, trong khi train loss vẫn giảm (0,63 → 0,24). Giới hạn nằm ở feature ảnh đóng băng (ViT-only khoảng 0,38 mAP).
+- **Cue Qwen** (27.040 người):
+  - 99,5% có đúng 3 person cue; 38% person cue là quần áo, chỉ 14% về mặt hay biểu cảm; 56% số người không có cue nào về mặt, ánh nhìn hay đầu;
+  - 18,4% số người có từ chỉ cảm xúc, chủ yếu "smiling";
+  - 32% relation dùng ID "person_N" mà Qwen không được cho biết.
+- **Ablation:** `no_person` và `no_context` chỉ bỏ token ảnh; chưa có ablation riêng cho person cue và context cue.
+- **CVPR17 là tập con của PAMI:** mọi ảnh CVPR đều nằm trong cùng split của PAMI (12.915/1.705/3.682 ảnh). Ảnh CVPR vẫn được dùng làm image root; annotation CVPR không thêm dữ liệu mới.
+
+### Đồng bộ repo
+
+- Pull `main` lên `d9229b20`. Chuyển local sang nhánh `nb04-batch-cues` (`e304c0ca`). Thay đổi tài liệu local được cất vào stash.
+- Áp lại `src/evaluation/` và `.gitignore` (thêm `!src/models/`, vì dòng `models/` vô tình bỏ qua cả `src/models/`).
+
+### Đề xuất: tái cấu trúc Notebook 04, chưa thực hiện
+
+- Viết lại notebook không tự làm điểm tăng. Nút thắt là feature và cue; lần chạy lại `20261107-133419` cho ra đúng số cũ.
+- Đề xuất:
+  - giữ 04 nguyên làm bản ghi chính thức của run H100;
+  - tách thành các phần: sinh cue (Qwen, dùng lại `qwen_cues.jsonl`), feature và train (backbone cấu hình được, ma trận biến thể × seed, lưu xác suất dev và eval từng người), explanation, và test chỉ chạy một lần.
+- Thứ tự làm:
+  1. Tái lập kết quả H100 bằng code mới.
+  2. Đổi backbone sang CLIP hoặc SigLIP, thêm feature khuôn mặt.
+  3. Chỉ đổi prompt Qwen khi ablation cho thấy cue có đóng góp.
+  

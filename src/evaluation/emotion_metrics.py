@@ -168,6 +168,55 @@ def select_constant_top_k(targets: np.ndarray) -> dict[str, object]:
     }
 
 
+def _average_precision(target: np.ndarray, scores: np.ndarray) -> float:
+    """Average precision with tied scores grouped, matching scikit-learn."""
+    order = np.argsort(-scores, kind="mergesort")
+    sorted_target = target[order]
+    sorted_scores = scores[order]
+    last_of_tie = np.r_[np.flatnonzero(np.diff(sorted_scores)), len(sorted_scores) - 1]
+    true_positives = np.cumsum(sorted_target)[last_of_tie]
+    precision = true_positives / (last_of_tie + 1)
+    recall = true_positives / true_positives[-1]
+    return float(np.sum(np.diff(np.r_[0.0, recall]) * precision))
+
+
+def mean_average_precision(targets: np.ndarray, scores: np.ndarray) -> float:
+    """Mean AP over labels that have at least one positive sample."""
+    targets_array = _as_binary_matrix(targets, "targets")
+    scores_array = np.asarray(scores, dtype=np.float64)
+    if scores_array.shape != targets_array.shape:
+        raise ValueError("scores and targets must have the same shape")
+    values = [
+        _average_precision(targets_array[:, index], scores_array[:, index])
+        for index in range(targets_array.shape[1])
+        if targets_array[:, index].any()
+    ]
+    return float(np.mean(values)) if values else float("nan")
+
+
+def threshold_boundary_report(
+    targets: np.ndarray,
+    thresholds: Sequence[float],
+    grid: Sequence[float],
+) -> dict[str, object]:
+    """Count labels with positives whose selected threshold sits on a grid edge."""
+    targets_array = _as_binary_matrix(targets, "targets")
+    threshold_array = _threshold_vector(thresholds, targets_array.shape[1])
+    candidates = np.asarray(grid, dtype=np.float64)
+    has_positive = targets_array.any(axis=0)
+    at_min = has_positive & np.isclose(threshold_array, candidates.min())
+    at_max = has_positive & np.isclose(threshold_array, candidates.max())
+    return {
+        "grid_min": float(candidates.min()),
+        "grid_max": float(candidates.max()),
+        "labels_with_positives": int(has_positive.sum()),
+        "at_min": int(at_min.sum()),
+        "at_max": int(at_max.sum()),
+        "at_min_indices": np.flatnonzero(at_min).tolist(),
+        "at_max_indices": np.flatnonzero(at_max).tolist(),
+    }
+
+
 def paired_image_bootstrap(
     targets: np.ndarray,
     predictions_a: np.ndarray,
@@ -176,11 +225,29 @@ def paired_image_bootstrap(
     *,
     n_resamples: int = 2000,
     seed: int = 42,
-) -> dict[str, float | int]:
-    """Bootstrap the paired macro-F1 difference by resampling whole images."""
+    metric: str = "macro_f1",
+) -> dict[str, float | int | str]:
+    """Bootstrap a paired metric difference by resampling whole images.
+
+    ``metric="macro_f1"`` compares binary predictions; ``metric="map"`` compares
+    scores and averages AP over labels with positives in each resample.
+    """
     targets_array = _as_binary_matrix(targets, "targets")
-    a_array = _as_binary_matrix(predictions_a, "predictions_a")
-    b_array = _as_binary_matrix(predictions_b, "predictions_b")
+    if metric == "macro_f1":
+        a_array = _as_binary_matrix(predictions_a, "predictions_a")
+        b_array = _as_binary_matrix(predictions_b, "predictions_b")
+
+        def score(target: np.ndarray, values: np.ndarray) -> float:
+            return f1_score(target, values, average="macro", zero_division=0)
+
+    elif metric == "map":
+        a_array = np.asarray(predictions_a, dtype=np.float64)
+        b_array = np.asarray(predictions_b, dtype=np.float64)
+        if not (np.isfinite(a_array).all() and np.isfinite(b_array).all()):
+            raise ValueError("scores must be finite")
+        score = mean_average_precision
+    else:
+        raise ValueError("metric must be 'macro_f1' or 'map'")
     if not (targets_array.shape == a_array.shape == b_array.shape):
         raise ValueError("targets and prediction arrays must have the same shape")
     image_ids_array = np.asarray(image_ids)
@@ -192,9 +259,7 @@ def paired_image_bootstrap(
 
     def difference(indices: np.ndarray) -> float:
         target = targets_array[indices]
-        score_a = f1_score(target, a_array[indices], average="macro", zero_division=0)
-        score_b = f1_score(target, b_array[indices], average="macro", zero_division=0)
-        return float(score_a - score_b)
+        return float(score(target, a_array[indices]) - score(target, b_array[indices]))
 
     observed = difference(np.arange(len(targets_array)))
     rng = np.random.default_rng(seed)
@@ -206,7 +271,7 @@ def paired_image_bootstrap(
 
     lower, upper = np.quantile(differences, [0.025, 0.975])
     return {
-        "metric": "macro_f1",
+        "metric": metric,
         "difference_a_minus_b": observed,
         "ci95_lower": float(lower),
         "ci95_upper": float(upper),

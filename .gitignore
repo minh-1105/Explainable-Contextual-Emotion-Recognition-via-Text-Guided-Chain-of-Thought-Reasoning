@@ -2,6 +2,8 @@
 data/
 outputs/
 models/
+!src/models/
+!src/models/*.py
 
 # Model weights and dataset archives
 *.pt
