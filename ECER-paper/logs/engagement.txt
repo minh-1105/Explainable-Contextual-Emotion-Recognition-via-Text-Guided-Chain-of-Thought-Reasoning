@@ -1,0 +1,50 @@
+--- GT=union: per-label (TP_D,FP_D) -> (TP_E,FP_E), support
+  Affection        D=(6,0) E=(5,0) support=60
+  Anger            D=(2,0) E=(1,0) support=11
+  Annoyance        D=(1,0) E=(2,0) support=19
+  Anticipation     D=(2,0) E=(5,1) support=269
+  Confidence       D=(10,0) E=(27,7) support=165
+  Disconnection    D=(4,6) E=(9,3) support=85
+  Disquietment     D=(1,1) E=(0,0) support=38
+  Engagement       D=(118,2) E=(227,6) support=288
+  Esteem           D=(1,2) E=(1,2) support=59
+  Excitement       D=(87,17) E=(66,11) support=176
+  Fatigue          D=(5,25) E=(5,44) support=19
+  Fear             D=(0,0) E=(0,1) support=18
+  Happiness        D=(122,19) E=(90,12) support=209
+  Pain             D=(8,19) E=(6,6) support=19
+  Peace            D=(0,1) E=(3,5) support=52
+  Pleasure         D=(19,21) E=(11,8) support=104
+  Sadness          D=(8,11) E=(10,14) support=17
+  Sensitivity      D=(0,0) E=(0,1) support=14
+  Suffering        D=(0,0) E=(0,1) support=12
+  Surprise         D=(1,0) E=(1,1) support=26
+  Sympathy         D=(0,0) E=(2,0) support=71
+  micro F1 without Engagement: D=0.283 E=0.254 E-D=-0.029 CI95=[-0.048,-0.010]
+  'always Engagement' micro F1=0.268
+  'always Engagement+Happiness+Anticipation' micro F1=0.557
+--- GT=majority: per-label (TP_D,FP_D) -> (TP_E,FP_E), support
+  Affection        D=(4,2) E=(4,1) support=9
+  Anger            D=(0,2) E=(0,1) support=0
+  Annoyance        D=(0,1) E=(0,2) support=0
+  Anticipation     D=(1,1) E=(4,2) support=104
+  Confidence       D=(2,8) E=(7,27) support=18
+  Disconnection    D=(1,9) E=(2,10) support=8
+  Disquietment     D=(0,2) E=(0,0) support=1
+  Engagement       D=(79,41) E=(141,92) support=174
+  Esteem           D=(0,3) E=(0,3) support=0
+  Excitement       D=(24,80) E=(19,58) support=31
+  Fatigue          D=(2,28) E=(1,48) support=3
+  Fear             D=(0,0) E=(0,1) support=0
+  Happiness        D=(70,71) E=(60,42) support=82
+  Pain             D=(2,25) E=(1,11) support=2
+  Peace            D=(0,1) E=(0,8) support=0
+  Pleasure         D=(1,39) E=(1,18) support=6
+  Sadness          D=(4,15) E=(4,20) support=4
+  Sensitivity      D=(0,0) E=(0,1) support=0
+  Suffering        D=(0,0) E=(0,1) support=3
+  Surprise         D=(0,1) E=(0,2) support=0
+  Sympathy         D=(0,0) E=(1,1) support=1
+  micro F1 without Engagement: D=0.328 E=0.326 E-D=-0.002 CI95=[-0.038,+0.032]
+  'always Engagement' micro F1=0.463
+  'always Engagement+Happiness+Anticipation' micro F1=0.533

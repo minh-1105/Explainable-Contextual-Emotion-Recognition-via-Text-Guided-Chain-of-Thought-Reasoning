@@ -20,15 +20,20 @@ venv/
 # Jupyter
 .ipynb_checkpoints/
 
-# Local reports and temporary files
-paper/
-.codex_tmp/
+# Downloaded run outputs
+drive_results/
+
+# Third-party papers kept next to the paper source
+ECER-paper/*.pdf
+ECER-paper/logs/*.pdf
+ECER-paper/logs/etesam2023.txt
+ECER-paper/logs/etesam2024.txt
+ECER-paper/logs/lei2024.txt
 
 # Operating-system metadata
 .DS_Store
 Thumbs.db
 
-#
 desktop.ini
 
 

@@ -1,0 +1,740 @@
+----- cell 0 [markdown]
+# 02 — Train Visual Baseline
+
+Notebook này huấn luyện ba visual baseline của EMOTIC:
+
+- `person_only`: chỉ dùng ảnh crop người mục tiêu;
+- `context_only`: chỉ dùng toàn bộ ảnh ngữ cảnh;
+- `person_context`: kết hợp cả hai nhánh.
+
+Mỗi lần chạy chỉ huấn luyện **một cấu hình**. Hãy chạy lần lượt ba cấu hình và giữ nguyên `RUN_ID` khi resume. Model tốt nhất được chọn bằng **validation mAP**, không dùng test set trong notebook này.
+
+----- cell 1 [markdown]
+## 1. Mount Drive, clone mã nguồn và cài dependencies
+
+Notebook được lưu trên Drive, còn mã nguồn được clone vào `/content` để đọc dữ liệu và import nhanh hơn. Sau khi runtime Colab reset, chạy lại cell này.
+
+----- cell 2 [code]
+from google.colab import drive
+drive.mount("/content/drive")
+
+from pathlib import Path
+import subprocess
+import sys
+
+DRIVE_ROOT = Path(
+    "/content/drive/MyDrive/Colab Notebooks/Contextual Emotion Recognition"
+)
+REPO_URL = (
+    "https://github.com/minh-1105/"
+    "-Explainable-Contextual-Emotion-Recognition-via-"
+    "Text-Guided-Chain-of-Thought-Reasoning.git"
+)
+CODE_ROOT = Path("/content/contextual-emotion-reasoning")
+
+assert DRIVE_ROOT.is_dir(), f"Không tìm thấy project trên Drive: {DRIVE_ROOT}"
+
+if not CODE_ROOT.exists():
+    subprocess.run(["git", "clone", REPO_URL, str(CODE_ROOT)], check=True)
+else:
+    subprocess.run(
+        ["git", "-C", str(CODE_ROOT), "pull", "--ff-only"],
+        check=True,
+    )
+
+subprocess.run(
+    [sys.executable, "-m", "pip", "install", "-q", "-r", str(CODE_ROOT / "requirements.txt")],
+    check=True,
+)
+
+if str(CODE_ROOT) not in sys.path:
+    sys.path.insert(0, str(CODE_ROOT))
+
+print("Drive root:", DRIVE_ROOT)
+print("Code root :", CODE_ROOT)
+
+----- cell 3 [markdown]
+## 2. Cấu hình thí nghiệm
+
+Đổi `experiment_name` thành `person_only`, `context_only` hoặc `person_context`. Mỗi lần chạy mới tạo một thư mục có timestamp riêng trên Drive.
+
+Ảnh EMOTIC nằm trên Drive dưới dạng `PAMI/pami_emotic.zip` và `CVPR/cvpr_emotic.zip`. Lần đầu chạy cell này trong một runtime, notebook giải nén chúng vào `/content/emotic` (vài phút); các lần chạy lại trong cùng runtime dùng luôn bản đã giải nén.
+
+Để tiếp tục một run bị gián đoạn, đặt `RESUME_CHECKPOINT` thành đường dẫn tuyệt đối tới `last.pt`. Khi resume, notebook tự dùng lại thư mục và cấu hình đã lưu của run đó.
+
+----- cell 4 [code]
+from datetime import datetime
+import json
+import os
+import shutil
+import time
+import zipfile
+
+EMOTIC_ROOT = DRIVE_ROOT / "data/raw/raw/emotic"
+PAMI_ROOT = EMOTIC_ROOT / "PAMI"
+CVPR_ROOT = EMOTIC_ROOT / "CVPR"
+ANNOTATION_PATH = PAMI_ROOT / "Annotations/Annotations/Annotations.mat"
+
+# Ảnh lưu trên Drive dưới dạng zip và được giải nén vào /content, vì đọc
+# hàng chục nghìn ảnh nhỏ trực tiếp từ Drive khiến GPU phải chờ dữ liệu.
+LOCAL_EMOTIC_ROOT = Path("/content/emotic")
+IMAGE_ARCHIVES = (
+    # (zip trên Drive, thư mục giải nén, thư mục gốc trong zip, số file ảnh)
+    (PAMI_ROOT / "pami_emotic.zip", LOCAL_EMOTIC_ROOT / "PAMI", "emotic", 23185),
+    (CVPR_ROOT / "cvpr_emotic.zip", LOCAL_EMOTIC_ROOT / "CVPR", "cvpr_emotic", 18302),
+)
+
+OUTPUT_ROOT = DRIVE_ROOT / "outputs"
+MODEL_ROOT = DRIVE_ROOT / "models"
+
+TRAIN_CONFIG = {
+    "experiment_name": "person_only",  # person_only | context_only | person_context
+    "backbone": "resnet50",
+    "pretrained": True,
+    "freeze_backbone": False,
+    "image_size": 224,
+    "batch_size": 16,
+    "num_workers": min(8, os.cpu_count() or 1),
+    "epochs": 30,
+    "learning_rate": 1e-4,
+    "weight_decay": 1e-4,
+    "category_policy": "union",
+    "crop_padding": 0.05,
+    "strict_images": True,
+    "dropout": 0.3,
+    "decision_threshold": 0.5,
+    "seed": 42,
+    "best_metric": "val_map",
+}
+
+# Ví dụ:
+# RESUME_CHECKPOINT = OUTPUT_ROOT / "runs/person_only/20261015-120000/checkpoints/last.pt"
+RESUME_CHECKPOINT = None
+# Đặt một số nguyên lớn hơn nếu muốn kéo dài run khi resume, ví dụ 40.
+RESUME_TOTAL_EPOCHS = None
+
+
+def extract_images(archive_path, extract_dir, root_name, expected_files):
+    """Giải nén zip ảnh từ Drive vào ổ local của Colab, mỗi runtime một lần."""
+    image_root = extract_dir / root_name
+    marker = extract_dir / ".extracted"
+    if marker.is_file():
+        return image_root
+    assert archive_path.is_file(), f"Thiếu file zip: {archive_path}"
+    shutil.rmtree(extract_dir, ignore_errors=True)
+    extract_dir.mkdir(parents=True)
+    started = time.time()
+    with zipfile.ZipFile(archive_path) as archive:
+        archive.extractall(extract_dir)
+    file_count = sum(1 for path in image_root.rglob("*") if path.is_file())
+    assert file_count == expected_files, (
+        f"{archive_path.name}: {file_count} file, cần {expected_files}"
+    )
+    marker.touch()
+    print(f"Giải nén {archive_path.name}: {file_count:,} file, {time.time() - started:.0f}s")
+    return image_root
+
+valid_experiments = {"person_only", "context_only", "person_context"}
+assert TRAIN_CONFIG["experiment_name"] in valid_experiments
+assert ANNOTATION_PATH.is_file(), f"Thiếu annotation: {ANNOTATION_PATH}"
+IMAGE_ROOTS = tuple(extract_images(*spec) for spec in IMAGE_ARCHIVES)
+
+is_resume = RESUME_CHECKPOINT is not None
+if not is_resume:
+    RUN_ID = datetime.now().strftime("%Y%m%d-%H%M%S")
+    RUN_DIR = (
+        OUTPUT_ROOT / "runs" / TRAIN_CONFIG["experiment_name"] / RUN_ID
+    )
+else:
+    RESUME_CHECKPOINT = Path(RESUME_CHECKPOINT)
+    assert RESUME_CHECKPOINT.is_file(), f"Không tìm thấy: {RESUME_CHECKPOINT}"
+    RUN_DIR = RESUME_CHECKPOINT.parent.parent
+    RUN_ID = RUN_DIR.name
+
+    saved_config_path = RUN_DIR / "config.json"
+    assert saved_config_path.is_file(), f"Thiếu cấu hình của run: {saved_config_path}"
+    saved_config = json.loads(saved_config_path.read_text(encoding="utf-8"))
+    TRAIN_CONFIG = saved_config
+    if RESUME_TOTAL_EPOCHS is not None:
+        assert RESUME_TOTAL_EPOCHS >= saved_config["epochs"]
+        TRAIN_CONFIG["epochs"] = RESUME_TOTAL_EPOCHS
+
+CHECKPOINT_DIR = RUN_DIR / "checkpoints"
+LOG_DIR = RUN_DIR / "logs"
+METRIC_DIR = RUN_DIR / "metrics"
+PREDICTION_DIR = RUN_DIR / "predictions"
+FIGURE_DIR = RUN_DIR / "figures"
+
+for path in (
+    CHECKPOINT_DIR,
+    LOG_DIR,
+    METRIC_DIR,
+    PREDICTION_DIR,
+    FIGURE_DIR,
+    MODEL_ROOT,
+):
+    path.mkdir(parents=True, exist_ok=True)
+
+config_path = RUN_DIR / "config.json"
+if not is_resume:
+    with config_path.open("x", encoding="utf-8") as file:
+        json.dump(TRAIN_CONFIG, file, ensure_ascii=False, indent=2)
+elif TRAIN_CONFIG["epochs"] != saved_config["epochs"]:
+    with config_path.open("w", encoding="utf-8") as file:
+        json.dump(TRAIN_CONFIG, file, ensure_ascii=False, indent=2)
+
+print("Experiment:", TRAIN_CONFIG["experiment_name"])
+print("Run ID    :", RUN_ID)
+print("Run dir   :", RUN_DIR)
+
+----- cell 5 [markdown]
+## 3. Thiết lập môi trường và khả năng tái lập
+
+GPU là bắt buộc cho các run đầy đủ. Notebook ghi phiên bản Python, PyTorch, CUDA, GPU và Git commit vào thư mục run.
+
+----- cell 6 [code]
+import os
+import platform
+import random
+import subprocess
+import numpy as np
+import torch
+
+
+def seed_everything(seed):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+
+seed_everything(TRAIN_CONFIG["seed"])
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+assert device.type == "cuda", "Hãy bật GPU: Runtime > Change runtime type > GPU"
+
+commit = subprocess.run(
+    ["git", "-C", str(CODE_ROOT), "rev-parse", "HEAD"],
+    check=True,
+    capture_output=True,
+    text=True,
+).stdout.strip()
+
+environment_lines = [
+    f"python={platform.python_version()}",
+    f"torch={torch.__version__}",
+    f"cuda={torch.version.cuda}",
+    f"gpu={torch.cuda.get_device_name(0)}",
+    f"git_commit={commit}",
+]
+(RUN_DIR / "environment.txt").write_text(
+    "\n".join(environment_lines) + "\n",
+    encoding="utf-8",
+)
+
+print("Device:", device)
+print("GPU   :", torch.cuda.get_device_name(0))
+print("Commit:", commit)
+
+----- cell 7 [markdown]
+## 4. Tạo dataset và DataLoader
+
+`EmoticDataset` đọc annotation `.mat`, xem mỗi người là một mẫu, tạo ảnh context, crop người, vector multi-hot 26 chiều và VAD. Transform là bắt buộc để `DataLoader` gom ảnh thành batch tensor.
+
+----- cell 8 [code]
+from torch.utils.data import DataLoader
+from torchvision import transforms
+from src.datasets.emotic_dataset import EmoticDataset
+
+image_size = TRAIN_CONFIG["image_size"]
+normalize = transforms.Normalize(
+    mean=(0.485, 0.456, 0.406),
+    std=(0.229, 0.224, 0.225),
+)
+
+train_transform = transforms.Compose([
+    transforms.Resize((image_size, image_size)),
+    transforms.ToTensor(),
+    normalize,
+])
+eval_transform = transforms.Compose([
+    transforms.Resize((image_size, image_size)),
+    transforms.ToTensor(),
+    normalize,
+])
+
+dataset_kwargs = {
+    "annotation_path": ANNOTATION_PATH,
+    "image_roots": IMAGE_ROOTS,
+    "category_policy": TRAIN_CONFIG["category_policy"],
+    "crop_padding": TRAIN_CONFIG["crop_padding"],
+    "strict_images": TRAIN_CONFIG["strict_images"],
+}
+
+train_dataset = EmoticDataset(
+    split="train",
+    context_transform=train_transform,
+    person_transform=train_transform,
+    **dataset_kwargs,
+)
+val_dataset = EmoticDataset(
+    split="val",
+    context_transform=eval_transform,
+    person_transform=eval_transform,
+    **dataset_kwargs,
+)
+
+loader_kwargs = {
+    "batch_size": TRAIN_CONFIG["batch_size"],
+    "num_workers": TRAIN_CONFIG["num_workers"],
+    "pin_memory": True,
+    "persistent_workers": TRAIN_CONFIG["num_workers"] > 0,
+}
+generator = torch.Generator().manual_seed(TRAIN_CONFIG["seed"])
+
+train_loader = DataLoader(
+    train_dataset,
+    shuffle=True,
+    generator=generator,
+    **loader_kwargs,
+)
+val_loader = DataLoader(
+    val_dataset,
+    shuffle=False,
+    **loader_kwargs,
+)
+
+print(f"Train: {len(train_dataset):,} person samples / {len(train_loader):,} batches")
+print(f"Val  : {len(val_dataset):,} person samples / {len(val_loader):,} batches")
+print("Labels:", train_dataset.class_names)
+
+----- cell 9 [markdown]
+## 5. Kiểm tra một batch
+
+Cell này xác minh kích thước tensor trước khi tạo model. Với `person_context`, cả hai tensor ảnh đều được chuyển vào hai nhánh của model.
+
+----- cell 10 [code]
+sample_batch = next(iter(train_loader))
+
+for key in ("context_image", "person_image", "labels", "vad", "vad_mask", "bbox"):
+    value = sample_batch[key]
+    print(f"{key:14}: shape={tuple(value.shape)}, dtype={value.dtype}")
+
+assert sample_batch["context_image"].shape[1:] == (3, image_size, image_size)
+assert sample_batch["person_image"].shape[1:] == (3, image_size, image_size)
+assert sample_batch["labels"].shape[1] == 26
+
+----- cell 11 [markdown]
+## 6. Định nghĩa visual baseline
+
+Mỗi nhánh dùng ResNet-50 bỏ lớp phân loại cuối. `person_context` ghép hai vector đặc trưng rồi phân loại 26 nhãn. Đầu ra là logits, vì vậy không đặt sigmoid bên trong model.
+
+----- cell 12 [code]
+import torch.nn as nn
+from torchvision.models import ResNet50_Weights, resnet50
+
+
+def make_encoder(pretrained=True, freeze=False):
+    weights = ResNet50_Weights.DEFAULT if pretrained else None
+    backbone = resnet50(weights=weights)
+    feature_dim = backbone.fc.in_features
+    backbone.fc = nn.Identity()
+    if freeze:
+        for parameter in backbone.parameters():
+            parameter.requires_grad = False
+    return backbone, feature_dim
+
+
+class VisualBaseline(nn.Module):
+    def __init__(
+        self,
+        mode,
+        num_classes=26,
+        pretrained=True,
+        freeze_backbone=False,
+        dropout=0.3,
+    ):
+        super().__init__()
+        if mode not in {"person_only", "context_only", "person_context"}:
+            raise ValueError(f"Unsupported mode: {mode}")
+        self.mode = mode
+
+        if mode in {"person_only", "person_context"}:
+            self.person_encoder, person_dim = make_encoder(
+                pretrained, freeze_backbone
+            )
+        if mode in {"context_only", "person_context"}:
+            self.context_encoder, context_dim = make_encoder(
+                pretrained, freeze_backbone
+            )
+
+        if mode == "person_only":
+            input_dim = person_dim
+        elif mode == "context_only":
+            input_dim = context_dim
+        else:
+            input_dim = person_dim + context_dim
+
+        self.classifier = nn.Sequential(
+            nn.Dropout(dropout),
+            nn.Linear(input_dim, 512),
+            nn.ReLU(inplace=True),
+            nn.Dropout(dropout),
+            nn.Linear(512, num_classes),
+        )
+
+    def forward(self, person_image, context_image):
+        if self.mode == "person_only":
+            features = self.person_encoder(person_image)
+        elif self.mode == "context_only":
+            features = self.context_encoder(context_image)
+        else:
+            person_features = self.person_encoder(person_image)
+            context_features = self.context_encoder(context_image)
+            features = torch.cat((person_features, context_features), dim=1)
+        return self.classifier(features)
+
+
+model = VisualBaseline(
+    mode=TRAIN_CONFIG["experiment_name"],
+    num_classes=train_dataset.num_classes,
+    pretrained=TRAIN_CONFIG["pretrained"],
+    freeze_backbone=TRAIN_CONFIG["freeze_backbone"],
+    dropout=TRAIN_CONFIG["dropout"],
+).to(device)
+
+trainable_parameters = sum(
+    parameter.numel() for parameter in model.parameters() if parameter.requires_grad
+)
+print(model.__class__.__name__, TRAIN_CONFIG["experiment_name"])
+print(f"Trainable parameters: {trainable_parameters:,}")
+
+----- cell 13 [markdown]
+## 7. Loss, optimizer, scheduler và metrics
+
+EMOTIC là bài toán multi-label nên dùng `BCEWithLogitsLoss`. Sigmoid chỉ được áp dụng khi chuyển logits thành xác suất để tính metrics.
+
+----- cell 14 [code]
+from sklearn.metrics import average_precision_score, f1_score
+
+criterion = nn.BCEWithLogitsLoss()
+optimizer = torch.optim.AdamW(
+    (parameter for parameter in model.parameters() if parameter.requires_grad),
+    lr=TRAIN_CONFIG["learning_rate"],
+    weight_decay=TRAIN_CONFIG["weight_decay"],
+)
+scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+    optimizer,
+    T_max=TRAIN_CONFIG["epochs"],
+)
+scaler = torch.cuda.amp.GradScaler(enabled=device.type == "cuda")
+
+
+def compute_metrics(targets, probabilities, threshold=0.5):
+    targets = np.asarray(targets)
+    probabilities = np.asarray(probabilities)
+    predictions = (probabilities >= threshold).astype(np.int32)
+
+    per_class_ap = []
+    for class_index in range(targets.shape[1]):
+        class_targets = targets[:, class_index]
+        if class_targets.sum() == 0:
+            per_class_ap.append(float("nan"))
+        else:
+            per_class_ap.append(
+                float(average_precision_score(class_targets, probabilities[:, class_index]))
+            )
+
+    return {
+        "map": float(np.nanmean(per_class_ap)),
+        "macro_f1": float(f1_score(targets, predictions, average="macro", zero_division=0)),
+        "micro_f1": float(f1_score(targets, predictions, average="micro", zero_division=0)),
+        "per_class_ap": per_class_ap,
+    }
+
+----- cell 15 [markdown]
+## 8. Smoke test: forward, backward, save và reload
+
+Phải chạy thành công cell này trước khi bắt đầu huấn luyện dài. Smoke test không gọi `optimizer.step()`, nên không làm thay đổi trọng số model.
+
+----- cell 16 [code]
+person_image = sample_batch["person_image"].to(device, non_blocking=True)
+context_image = sample_batch["context_image"].to(device, non_blocking=True)
+targets = sample_batch["labels"].to(device, non_blocking=True)
+
+model.train()
+optimizer.zero_grad(set_to_none=True)
+with torch.cuda.amp.autocast(enabled=device.type == "cuda"):
+    logits = model(person_image, context_image)
+    smoke_loss = criterion(logits, targets)
+scaler.scale(smoke_loss).backward()
+optimizer.zero_grad(set_to_none=True)
+
+assert logits.shape == targets.shape == (targets.shape[0], 26)
+assert torch.isfinite(smoke_loss), "Smoke-test loss không hữu hạn"
+
+smoke_path = Path("/content/emotic_smoke_checkpoint.pt")
+torch.save({"model_state_dict": model.state_dict()}, smoke_path)
+smoke_checkpoint = torch.load(smoke_path, map_location=device, weights_only=False)
+model.load_state_dict(smoke_checkpoint["model_state_dict"])
+
+print("Logits shape:", tuple(logits.shape))
+print("Smoke loss  :", float(smoke_loss.item()))
+print("Save/reload : OK")
+
+----- cell 17 [markdown]
+## 9. Hàm train, validation và checkpoint
+
+Checkpoint được ghi hoàn chỉnh vào `/content` trước, sau đó mới copy sang Drive để giảm nguy cơ file bị ghi dở khi runtime ngắt kết nối.
+
+----- cell 18 [code]
+import csv
+import shutil
+from tqdm.auto import tqdm
+
+
+def run_epoch(model, loader, training):
+    model.train(training)
+    total_loss = 0.0
+    all_targets = []
+    all_probabilities = []
+
+    progress = tqdm(loader, leave=False, desc="train" if training else "val")
+    for batch in progress:
+        person_image = batch["person_image"].to(device, non_blocking=True)
+        context_image = batch["context_image"].to(device, non_blocking=True)
+        targets = batch["labels"].to(device, non_blocking=True)
+
+        if training:
+            optimizer.zero_grad(set_to_none=True)
+
+        with torch.set_grad_enabled(training):
+            with torch.cuda.amp.autocast(enabled=device.type == "cuda"):
+                logits = model(person_image, context_image)
+                loss = criterion(logits, targets)
+
+            if training:
+                scaler.scale(loss).backward()
+                scaler.step(optimizer)
+                scaler.update()
+
+        batch_size = targets.shape[0]
+        total_loss += loss.item() * batch_size
+        all_targets.append(targets.detach().cpu().numpy())
+        all_probabilities.append(torch.sigmoid(logits).detach().cpu().numpy())
+        progress.set_postfix(loss=f"{loss.item():.4f}")
+
+    targets_array = np.concatenate(all_targets)
+    probabilities_array = np.concatenate(all_probabilities)
+    metrics = compute_metrics(
+        targets_array,
+        probabilities_array,
+        threshold=TRAIN_CONFIG["decision_threshold"],
+    )
+    metrics["loss"] = total_loss / len(loader.dataset)
+    return metrics, targets_array, probabilities_array
+
+
+def save_checkpoint(epoch, best_val_map, val_metrics, destination):
+    checkpoint = {
+        "epoch": epoch,
+        "model_state_dict": model.state_dict(),
+        "optimizer_state_dict": optimizer.state_dict(),
+        "scheduler_state_dict": scheduler.state_dict(),
+        "scaler_state_dict": scaler.state_dict(),
+        "best_val_map": best_val_map,
+        "val_metrics": val_metrics,
+        "config": TRAIN_CONFIG,
+        "class_names": list(train_dataset.class_names),
+        "git_commit": commit,
+    }
+    local_checkpoint = Path("/content/emotic_checkpoint.pt")
+    torch.save(checkpoint, local_checkpoint)
+    shutil.copy2(local_checkpoint, destination)
+
+
+def append_history(row):
+    history_path = LOG_DIR / "history.csv"
+    write_header = not history_path.exists()
+    with history_path.open("a", newline="", encoding="utf-8") as file:
+        writer = csv.DictWriter(file, fieldnames=list(row))
+        if write_header:
+            writer.writeheader()
+        writer.writerow(row)
+
+----- cell 19 [markdown]
+## 10. Resume nếu có
+
+Notebook kiểm tra các trường cấu hình ảnh hưởng trực tiếp đến kiến trúc và dữ liệu trước khi nạp checkpoint.
+
+----- cell 20 [code]
+start_epoch = 0
+best_val_map = float("-inf")
+
+if RESUME_CHECKPOINT is not None:
+    checkpoint = torch.load(
+        RESUME_CHECKPOINT,
+        map_location=device,
+        weights_only=False,
+    )
+    compatibility_keys = (
+        "experiment_name",
+        "backbone",
+        "image_size",
+        "category_policy",
+        "crop_padding",
+    )
+    mismatches = {
+        key: (checkpoint["config"].get(key), TRAIN_CONFIG.get(key))
+        for key in compatibility_keys
+        if checkpoint["config"].get(key) != TRAIN_CONFIG.get(key)
+    }
+    assert not mismatches, f"Cấu hình không tương thích: {mismatches}"
+
+    model.load_state_dict(checkpoint["model_state_dict"])
+    optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+    scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
+    if checkpoint.get("scaler_state_dict"):
+        scaler.load_state_dict(checkpoint["scaler_state_dict"])
+    start_epoch = checkpoint["epoch"] + 1
+    best_val_map = checkpoint["best_val_map"]
+    print(f"Resume từ epoch {start_epoch}; best val mAP={best_val_map:.4f}")
+else:
+    print("Bắt đầu run mới")
+
+----- cell 21 [markdown]
+## 11. Huấn luyện
+
+Cell này có thể chạy lâu. `last.pt` được cập nhật sau mỗi epoch; `best.pt` chỉ cập nhật khi validation mAP tăng.
+
+----- cell 22 [code]
+for epoch in range(start_epoch, TRAIN_CONFIG["epochs"]):
+    train_metrics, _, _ = run_epoch(model, train_loader, training=True)
+    val_metrics, val_targets, val_probabilities = run_epoch(
+        model, val_loader, training=False
+    )
+    scheduler.step()
+
+    is_best = val_metrics["map"] > best_val_map
+    if is_best:
+        best_val_map = val_metrics["map"]
+
+    save_checkpoint(epoch, best_val_map, val_metrics, CHECKPOINT_DIR / "last.pt")
+    if is_best:
+        shutil.copy2(CHECKPOINT_DIR / "last.pt", CHECKPOINT_DIR / "best.pt")
+
+    row = {
+        "epoch": epoch,
+        "learning_rate": optimizer.param_groups[0]["lr"],
+        "train_loss": train_metrics["loss"],
+        "train_map": train_metrics["map"],
+        "train_macro_f1": train_metrics["macro_f1"],
+        "train_micro_f1": train_metrics["micro_f1"],
+        "val_loss": val_metrics["loss"],
+        "val_map": val_metrics["map"],
+        "val_macro_f1": val_metrics["macro_f1"],
+        "val_micro_f1": val_metrics["micro_f1"],
+        "is_best": is_best,
+    }
+    append_history(row)
+
+    with (METRIC_DIR / "val_metrics_latest.json").open("w", encoding="utf-8") as file:
+        json.dump(val_metrics, file, ensure_ascii=False, indent=2)
+
+    np.savez_compressed(
+        PREDICTION_DIR / "val_predictions_latest.npz",
+        targets=val_targets,
+        probabilities=val_probabilities,
+    )
+
+    print(
+        f"Epoch {epoch + 1:02d}/{TRAIN_CONFIG['epochs']} | "
+        f"train loss={train_metrics['loss']:.4f} mAP={train_metrics['map']:.4f} | "
+        f"val loss={val_metrics['loss']:.4f} mAP={val_metrics['map']:.4f} | "
+        f"best={best_val_map:.4f}"
+    )
+
+print("Training hoàn tất. Best validation mAP:", best_val_map)
+
+----- cell 23 [markdown]
+## 12. Xác minh checkpoint và export model tốt nhất
+
+Export chỉ chứa trọng số dùng cho inference cùng cấu hình, thứ tự nhãn và validation metrics. Nếu chạy lại cell, thư mục export hiện có sẽ được kiểm tra thay vì âm thầm ghi đè.
+
+----- cell 24 [code]
+best_checkpoint_path = CHECKPOINT_DIR / "best.pt"
+assert best_checkpoint_path.is_file(), f"Thiếu checkpoint: {best_checkpoint_path}"
+
+best_checkpoint = torch.load(
+    best_checkpoint_path,
+    map_location="cpu",
+    weights_only=False,
+)
+assert best_checkpoint["class_names"] == list(train_dataset.class_names)
+
+model_name = f"emotic_{TRAIN_CONFIG['experiment_name']}_{TRAIN_CONFIG['backbone']}"
+export_dir = MODEL_ROOT / model_name / RUN_ID
+export_dir.mkdir(parents=True, exist_ok=True)
+
+torch.save(best_checkpoint["model_state_dict"], export_dir / "model.pt")
+(export_dir / "config.json").write_text(
+    json.dumps(TRAIN_CONFIG, ensure_ascii=False, indent=2),
+    encoding="utf-8",
+)
+(export_dir / "label_map.json").write_text(
+    json.dumps(
+        {name: index for index, name in enumerate(train_dataset.class_names)},
+        ensure_ascii=False,
+        indent=2,
+    ),
+    encoding="utf-8",
+)
+
+(export_dir / "metrics.json").write_text(
+    json.dumps(best_checkpoint["val_metrics"], ensure_ascii=False, indent=2),
+    encoding="utf-8",
+)
+
+readme = f'''# {model_name}
+
+- Experiment: {TRAIN_CONFIG['experiment_name']}
+- Run ID: {RUN_ID}
+- Backbone: {TRAIN_CONFIG['backbone']}
+- Dataset split used for model selection: validation
+- Best validation mAP: {best_checkpoint['best_val_map']:.6f}
+- Git commit: {best_checkpoint['git_commit']}
+- Source notebook: 02_Train_Visual_Baseline.ipynb
+- Input preprocessing: resize to {TRAIN_CONFIG['image_size']}x{TRAIN_CONFIG['image_size']}, ImageNet normalization
+
+This export contains model weights only. Use the source run checkpoint to resume training.
+'''
+(export_dir / "README.md").write_text(readme, encoding="utf-8")
+
+run_summary = {
+    "experiment_name": TRAIN_CONFIG["experiment_name"],
+    "run_id": RUN_ID,
+    "best_val_map": best_checkpoint["best_val_map"],
+    "best_epoch": best_checkpoint["epoch"],
+    "checkpoint": str(best_checkpoint_path),
+    "export_dir": str(export_dir),
+    "git_commit": best_checkpoint["git_commit"],
+}
+(RUN_DIR / "run_summary.json").write_text(
+    json.dumps(run_summary, ensure_ascii=False, indent=2),
+    encoding="utf-8",
+)
+
+print("Best checkpoint:", best_checkpoint_path)
+print("Exported model :", export_dir)
+print(json.dumps(run_summary, ensure_ascii=False, indent=2))
+
+----- cell 25 [markdown]
+## 13. Thứ tự chạy tiếp theo
+
+1. Hoàn tất `person_only`.
+2. Đổi `experiment_name` thành `context_only`, chọn **Runtime → Restart session**, rồi chạy lại toàn bộ notebook.
+3. Làm tương tự với `person_context`.
+4. Khi cả ba run có `best.pt`, chuyển sang `03_Evaluate_Visual_Baseline.ipynb` để đánh giá trên test set và so sánh các baseline.
+
+

@@ -1,0 +1,62 @@
+{
+  "eval": {
+    "majority_modality": "context",
+    "agreement_stated_vs_majority": {
+      "difference_a_minus_b": -0.020395920815836834,
+      "ci95_lower": -0.06951857629041407,
+      "ci95_upper": 0.030909827654003557,
+      "n_people": 1667,
+      "n_images": 1033,
+      "n_resamples": 2000,
+      "seed": 42
+    },
+    "comprehensiveness_stated_vs_majority": {
+      "difference_a_minus_b": -0.005935122100704734,
+      "ci95_lower": -0.01572860380718744,
+      "ci95_upper": 0.0034013394470504598,
+      "n_people": 1667,
+      "n_images": 1033,
+      "n_resamples": 2000,
+      "seed": 42
+    },
+    "comprehensiveness_stated_vs_random": {
+      "difference_a_minus_b": 0.006012918770225309,
+      "ci95_lower": 0.0009105675565363769,
+      "ci95_upper": 0.011186788482000179,
+      "n_people": 1667,
+      "n_images": 1033,
+      "n_resamples": 2000,
+      "seed": 42
+    }
+  },
+  "test": {
+    "majority_modality": "person",
+    "agreement_stated_vs_majority": {
+      "difference_a_minus_b": -0.0004170721534825525,
+      "ci95_lower": -0.001810868716033697,
+      "ci95_upper": 0.0009847770978208797,
+      "n_people": 7193,
+      "n_images": 4357,
+      "n_resamples": 2000,
+      "seed": 42
+    },
+    "comprehensiveness_stated_vs_majority": {
+      "difference_a_minus_b": 3.996942122863158e-05,
+      "ci95_lower": -0.00019570629396054015,
+      "ci95_upper": 0.00029625179649334733,
+      "n_people": 7193,
+      "n_images": 4357,
+      "n_resamples": 2000,
+      "seed": 42
+    },
+    "comprehensiveness_stated_vs_random": {
+      "difference_a_minus_b": 0.007103269396393433,
+      "ci95_lower": 0.004651231734179537,
+      "ci95_upper": 0.009586455449011043,
+      "n_people": 7193,
+      "n_images": 4357,
+      "n_resamples": 2000,
+      "seed": 42
+    }
+  }
+}

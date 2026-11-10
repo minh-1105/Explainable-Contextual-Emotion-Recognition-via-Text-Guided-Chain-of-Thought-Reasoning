@@ -1,0 +1,291 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+\usepackage[utf8]{inputenc}
+\usepackage[T5]{fontenc}
+\usepackage[vietnamese]{babel}
+\usepackage{cite}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{textcomp}
+
+\begin{document}
+
+\title{Nhận diện cảm xúc theo ngữ cảnh có giải thích, dẫn dắt bằng văn bản và suy luận chuỗi}
+
+\author{\IEEEauthorblockN{N. Q. Sang}
+\IEEEauthorblockA{Trí tuệ nhân tạo, Đại học FPT\\
+sangquang2904@gmail.com}}
+\maketitle
+
+\begin{abstract}
+Nhận diện cảm xúc theo ngữ cảnh là bài toán xác định một người được chỉ định trong ảnh đang có những cảm xúc nào, dựa trên cả người đó và khung cảnh xung quanh. Các hệ thống gần đây để mô hình thị giác--ngôn ngữ (VLM) suy luận bằng văn bản rồi tự gọi tên cảm xúc. Cách làm này để lại hai vấn đề: đầu ra không chấm được bằng mAP để so với các bộ phân loại đã huấn luyện, và lời giải thích được viết ra chưa chắc là lý do thật của câu trả lời. Chúng tôi mô tả một pipeline tách hai vai trò này. VLM (Qwen3-VL-4B) chỉ trích các dấu hiệu nhìn thấy được về người, về ngữ cảnh và các quan hệ của người mục tiêu, không được gọi tên cảm xúc; một bộ mã hóa văn bản và một bộ mã hóa ảnh được đóng băng cung cấp đặc trưng cho một transformer nhỏ dự đoán 26 nhãn EMOTIC; các phép can thiệp lên từng modality của mô hình đã huấn luyện tạo ra một gói bằng chứng; và VLM chỉ diễn đạt lại gói bằng chứng đó. Chúng tôi kiểm tra tự động lời diễn đạt theo mức khớp với modality quan trọng nhất đo được, độ đúng của các con số được trích, các cảm xúc được nêu ngoài dự đoán, và comprehensiveness cùng sufficiency của ERASER. Trên 7.280 người của tập test EMOTIC, các baseline ResNet-50 đạt 25,39--27,35 mAP, so với 17,0 của bộ chấm hằng số, và khi đổi ảnh cắt người trong cùng ảnh, dự đoán khớp với người mới hơn chỉ ở 40,5\% trong 9.988 cặp. Việc trích dấu hiệu cho toàn bộ 34.320 người trả về JSON đúng schema cho 99,6\% mẫu, nhưng 18,9\% bộ dấu hiệu vẫn chứa từ chỉ cảm xúc như ``smiling'' dù đã bị cấm. Trên tập test, mô hình hợp nhất đạt 28,5 mAP và 32,2 macro-F1 (trung bình ba seed); khi xóa từ chỉ cảm xúc khỏi dấu hiệu, mô hình đạt 30,0 và 33,7, cao hơn biến thể chỉ thị giác (27,0; 31,3) và ResNet-50 tốt nhất (27,35; 30,9). Dấu hiệu đã xóa từ chỉ cảm xúc thắng biến thể chỉ thị giác trong bootstrap ghép cặp trên cả nửa validation giữ lại và tập test, còn phần tăng thêm của dấu hiệu gốc trên validation không giữ được trên test. Trên toàn bộ 1.691 lời giải thích của validation và 7.280 lời giải thích của test, 99,97\% con số được trích khớp với bằng chứng, nhưng VLM nêu người là modality quan trọng nhất ở 99,5\% trường hợp và khớp với modality quan trọng nhất đo được không thường hơn khi luôn nêu modality phổ biến nhất; theo ERASER, lựa chọn của nó không trung thực hơn lựa chọn hằng số đó.
+\end{abstract}
+
+\begin{IEEEkeywords}
+nhận diện cảm xúc theo ngữ cảnh, EMOTIC, mô hình thị giác--ngôn ngữ, hợp nhất đa phương thức, tính trung thực của lời giải thích
+\end{IEEEkeywords}
+
+\section{Giới thiệu}
+Đọc cảm xúc của một người cụ thể từ một bức ảnh là việc mơ hồ nếu thiếu ngữ cảnh. Cùng một tư thế có thể ứng với nhiều cảm xúc, và các nghiên cứu tâm lý học cho rằng biểu cảm khuôn mặt đơn thuần không xác định cảm xúc một cách tin cậy~\cite{barrett2019,barrett2011}. Bộ dữ liệu EMOTIC~\cite{kosti2017emotic,kosti2020emotic} đặt bài toán thành nhận diện đa nhãn 26 loại cảm xúc cho một người được gán nhãn trong khung cảnh tự nhiên. Các CNN hai nhánh trên ảnh cắt người và ảnh toàn cảnh là những baseline đầu tiên~\cite{kosti2020emotic}. Các mô hình sau đó bổ sung cơ chế chú ý theo ngữ cảnh~\cite{lee2019caer}, hợp nhất nhiều ngữ cảnh theo nguyên lý Frege~\cite{mittal2020emoticon}, nhận biết đa ngữ cảnh~\cite{yang2022heco}, transformer một giai đoạn tách chủ thể và ngữ cảnh~\cite{li2024tscnet}, khử thiên lệch ngữ cảnh~\cite{yang2024debias}, và tiền huấn luyện trên giao tiếp bằng lời và phi ngôn ngữ~\cite{zhang2023emotionclip}.
+
+Các VLM lớn đã thay đổi cách tiếp cận. Etesam và cộng sự chuyển ảnh thành chú thích rồi để LLM chọn nhãn, đồng thời so sánh GPT-4V và LLaVA~\cite{etesam2023,etesam2024}. Các nghiên cứu khác đánh giá hoặc tinh chỉnh VLM trực tiếp~\cite{lei2025lvlm,bhattacharyya2025eve}, hoặc đưa mô tả do VLM sinh ra vào một bộ phân loại đã huấn luyện~\cite{xenos2025vllm}. EmoCoT, một framework dạng agent năm 2026, xây thẻ thông tin cho từng người và sửa dự đoán bằng một bộ kiểm định~\cite{chen2026emocot}. Do đó, suy luận bằng văn bản cho cảm xúc theo ngữ cảnh không phải là điều mới.
+
+Khi chính VLM gọi tên cảm xúc, vẫn còn hai vấn đề. (i)~Một tập nhãn được sinh ra không có điểm số cho từng nhãn, nên các tác giả không báo cáo được mAP và không so được với CNN trên chính thước đo mà CNN được xây dựng~\cite{etesam2024,lei2025lvlm}. (ii)~Lời giải thích dạng chuỗi suy luận chưa chắc phản ánh lý do tạo ra câu trả lời~\cite{turpin2023,lanham2023,jacovi2020}. Pilot của chính chúng tôi (Mục~\ref{sec:pilot}) cho thấy thêm vấn đề thứ ba: prompt có cấu trúc làm tăng micro-F1 chủ yếu nhờ dự đoán một nhãn phổ biến thường xuyên hơn.
+
+Vì vậy chúng tôi giữ văn bản trong pipeline nhưng đổi vai trò của nó. VLM được dùng hai lần và không lần nào nó quyết định cảm xúc: lần đầu nó mô tả những gì nhìn thấy được về người mục tiêu và khung cảnh, lần sau nó diễn đạt thành lời các bằng chứng đã được đo trên một bộ phân loại đã huấn luyện. Việc nhận diện do một bộ phân loại đảm nhận, cho ra xác suất của từng nhãn, nên có thể chấm giống như các baseline CNN trên cùng một tập chia.
+
+% PROVISIONAL-CONTRIBUTIONS
+Các đóng góp của chúng tôi gồm:
+\begin{enumerate}
+\item \textbf{Một pipeline tách vai trò, được chấm một lần trên tập test.} Trích dấu hiệu bằng VLM không dùng từ chỉ cảm xúc, bộ mã hóa BERT và ViT đóng băng, một transformer hợp nhất token người, ngữ cảnh và dấu hiệu, can thiệp theo modality, và VLM diễn đạt lại bằng chứng thu được (Mục~\ref{sec:method}). So sánh ba seed với các biến thể bỏ token dấu hiệu, ngữ cảnh hoặc người và biến thể xóa từ chỉ cảm xúc khỏi dấu hiệu, trên nửa validation giữ lại và trên tập test, kèm so sánh ghép cặp với các baseline ResNet-50 trên cùng người của tập test (Mục~\ref{sec:fusion}).
+\item \textbf{Các phép kiểm tra tự động cho lời giải thích có căn cứ, chạy trên mọi người của nửa eval và tập test.} Mức khớp modality kèm đối chứng chọn modality phổ biến nhất, độ đúng của con số được trích, tỉ lệ nêu cảm xúc ngoài dự đoán, và comprehensiveness cùng sufficiency của ERASER so với modality phổ biến nhất, modality ngẫu nhiên và modality đo được (Mục~\ref{sec:explain}, \ref{sec:explresults}).
+\item \textbf{Một đánh giá có đối chứng các baseline trên tập test EMOTIC.} Baseline ResNet-50 kèm baseline hằng số, bootstrap ghép cặp theo ảnh, đối chứng cách gộp nhãn và tần suất nhãn, che vùng có đối chứng vùng ngẫu nhiên, và hoán đổi người mục tiêu trong cùng ảnh (Mục~\ref{sec:baseline}).
+\item \textbf{Trích dấu hiệu cho toàn bộ 34.320 người.} Tỉ lệ parse, đúng schema, bị cắt cụt, số dấu hiệu, tốc độ và mức trùng khớp của giải mã theo batch, và kiểm tra rò rỉ từ chỉ cảm xúc (Mục~\ref{sec:cues}).
+\end{enumerate}
+% END-PROVISIONAL
+Chúng tôi không khẳng định cách tiếp cận này tốt hơn các hệ thống hiện có.
+
+\section{Các công trình liên quan}
+\textbf{Nhận diện có xét ngữ cảnh.} Ngoài các mô hình kể trên, một số bộ dữ liệu bổ sung ngữ cảnh toàn thân hoặc video, ví dụ BoLD cho biểu cảm cơ thể~\cite{luo2020arbee}. Backbone ResNet~\cite{he2016resnet} vẫn là điểm khởi đầu phổ biến cho các baseline có giám sát, và chúng tôi cũng dùng nó cho các mô hình tham chiếu.
+
+\textbf{VLM và LLM cho cảm xúc theo ngữ cảnh.} Etesam và cộng sự lần đầu sinh chú thích cho người mục tiêu và khung cảnh rồi yêu cầu LLM suy luận từ đó theo kiểu chuỗi suy luận~\cite{etesam2023}. Công trình tiếp theo của họ so sánh chú thích, GPT-4V, LLaVA và LLaVA đã tinh chỉnh với CNN của EMOTIC~\cite{etesam2024}. Trong kết quả trung bình macro của họ, LLaVA tinh chỉnh trên tập validation tăng cường đạt 36,83 F1, so với 28,83 của CNN, và GPT-4V với prompt được thiết kế đạt 34,47. Họ cho biết không dùng được mAP và VLM gặp khó khăn khi xác định người được nhắc đến trong prompt. Họ cũng lưu ý rằng chú thích thiếu các tương tác xã hội và tương tác với đồ vật, không có lựa chọn ``không biết'', và không rõ VLM đã từng thấy bao nhiêu phần của tập test EMOTIC~\cite{etesam2024}. Yang và cộng sự nghiên cứu việc dùng chú thích để ước lượng cảm xúc theo ngữ cảnh~\cite{yang2023captions}. Lei và cộng sự đánh giá LVLM ở chế độ zero-shot, few-shot và tinh chỉnh trên EMOTIC và HECO; thêm ví dụ chuỗi suy luận làm tăng precision nhưng giảm recall trên EMOTIC và làm giảm hiệu năng trên HECO~\cite{lei2025lvlm}. Xenos và cộng sự đưa mô tả do VLM sinh ra vào một bộ phân loại đã huấn luyện~\cite{xenos2025vllm}, đây là thiết kế gần nhất với bước đầu tiên của chúng tôi. Bhattacharyya và Wang đánh giá nhiều VLM trên bài toán cảm xúc trong ảnh~\cite{bhattacharyya2025eve}, còn Zhang và cộng sự đánh số khung cho mọi khuôn mặt trong prompt~\cite{zhang2024sov}. ELENA thuật lại cảm xúc thể hiện qua cơ thể với đầu ra có cấu trúc~\cite{saim2025elena}. AICA-Bench khảo sát phân tích nội dung cảm xúc của ảnh, một hướng tiếp cận từ vựng mở đánh giá khả năng hiểu cảm xúc thị giác~\cite{she2026aica,wu2025customizing}, và EIBench nhắm tới việc diễn giải cảm xúc~\cite{lin2025eibench}. Các LLM đa phương thức suy luận hoặc giải thích cảm xúc, chủ yếu trên video có âm thanh, gồm EMER, Emotion-LLaMA, R1-Omni và AffectGPT-RL~\cite{lian2023emer,cheng2024emotionllama,zhao2025r1omni,lian2026affectgptrl}; EmoLLM xử lý cả ảnh và video~\cite{yang2024emollm}. Các VLM mở trọng số như Qwen2.5-VL~\cite{bai2025qwen25vl} cho phép chạy lại prompt và mô hình.
+
+Công trình gần nhất là EmoCoT~\cite{chen2026emocot}. Chúng tôi chỉ đọc được phần tóm tắt và danh sách tài liệu tham khảo trên trang của nhà xuất bản; toàn văn yêu cầu trả phí. Theo phần tóm tắt, công trình này dùng thẻ thông tin cho từng người, sửa dự đoán bằng bộ kiểm định, và đánh giá trên một benchmark dựa trên EMOTIC cùng một benchmark nhiều người mới. Thẻ của họ và bước trích dấu hiệu của chúng tôi đều mô tả từng người một; điểm khác là trong pipeline của chúng tôi, VLM không bao giờ đưa ra nhãn cảm xúc.
+
+\textbf{Suy luận và tính trung thực.} Prompt chuỗi suy luận~\cite{wei2022cot} được biết là có thể tạo ra lời giải thích không phản ánh lý do của câu trả lời~\cite{turpin2023,lanham2023}. Các nghiên cứu NLP phân biệt tính hợp lý với tính trung thực~\cite{jacovi2020}, kêu gọi đánh giá chặt chẽ khả năng diễn giải~\cite{doshivelez2017}, và đo tính trung thực bằng các phép thử như khả năng mô phỏng~\cite{hase2020las,chen2023cs}, phép thử phản thực tế hoặc can thiệp~\cite{atanasova2023,lanham2023}, và kiểm tra tự nhất quán cho bộ giải mã thị giác--ngôn ngữ~\cite{parcalabescu2024}. Với ảnh, đã có đề xuất chỉnh sửa phản thực tế các đối tượng được trích dẫn~\cite{ding2026edct,menzat2026vct}. Trong nghiên cứu cảm xúc, ERV kiểm tra sự nhất quán giữa lời giải thích và nhãn~\cite{rha2026erv}; FACR can thiệp lên các đơn vị cử động khuôn mặt~\cite{huynh2026facr}; OPPO che modality và kiểm tra các khẳng định~\cite{han2026oppo}; DSPO che vùng ảnh mà lập luận trích dẫn và giảm trọng số các diễn giải không được ảnh hỗ trợ~\cite{ye2026dspo}; AffectOmni kiểm tra tính có căn cứ sau khi sinh~\cite{wang2026affectomni}. Các công trình này kiểm tra xem lập luận do chính mô hình tạo ra có trung thực không. Chúng tôi tránh một phần vấn đề đó bằng cách đo bằng chứng trên bộ phân loại trước, rồi chỉ yêu cầu VLM thuật lại; điều còn phải kiểm tra là lời thuật lại có nằm trong phạm vi bằng chứng hay không.
+
+\textbf{Nhãn, cách chấm điểm và xác định người mục tiêu.} Mart{\'\i}nez-Miwa và Castel{\'a}n gán nhãn lại một tập con 1.120 ảnh EMOTIC với tám nhóm cảm xúc và lọc phiếu của từng ảnh bằng ngưỡng Z-score, làm thay đổi số nhãn và mức đồng thuận~\cite{martinez2023reliability}. Về chấm điểm, việc đọc xác suất token đã được dùng cho phân loại cảm xúc đa nhãn trên văn bản~\cite{ma2025mlc}, và đọc câu trả lời từ logit được báo cáo là tốt hơn câu trả lời được sinh ra trên một benchmark cảm xúc khuôn mặt~\cite{hallmen2026readout}; bộ phân loại của chúng tôi cho trực tiếp xác suất từng nhãn. Về xác định người mục tiêu, tính nhất quán khi hoán đổi người đã được đề xuất cho suy luận thường thức thị giác~\cite{kim2023vcr}; chúng tôi áp dụng phép hoán đổi cho các baseline cảm xúc.
+
+\section{Phương pháp}\label{sec:method}
+Mỗi mẫu là một người được gán nhãn $i$ trong ảnh $I$, có khung bao $b_i$ và vector nhãn đa nhãn $y_i\in\{0,1\}^{26}$. Pipeline gồm năm bước.
+
+\textbf{1) Trích dấu hiệu.} Người mục tiêu được đánh dấu bằng khung đỏ trên $I$, và Qwen3-VL-4B-Instruct\footnote{Mô hình \texttt{Qwen/Qwen3-VL-4B-Instruct} trên Hugging Face.} được yêu cầu trả về một đối tượng JSON gồm tối đa ba dấu hiệu nhìn thấy được về người (khuôn mặt, tư thế, cử chỉ, trang phục, hành động), tối đa ba dấu hiệu ngữ cảnh (khung cảnh, đồ vật, người khác), tối đa hai quan hệ liên quan đến người mục tiêu (ví dụ ``target facing person\_2''), và một câu mô tả điều đang diễn ra. Prompt cấm gọi tên hay suy đoán cảm xúc và không liệt kê 26 nhãn, nên tập nhãn không thể rò qua prompt. Giải mã tham lam với tối đa 192 token mới, và ảnh được thu nhỏ còn tối đa 409.600 điểm ảnh. Để chạy được toàn bộ tập, các prompt được giải mã theo batch với padding bên trái; kích thước batch được chọn trên những người đã có dấu hiệu, là kích thước nhanh nhất mà tỉ lệ đúng schema vẫn từ 95\% trở lên. Đầu ra sai schema được thay bằng một node dự phòng duy nhất.
+
+\textbf{2) Mã hóa.} Mỗi dấu hiệu, quan hệ và câu tình huống trở thành một node thuộc một trong bốn loại; mỗi mẫu có tối đa chín node. Một bộ mã hóa BERT-base đóng băng\footnote{\texttt{google-bert/bert-base-uncased}, embedding của token đầu, 32 token.} ánh xạ văn bản của từng node thành vector 768 chiều. Một ViT-B/16 đóng băng, tiền huấn luyện trên ImageNet\footnote{\texttt{torchvision} \texttt{vit\_b\_16}, trọng số \texttt{IMAGENET1K\_V1}.}, ánh xạ ảnh cắt người và ảnh toàn cảnh thành các vector 768 chiều $v^p_i$ và $v^c_i$. Mọi đặc trưng được tính một lần và lưu đệm.
+
+\textbf{3) Hợp nhất.} Các vector node được chiếu về $d=256$, cộng thêm embedding loại node, và một transformer encoder hai lớp (8 head) theo sau bởi phép gộp trung bình có mặt nạ cho ra một vector dấu hiệu $g_i$. Vì mọi node đều chú ý tới mọi node khác, đây là một đồ thị dấu hiệu kết nối đầy đủ, không có cạnh được gán nhãn; chúng tôi không khẳng định có suy luận quan hệ có cấu trúc. Một transformer hai lớp thứ hai nhận bốn token: một token phân loại học được, $W_pv^p_i$, $W_cv^c_i$ và $g_i$, mỗi token kèm một embedding modality; một lớp tuyến tính trên token phân loại cho ra logit $z_i\in\mathbb{R}^{26}$ và xác suất $\hat p_i=\sigma(z_i)$. Huấn luyện dùng binary cross-entropy với trọng số dương theo từng nhãn $\min(10,\max(1,N^-_k/N^+_k))$, AdamW (tốc độ học $3\times10^{-4}$, weight decay $10^{-4}$), batch 32 và 20 epoch.
+
+\textbf{4) Bằng chứng.} Với mỗi modality $m\in\{\text{người},\text{ngữ cảnh},\text{dấu hiệu}\}$, token tương ứng được đặt bằng 0 trong mô hình đã huấn luyện, cho ra $\hat p_i^{(-m)}$. Mức giảm $\Delta_{ik}^{m}=\hat p_{ik}-\hat p_{ik}^{(-m)}$ của mỗi nhãn được dự đoán $k$ được lưu cùng các dấu hiệu trong một gói bằng chứng. Đặt token bằng 0 chỉ là can thiệp ở mức modality và đưa đầu vào ra khỏi phân phối huấn luyện; nó không quy quyết định về từng điểm ảnh hay từng dấu hiệu.
+
+\textbf{5) Diễn đạt.} VLM nhận gói bằng chứng và phải trả về \texttt{\{"most\_important\_modality", "explanation"\}}, giải thích dự đoán chỉ bằng bằng chứng được cung cấp và trích dẫn các thay đổi xác suất. Ở bước này VLM vẫn thấy ảnh, nên nó có thể thêm lý do lấy từ ảnh; các phép kiểm tra dưới đây được thiết kế để phát hiện điều đó.
+
+\subsection{Giao thức đánh giá}\label{sec:explain}
+\textbf{Chia dữ liệu.} Huấn luyện dùng toàn bộ 23.706 người của tập train PAMI. 3.334 người của tập validation được chia theo ảnh thành nửa dev (1.643 người; chọn checkpoint, ngưỡng từng nhãn và $k$) và nửa eval (1.691 người; báo cáo), mỗi nửa 1.044 ảnh, nên những người trong cùng một ảnh không bao giờ rơi vào cả hai nửa. 7.280 người của tập test (4.389 ảnh) chỉ được chấm bằng mô hình, ngưỡng và $k$ đã cố định trên dev. Lần chạy test đầu tiên gồm các biến thể đầy đủ, bỏ dấu hiệu và xóa từ chỉ cảm xúc; các biến thể bỏ ngữ cảnh và bỏ người, phần so với ResNet và lời giải thích trên test được thêm sau đó mà không đổi bất kỳ thiết lập nào, và lần chạy lại cho ra đúng các con số test trước đó.
+
+\textbf{Nhận diện.} Chúng tôi báo cáo mAP, macro-F1 và micro-F1 với ngưỡng từng nhãn chọn trên dev, một baseline hằng số top-$k$ có $k$ và thứ tự nhãn chọn trên dev, và khoảng tin cậy bootstrap ghép cặp theo ảnh cho chênh lệch macro-F1 (2.000 lần lấy mẫu). Để kiểm tra đóng góp của từng đầu vào, cùng mô hình hợp nhất được huấn luyện lại khi bỏ token dấu hiệu (chỉ thị giác), bỏ token ngữ cảnh, bỏ token người, và khi xóa 22 từ chỉ cảm xúc khỏi mọi dấu hiệu trước khi mã hóa. Mỗi biến thể được huấn luyện với seed 42--44 và báo cáo bằng trung bình và độ lệch chuẩn; khoảng bootstrap so các lần chạy seed 42. Lần chạy seed 42 của mô hình đầy đủ là checkpoint chính, dùng để tạo gói bằng chứng.
+
+\textbf{Lời giải thích.} Với lời giải thích $e$ của mẫu $i$, đặt $m^\star_i=\arg\max_m \frac{1}{|K_i|}\sum_{k\in K_i}\Delta^m_{ik}$ là modality có mức giảm trung bình lớn nhất trên tập nhãn được dự đoán $K_i$. Chúng tôi báo cáo: (a)~\emph{mức khớp modality}, tỉ lệ lời giải thích có modality được nêu trùng với $m^\star_i$, đặt cạnh tỉ lệ đạt được khi luôn nêu $m^\star$ phổ biến nhất; (b)~\emph{độ đúng của con số được trích}, tỉ lệ số thập phân hoặc phần trăm trong $e$ khớp trong phạm vi 0,006 với một xác suất, một xác suất khi bỏ modality, hoặc một mức giảm trong gói; và (c)~tỉ lệ lời giải thích nêu một trong 26 cảm xúc nằm ngoài $K_i$. (d)~Chúng tôi cũng báo cáo hai metric trung thực của ERASER~\cite{deyoung2020eraser}, lấy modality được nêu $\hat m_i$ làm rationale: comprehensiveness $\frac{1}{|K_i|}\sum_{k\in K_i}(\hat p_{ik}-\hat p_{ik}^{(-\hat m_i)})$, mức giảm khi bỏ rationale (càng cao càng trung thực), và sufficiency $\frac{1}{|K_i|}\sum_{k\in K_i}(\hat p_{ik}-\hat p_{ik}^{(\text{chỉ }\hat m_i)})$, mức giảm khi chỉ giữ rationale (càng thấp càng trung thực). Cả hai được so với luôn nêu $m^\star$ phổ biến nhất, với một modality ngẫu nhiên và với chính $m^\star_i$. Các phép kiểm tra này rẻ và tự động; chúng kiểm tra sự nhất quán với bằng chứng, không kiểm tra lý do của bộ phân loại có đúng hay không.
+
+\section{Thực nghiệm và kết quả}
+Mọi con số đều lấy từ các lần chạy của chính chúng tôi trên bản mở rộng của EMOTIC với nhãn union, trừ khi có ghi chú khác.
+
+\subsection{Thống kê nhãn EMOTIC}\label{sec:data}
+Chúng tôi dùng bản mở rộng gồm 34.320 người được gán nhãn. Bảng~\ref{tab:labels} cho số nhãn mỗi người theo hai cách gộp. Cách \emph{union} giữ mọi nhãn mà ít nhất một người gán nhãn đã chọn; với mọi người trong validation và test, cách này trùng với nhãn tổng hợp chính thức. Cách \emph{majority} chỉ giữ các nhãn có hơn một nửa số phiếu. Mỗi người trong tập train chỉ có một người gán nhãn, nên hai cách trùng nhau ở đó. Trong validation, 52,4\% nhãn union chỉ do một người gán nhãn chọn, và trong test là 69,7\%.
+
+\begin{table}[t]
+\caption{Thống kê nhãn EMOTIC (chúng tôi đếm lại từ annotation chính thức).}
+\label{tab:labels}
+\centering
+\footnotesize
+\begin{tabular}{lrrrrr}
+\toprule
+Tập & Số người & Người gán/ & \multicolumn{2}{c}{Nhãn/người} & Tỉ lệ \\
+ & & mẫu & union & majority & 1 phiếu \\
+\midrule
+Train & 23.706 & 1,00 & 1,96 & 1,96 & -- \\
+Val & 3.334 & 4,81 & 6,16 & 1,48 & 52,4\% \\
+Test & 7.280 & 2,69 & 4,42 & 1,37 & 69,7\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Một mô hình được huấn luyện với khoảng hai nhãn mỗi người (Bảng~\ref{tab:labels}, Mục~\ref{sec:data}) lại được đánh giá với bốn đến sáu nhãn. Vì vậy cách gộp nhãn ảnh hưởng đến mọi phép so sánh bên dưới. Ảnh có nhiều người đặt ra vấn đề thứ hai: trong test, 996 trên 4.994 cặp người cùng ảnh (19,9\%) có tập nhãn majority khác rỗng nhưng không chung nhãn nào, nên một mô hình không phân biệt người được hỏi không thể đúng với cả hai người.
+
+\subsection{Các baseline tham chiếu trên tập test}\label{sec:baseline}
+Chúng tôi huấn luyện các baseline ResNet-50 theo kiểu của Kosti và cộng sự~\cite{kosti2020emotic}: chỉ ảnh cắt người, chỉ ảnh toàn cảnh, và ghép hai bộ mã hóa, mỗi mô hình có đầu MLP 512 đơn vị, binary cross-entropy, AdamW (tốc độ học $10^{-4}$), 30 epoch, ảnh vào 224 điểm ảnh và seed 42 (Hình~\ref{fig:pilot}a cho mAP validation theo epoch). Checkpoint có mAP validation tốt nhất được giữ lại, ngưỡng từng nhãn và baseline hằng số được chọn trên validation, và tập test được đánh giá đúng một lần.
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_pilot.pdf}
+\caption{(a)~mAP validation theo epoch của ba baseline ResNet-50. (b)~Số nhãn được dự đoán trong pilot VLM (300 người): Engagement so với mọi nhãn khác, cho prompt trực tiếp (D) và prompt có cấu trúc (E). (c)~Micro-F1 của pilot với nhãn union, cho D và E, cho D và E khi bỏ Engagement, cho việc luôn dự đoán Engagement, và cho baseline hằng số top-2.}
+\label{fig:pilot}
+\end{figure*}
+
+\begin{table}[t]
+\caption{Baseline ResNet-50 trên tập test EMOTIC (7.280 người, nhãn union). Ngưỡng và $k$ chọn trên validation. Dự đoán/n.: số nhãn dự đoán mỗi người (thực tế: 4,42).}
+\label{tab:baseline}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lcccc}
+\toprule
+Mô hình & mAP & Macro-F1 & Micro-F1 & Dự đoán/n. \\
+\midrule
+Chỉ người & 25,39 & 23,07 & 44,60 & 2,85 \\
+Chỉ ngữ cảnh & 27,35 & 30,94 & 53,11 & 7,52 \\
+Người + ngữ cảnh & 25,97 & 20,79 & 42,87 & 2,29 \\
+Hằng số (top-26) & 16,98$^\dagger$ & 25,12 & 29,03 & 26,00 \\
+\bottomrule
+\end{tabular}
+
+\vspace{2pt}
+{\scriptsize $^\dagger$mAP của mọi bộ chấm hằng số bằng tỉ lệ dương trung bình của các nhãn.}
+\end{table}
+
+Bảng~\ref{tab:baseline} cho thấy cả ba mô hình đều cao hơn hẳn bộ chấm hằng số về mAP, nhưng chỉ mô hình chỉ ngữ cảnh vượt baseline hằng số về macro-F1. Thứ hạng theo F1 chủ yếu phản ánh số nhãn mà mỗi mô hình dự đoán: mô hình chỉ ngữ cảnh dự đoán 7,52 nhãn mỗi người và thắng nhờ recall, còn mô hình người + ngữ cảnh dự đoán 2,29 nhãn và có micro-precision cao nhất (62,8\%). Bootstrap ghép cặp xác nhận các khoảng cách macro-F1 không phải do nhiễu: chỉ ngữ cảnh trừ người + ngữ cảnh là $+$10,1 điểm (KTC 95\% từ 9,1 đến 11,2) và chỉ người trừ người + ngữ cảnh là $+$2,3 (từ 1,5 đến 3,1). Theo mAP, thước đo không phụ thuộc ngưỡng, chênh lệch chỉ khoảng 2 điểm. Khi bỏ nhãn phổ biến Engagement, mAP giảm còn 23,1, 25,0 và 23,6, và mô hình người + ngữ cảnh giảm từ 28,3 mAP trên ảnh một người xuống 23,8 trên ảnh có từ ba người trở lên. Với nhãn majority, mAP là 12,6, 15,0 và 12,8.
+
+\textbf{Che vùng.} Trên mô hình người + ngữ cảnh, chúng tôi đặt bằng 0 (i)~ảnh cắt người và khung của người mục tiêu trong ảnh toàn cảnh, (ii)~mọi thứ ngoài khung người mục tiêu, và (iii)~ảnh cắt người cùng một khung ngẫu nhiên có kích thước bằng khung người mục tiêu. mAP trên test giảm lần lượt 5,62, 1,26 và 5,02 điểm. Đối chứng khung ngẫu nhiên cho thấy gần như toàn bộ ảnh hưởng của người đến từ việc mất ảnh cắt người; che chính vùng của người mục tiêu trong ảnh toàn cảnh chỉ làm giảm thêm 0,60 điểm so với che một vùng ngẫu nhiên. Bỏ toàn bộ ngữ cảnh làm giảm 1,26 điểm.
+
+\textbf{Hoán đổi người mục tiêu.} Với 9.988 cặp có thứ tự gồm hai người trong 1.783 ảnh test có nhiều người, chúng tôi giữ nguyên ảnh toàn cảnh và thay ảnh cắt người bằng ảnh cắt của người còn lại. Dự đoán khớp với nhãn của người mới tốt hơn nhãn của người cũ ở 40,5\% số cặp, hòa ở 23,0\%, và khớp với người cũ tốt hơn ở 36,6\% còn lại; sample-F1 trung bình là 0,387 với người mới và 0,373 với người cũ. Như vậy baseline hầu như không theo dõi được người mà nó được hỏi, và đây là động lực cho các dấu hiệu gắn với từng người trong pipeline của chúng tôi.
+
+\subsection{Pilot: để VLM tự gọi tên cảm xúc}\label{sec:pilot}
+Trước khi thiết kế pipeline, chúng tôi chạy Qwen2.5-VL-3B-Instruct~\cite{bai2025qwen25vl} trên 300 người của tập validation thuộc 279 ảnh (seed 42, giải mã tham lam, Tesla T4). Người mục tiêu được đánh dấu bằng khung đỏ. Với prompt \emph{trực tiếp} (D), mô hình chọn từ 26 nhãn; với prompt \emph{có cấu trúc} (E), mô hình liệt kê dấu hiệu về người, dấu hiệu ngữ cảnh và tình huống trước, rồi mới nêu cảm xúc. Khoảng tin cậy được tính bằng bootstrap ghép cặp theo ảnh.
+
+\begin{table}[t]
+\caption{Pilot VLM, nhãn union (300 người của validation). Khoảng tin cậy: bootstrap ghép cặp theo ảnh, 95\%. Số nhãn thật mỗi người: 6,16.}
+\label{tab:pilot}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lccc}
+\toprule
+ & D & E & E$-$D [KTC 95\%] \\
+\midrule
+Macro-F1 & 15,8 & 17,1 & $+$1,2 [$-$0,6; $+$3,0] \\
+Micro-F1 & 33,4 & 38,6 & $+$5,2 [$+$3,2; $+$7,0] \\
+Nhãn dự đoán / người & 1,73 & 1,98 & -- \\
+Tỉ lệ parse (\%) & 100 & 98,67 & -- \\
+Giây / mẫu & 1,0 & 4,76 & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+E có micro-F1 cao hơn, nhưng mức tăng macro-F1 không phân biệt được với 0 (Bảng~\ref{tab:pilot}). Engagement là nhãn phổ biến nhất (288 trên 300 người); D dự đoán nhãn này cho 120 người và E cho 233 người (Hình~\ref{fig:pilot}b). Khi bỏ Engagement, micro-F1 của D là 28,3 và của E là 25,4, chênh $-$2,9 điểm (KTC từ $-$4,8 đến $-$1,0), và baseline hằng số top-2 đạt micro-F1 45,5 so với 38,6 của E (Hình~\ref{fig:pilot}c). Pilot này nhỏ (một mô hình 3B, một seed), nhưng cho thấy lập luận có cấu trúc không làm VLM gán nhãn tốt hơn, và các tập nhãn được sinh ra khó so sánh khi không có điểm số từng nhãn. Đó là lý do VLM trong pipeline của chúng tôi chỉ mô tả và thuật lại, không gán nhãn.
+
+\subsection{Trích dấu hiệu}\label{sec:cues}
+Bước trích dấu hiệu với prompt ở Mục~\ref{sec:method} đã được chạy cho toàn bộ 23.706 người của tập train, 3.334 người của tập validation và 7.280 người của tập test. 2.275 người đầu tiên của tập train theo thứ tự annotation được giải mã từng mẫu trên Tesla T4 (6,29 giây mỗi người trên 1.420 người đầu); những người còn lại được giải mã theo batch 48 trên NVIDIA A100 và NVIDIA H100. Trong lần đo của run được báo cáo trên H100, batch 48 mất 0,22 giây mỗi người, so với 0,27 khi batch 32 và 0,84 khi batch 16, với bộ nhớ đỉnh 16,2~GB. Giải mã theo batch không tương đương với giải mã từng mẫu: với 48 người đầu của tập train, đầu ra theo batch sau khi parse trùng với đầu ra từng mẫu đã lưu ở 28 người, dù cả 48 vẫn đúng schema; qua bốn lần đo, con số này dao động từ 24 đến 28. Bảng~\ref{tab:cues} tóm tắt kết quả trên train và validation; với tập test, giải mã theo batch 48 trên H100, 99,99\% đầu ra parse được, 99,63\% đúng schema và không đầu ra nào bị cắt. Các trường hợp sai schema mà chúng tôi kiểm tra đều có hai danh sách dấu hiệu rỗng trong khi câu tình huống vẫn có nội dung. Quan hệ là phần yếu nhất: gần một phần tư đầu ra không có quan hệ nào.
+
+\begin{table}[t]
+\caption{Trích dấu hiệu bằng Qwen3-VL-4B trên toàn bộ 27.040 người của train và validation.}
+\label{tab:cues}
+\centering
+\footnotesize
+\begin{tabular}{lr}
+\toprule
+Chỉ số & Giá trị \\
+\midrule
+Parse được JSON & 100,0\% \\
+Đúng schema & 99,65\% \\
+Bị cắt ở giới hạn token & 0,0\% \\
+Dấu hiệu người / ngữ cảnh mỗi mẫu & 3,00 / 2,99 \\
+Quan hệ mỗi mẫu (không có) & 0,86 (23,4\%) \\
+Bộ dấu hiệu chứa từ chỉ cảm xúc & 18,4\% \\
+Giây mỗi người, T4, từng mẫu (1.420 người đầu) & 6,29 \\
+Giây mỗi người, H100, batch 48 & 0,22 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Prompt cấm dùng từ chỉ cảm xúc, nhưng 18,4\% bộ dấu hiệu hợp lệ vẫn chứa ít nhất một từ trong một danh sách 22 từ chỉ cảm xúc. Phần lớn là ``smiling'' (6.099 lần), có thể xem là một dấu hiệu khuôn mặt nhìn thấy được, nhưng ``engaged'' xuất hiện 507 lần và gần như trùng với nhãn Engagement, còn ``focused'' xuất hiện 143 lần. Những từ này có thể mang thông tin nhãn từ VLM sang bộ phân loại. Để đối chứng, chúng tôi xóa 22 từ này khỏi mọi dấu hiệu rồi mã hóa lại; việc này làm thay đổi 18,9\% trong 34.320 bộ dấu hiệu, và biến thể thu được được so sánh ở Mục~\ref{sec:fusion}.
+
+\subsection{Mô hình hợp nhất, các biến thể và kết quả trên test}\label{sec:fusion}
+Khi đặc trưng BERT và ViT đã được lưu đệm, mỗi lần huấn luyện gồm 20 epoch, mỗi epoch khoảng 6 giây trên H100. Bảng~\ref{tab:fusion} cho mọi biến thể trên nửa eval (1.691 người, 6,18 nhãn union mỗi người) và trên tập test (7.280 người, 4,42), cùng baseline hằng số và các baseline ResNet-50 của Mục~\ref{sec:baseline}; Hình~\ref{fig:fusion} cho đường huấn luyện và mAP trên test.
+
+\begin{table*}[t]
+\caption{Các biến thể của mô hình hợp nhất trên nửa eval của validation và trên tập test (nhãn union), trung bình $\pm$ độ lệch chuẩn qua seed 42--44. Checkpoint, ngưỡng và $k$ chọn trên nửa dev. Dự đoán/ng.: số nhãn dự đoán mỗi người trên test (thật: 4,42). Các dòng ResNet-50 lặp lại Bảng~\ref{tab:baseline}; ngưỡng của chúng được chọn trên toàn bộ validation.}
+\label{tab:fusion}
+\centering
+\footnotesize
+\begin{tabular}{lccccccc}
+\toprule
+ & \multicolumn{3}{c}{Nửa eval (1.691 người)} & \multicolumn{4}{c}{Test (7.280 người)} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-8}
+Biến thể & mAP & Macro-F1 & Micro-F1 & mAP & Macro-F1 & Micro-F1 & Dự đoán/ng. \\
+\midrule
+Đầy đủ (người, ngữ cảnh, dấu hiệu) & 40,5$\pm$0,5 & 42,6$\pm$1,1 & 64,3$\pm$1,6 & 28,5$\pm$1,2 & 32,2$\pm$1,0 & 51,3$\pm$1,8 & 8,69 \\
+Bỏ token dấu hiệu (chỉ thị giác) & 37,5$\pm$0,4 & 40,4$\pm$0,2 & 61,3$\pm$0,7 & 27,0$\pm$0,1 & 31,3$\pm$0,2 & 48,4$\pm$0,7 & 10,29 \\
+Bỏ token ngữ cảnh & 40,1$\pm$0,6 & 43,2$\pm$0,5 & 62,7$\pm$0,6 & 29,8$\pm$0,4 & 33,4$\pm$0,1 & 50,1$\pm$0,7 & 9,68 \\
+Bỏ token người & 39,8$\pm$0,6 & 43,1$\pm$0,6 & 62,7$\pm$0,6 & 30,4$\pm$0,3 & 33,9$\pm$0,4 & 50,0$\pm$0,8 & 9,86 \\
+Dấu hiệu đã xóa từ chỉ cảm xúc & 39,7$\pm$0,1 & 43,5$\pm$0,3 & 62,1$\pm$0,7 & 30,0$\pm$0,2 & 33,7$\pm$0,1 & 49,3$\pm$0,7 & 10,23 \\
+Hằng số (top-26) & 23,8$^\dagger$ & 32,6 & 38,4 & 17,0$^\dagger$ & 25,1 & 29,0 & 26,00 \\
+\midrule
+ResNet-50, chỉ người & -- & -- & -- & 25,39 & 23,07 & 44,60 & 2,85 \\
+ResNet-50, chỉ ngữ cảnh & -- & -- & -- & 27,35 & 30,94 & 53,11 & 7,52 \\
+ResNet-50, người + ngữ cảnh & -- & -- & -- & 25,97 & 20,79 & 42,87 & 2,29 \\
+\bottomrule
+\end{tabular}
+
+\vspace{2pt}
+{\scriptsize $^\dagger$Tỉ lệ dương trung bình của các nhãn trên tập tương ứng.}
+\end{table*}
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_fusion.pdf}
+\caption{(a)~Train loss và dev mAP theo epoch của mô hình hợp nhất chính (seed 42). (b)~Dev mAP theo epoch của năm biến thể, trung bình ba seed, vùng tô là khoảng min--max. (c)~mAP trên test của các biến thể (trung bình và độ lệch chuẩn qua ba seed) so với ResNet-50 tốt nhất (chỉ ngữ cảnh) và bộ chấm hằng số.}
+\label{fig:fusion}
+\end{figure*}
+
+\textbf{Nửa eval.} Bỏ token dấu hiệu làm mất trung bình 2,9 điểm mAP và 2,2 điểm macro-F1, gấp nhiều lần độ dao động giữa các seed của biến thể chỉ thị giác, và đường dev của biến thể này nằm dưới mọi biến thể khác ở mọi epoch (Hình~\ref{fig:fusion}b). Bỏ token ngữ cảnh hoặc token người mất tối đa 0,7 mAP và làm macro-F1 tăng nhẹ, nên khi đã có dấu hiệu gắn với người mục tiêu thì mỗi token thị giác đóng góp rất ít. Xóa từ chỉ cảm xúc khỏi dấu hiệu mất 0,7 mAP nhưng không mất macro-F1 (43,5 so với 42,6), và mô hình không có từ chỉ cảm xúc thắng biến thể chỉ thị giác 2,8 điểm macro-F1 trên các lần chạy seed 42 (KTC 95\% từ 0,7 đến 5,2).
+
+\textbf{Tập test.} Mọi biến thể đều cao hơn hẳn bộ chấm hằng số (bản đầy đủ trừ hằng số, seed 42: $+$5,8 macro-F1, KTC từ 4,8 đến 6,7), nhưng thứ hạng trên eval không giữ được. Mô hình đầy đủ có độ dao động giữa các seed lớn nhất, và lần chạy seed 42 của nó, tức checkpoint chính, là lần yếu nhất trên test (26,8 mAP so với 29,4 và 29,2). Theo trung bình seed, mô hình đầy đủ cao hơn biến thể chỉ thị giác 1,5 mAP, còn các biến thể bỏ ngữ cảnh, bỏ người và xóa từ chỉ cảm xúc cao hơn mô hình đầy đủ 1,3 đến 2,0 mAP, cỡ bằng độ dao động của chính mô hình đầy đủ. Trên các lần chạy seed 42, bản đầy đủ trừ bản chỉ thị giác là $-$0,3 macro-F1 (KTC từ $-$1,1 đến $+$0,5), còn bản đầy đủ trừ bản bỏ ngữ cảnh, bỏ người và xóa từ chỉ cảm xúc lần lượt là $-$2,3, $-$3,2 và $-$3,0, đều có khoảng tin cậy không chứa 0; lần chạy seed 42 yếu của bản đầy đủ góp phần vào ba khoảng cách này. Phép so sánh đúng trên cả hai tập và với mọi seed là dấu hiệu đã xóa từ chỉ cảm xúc so với chỉ thị giác: $+$3,0 mAP và $+$2,4 macro-F1 trên test theo trung bình seed, và $+$2,7 macro-F1 trên các lần chạy seed 42 (KTC từ 1,9 đến 3,4), so với $+$2,8 trên nửa eval. Như vậy dấu hiệu nhìn thấy được, khi không có từ chỉ cảm xúc, bổ sung thông tin ngoài đặc trưng ảnh đóng băng trên những người chưa thấy, còn phần tăng thêm của dấu hiệu gốc trên eval không tổng quát hóa được.
+
+Mọi biến thể dự đoán 8,7 đến 10,3 nhãn mỗi người trên test so với 4,42 nhãn thật, vì ngưỡng được chọn trên dev, nơi mỗi người có 6,13 nhãn; checkpoint chính có micro-precision 43,8\% và micro-recall 69,7\% trên test. Vì vậy F1 phụ thuộc vào số nhãn, và mAP là thước đo so sánh đáng tin hơn. Checkpoint chính đạt 40,5 mAP, 41,3 macro-F1 và 66,5 micro-F1 trên nửa eval, và 26,8, 30,9 và 53,8 trên test. AP từng nhãn trên test trải từ 85,4 với Engagement và 76,4 với Happiness xuống 5,1 với Fear và 2,4 với Embarrassment.
+
+\textbf{Nhiễu huấn luyện.} Dev mAP trung bình của mọi biến thể đạt đỉnh trong khoảng epoch 2 đến 5 và đến epoch 20 thấp hơn 1,1 đến 3,0 điểm, trong khi train loss vẫn giảm (Hình~\ref{fig:fusion}a,b). Lần chạy chính thì nằm trong khoảng 38,8 đến 40,4 dev mAP từ epoch 2 đến 19 và đạt đỉnh ở epoch 20 (40,8), nên checkpoint được chọn phụ thuộc vào nhiễu dev khoảng hai điểm. Một lượt chạy trước đó của các biến thể đầy đủ, bỏ dấu hiệu, bỏ ngữ cảnh và bỏ người với cùng seed nhưng trạng thái ngẫu nhiên của data loader khác cho eval mAP 40,9, 38,1, 39,8 và 40,7; hai lượt lệch nhau tới 0,9 mAP, nên không nên đọc các chênh lệch dưới một điểm là hiệu ứng.
+
+\textbf{So với ResNet-50.} Trên cùng người của tập test, mọi biến thể của pipeline có mAP trung bình (27,0 đến 30,4) cao hơn cả ba baseline ResNet-50 (25,39 đến 27,35), và biến thể chỉ thị giác, dùng đặc trưng ViT ImageNet đóng băng, ngang với ResNet chỉ ngữ cảnh đã fine-tune. Về macro-F1 trên seed 42, bản đầy đủ ngang với ResNet chỉ ngữ cảnh ($-$0,1, KTC từ $-$1,1 đến $+$1,0) và cao hơn ResNet chỉ người ($+$7,8, KTC từ 6,7 đến 8,7) và người + ngữ cảnh ($+$10,1, KTC từ 9,1 đến 11,0); mô hình không có từ chỉ cảm xúc cao hơn cả ba, hơn ResNet chỉ ngữ cảnh $+$2,9 (KTC từ 2,0 đến 3,9). Với nhãn majority, mAP trên test là 13,2 cho checkpoint chính và 15,4 cho mô hình không có từ chỉ cảm xúc seed 42, so với 12,6 đến 15,0 của các ResNet. Phép so sánh này không được kiểm soát hoàn toàn: ngưỡng của ResNet chọn trên toàn bộ validation với một seed, ResNet fine-tune backbone còn bộ mã hóa của chúng tôi đóng băng, và VLM viết dấu hiệu được tiền huấn luyện trên dữ liệu mà chúng tôi không kiểm tra được.
+
+\subsection{Kiểm tra lời giải thích}\label{sec:explresults}
+Qwen3-VL-4B diễn đạt gói bằng chứng của checkpoint chính cho mọi người của nửa eval và tập test, bằng giải mã tham lam, tối đa 256 token mới và batch 32 (30 người đầu của eval giải mã từng mẫu). Bảng~\ref{tab:expl} cho kết quả kiểm tra; một lời giải thích là dùng được khi parse được và nêu một trong ba modality.
+
+\begin{table}[t]
+\caption{Kiểm tra lời giải thích của checkpoint chính trên mọi người của nửa eval và tập test. Điểm ERASER là mức giảm xác suất trung bình trên các nhãn được dự đoán: comprehensiveness ($\uparrow$) bỏ modality được nêu, sufficiency ($\downarrow$) chỉ giữ modality đó.}
+\label{tab:expl}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrr}
+\toprule
+ & Eval & Test \\
+\midrule
+Lời giải thích sinh ra / dùng được & 1.691 / 1.667 & 7.280 / 7.193 \\
+Bị cắt ở giới hạn token & 1,42\% & 1,09\% \\
+Modality được nêu: người / ngữ cảnh / dấu hiệu & 1.660 / 7 / 0 & 7.158 / 35 / 0 \\
+Modality đo được: người / ngữ cảnh / dấu hiệu & 633 / 672 / 362 & 2.793 / 2.735 / 1.665 \\
+Mức khớp modality & 38,3\% & 38,8\% \\
+\quad luôn nêu modality phổ biến nhất & 40,3\% & 38,8\% \\
+Số con số được trích & 8.188 & 35.560 \\
+\quad có trong bằng chứng & 99,99\% & 99,97\% \\
+Nêu cảm xúc ngoài dự đoán & 1,74\% & 1,99\% \\
+\midrule
+Comprehensiveness: modality được nêu & 0,072 & 0,077 \\
+\quad phổ biến nhất / ngẫu nhiên & 0,078 / 0,066 & 0,077 / 0,070 \\
+\quad modality đo được & 0,157 & 0,159 \\
+Sufficiency: modality được nêu & 0,123 & 0,125 \\
+\quad phổ biến nhất / ngẫu nhiên & 0,120 / 0,133 & 0,125 / 0,134 \\
+\quad modality đo được & 0,045 & 0,047 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+VLM chép bằng chứng trung thực: trên nửa eval, 99,99\% trong 8.188 con số được trích khớp trong phạm vi 0,006 với một xác suất hoặc một mức giảm trong gói, và 1,74\% lời giải thích nêu cảm xúc ngoài dự đoán. Nó không thuật lại đúng modality mà các phép đo chỉ ra. Nó nêu người ở 99,6\% lời giải thích dùng được của eval, trong khi người chỉ là modality đo được quan trọng nhất ở 38,0\% số người, và mức khớp modality của nó (38,3\%) thấp hơn khi luôn nêu modality phổ biến nhất (40,3\%). ERASER cho cùng bức tranh: comprehensiveness (0,072) và sufficiency (0,123) của modality được nêu nằm giữa giá trị của một modality ngẫu nhiên và của modality phổ biến nhất, rất xa mức 0,157 và 0,045 của modality đo được. Trên tập test, modality đo được quan trọng nhất thường gặp nhất là người (2.793 trong 7.193 lời giải thích dùng được, so với 2.735 cho ngữ cảnh và 1.665 cho dấu hiệu), và VLM lại nêu người ở 99,5\%, nên mức khớp (38,8\%), comprehensiveness (0,077) và sufficiency (0,125) của nó gần như trùng với khi luôn nêu người (38,8\%, 0,077, 0,125). Bootstrap ghép cặp theo ảnh cho chênh mức khớp giữa modality được nêu và modality phổ biến nhất là $-$2,0 điểm trên eval (KTC 95\% từ $-$7,0 đến $+$3,1) và $-$0,04 trên test ($-$0,18 đến $+$0,10), và chênh comprehensiveness là $-$0,006 trên eval ($-$0,016 đến $+$0,003) và 0,0000 trên test ($-$0,0002 đến $+$0,0003); so với một modality ngẫu nhiên, comprehensiveness cao hơn 0,006 trên eval (0,001 đến 0,011) và 0,007 trên test (0,005 đến 0,010). Như vậy modality được nêu chỉ nhỉnh hơn một modality ngẫu nhiên vì nó gần như luôn là người, và không tốt hơn một lựa chọn hằng số. Con số được trích vẫn có căn cứ trên test (99,97\% trong 35.560), và 1,99\% lời giải thích của test nêu cảm xúc ngoài dự đoán.
+
+\section{Thảo luận và giới hạn}
+\textbf{Dấu hiệu đóng góp gì.} Các baseline ResNet hầu như không đổi dự đoán khi hoán đổi ảnh cắt người, nên văn bản gắn với người mục tiêu là chỗ hợp lý để giúp ích. Trên nửa eval, token dấu hiệu cho mức tăng lớn nhất, nhưng trên tập test dấu hiệu gốc thêm rất ít so với chỉ thị giác, trong khi cùng các dấu hiệu đó sau khi xóa 22 từ chỉ cảm xúc thêm 2,2 mAP trên eval và 3,0 trên test. Một cách hiểu là các từ như ``engaged'' và ``smiling'' cho phép bộ phân loại dựa vào phán đoán cảm xúc của chính VLM, điều này hợp với nhãn của validation hơn nhãn của test, vốn thưa hơn (4,42 so với 6,16 mỗi người) và thường do một người gán hơn (69,7\% so với 52,4\% nhãn union). Chúng tôi chưa kiểm chứng cách hiểu này. Dù thế nào, bằng chứng rằng dấu hiệu nhìn thấy được có ích dựa trên biến thể đã xóa từ chỉ cảm xúc. Bỏ token ngữ cảnh hoặc token người không làm giảm kết quả trên eval và giúp ích trên test, nên khi đã có dấu hiệu, mô hình ba token có thể có năng lực vượt quá mức dữ liệu cho phép; chúng tôi vẫn giữ mô hình đầy đủ làm checkpoint chính vì lựa chọn này đã cố định trước lần chạy test.
+
+\textbf{Lời giải thích cho thấy gì.} Việc tách quyết định khỏi lời diễn đạt khiến phép kiểm tra con số và cảm xúc đạt gần như ở mọi mẫu: VLM không bịa số hay nêu cảm xúc ngoài dự đoán. Phép kiểm tra modality thất bại trên cả hai tập: VLM gần như luôn gọi người là quan trọng nhất, bất kể các mức giảm đo được, và theo ERASER lựa chọn của nó không trung thực hơn một lựa chọn hằng số. Hoặc VLM không gộp được nhiều mức giảm xác suất thành một argmax, hoặc nó ưu tiên modality mà nó thấy hợp lý nhất từ ảnh, chính là hành vi không trung thực mà thiết kế muốn tránh. Có thể làm phép kiểm tra này đạt bằng cách tính $m^\star_i$ trong code rồi đưa cho VLM, nhưng khi đó VLM chỉ còn diễn đạt lại, nên chúng tôi báo cáo thất bại đúng như nó là.
+
+\textbf{So sánh.} F1 trên EMOTIC bị chi phối bởi số nhãn được dự đoán: các biến thể của chúng tôi dự đoán số nhãn mỗi người trên test khoảng gấp đôi số nhãn thật, vì ngưỡng được chọn trên dev có nhãn dày hơn. Vì vậy chúng tôi dựa vào mAP và bootstrap ghép cặp trên cùng người. Pipeline cao hơn các baseline ResNet về mAP trên test, nhưng hai phía khác nhau về tập chọn ngưỡng, số seed, cách huấn luyện backbone và dữ liệu tiền huấn luyện, nên điều này cho thấy thiết kế cạnh tranh được với một baseline có giám sát chuẩn, không cho thấy nó tốt hơn các hệ thống đã công bố.
+
+\textbf{Giới hạn của thiết kế.} Bộ mã hóa dấu hiệu là một tập node kết nối đầy đủ, không phải scene graph. Đặt token modality bằng 0 là phép can thiệp thô và gây lệch phân phối. Các phép kiểm tra ở Mục~\ref{sec:explain} kiểm tra sự nhất quán với bằng chứng và sẽ không phát hiện được trường hợp chính bằng chứng bị sai lệch. Dấu hiệu của 2.275 người trong tập train đến từ giải mã từng mẫu, phần còn lại từ giải mã theo batch, vốn chỉ trùng với đầu ra từng mẫu ở 50--58\% số người được so. Ba seed mỗi biến thể là ít: mAP trên test của mô hình đầy đủ trải từ 26,8 đến 29,4 giữa các seed, và hai lượt chạy cùng seed lệch nhau tới 0,9 mAP trên eval. Các baseline ResNet chỉ dùng một seed. Chạy lại toàn bộ notebook từ cue đã lưu cho ra đúng mọi con số.
+
+\section{Kết luận}
+Chúng tôi mô tả một pipeline trong đó VLM trích dấu hiệu nhìn thấy được và diễn đạt bằng chứng đã đo, còn một bộ phân loại đã huấn luyện đưa ra quyết định, cùng các phép kiểm tra tự động, gồm comprehensiveness và sufficiency của ERASER, xem lời giải thích có nằm trong phạm vi bằng chứng không. Đánh giá các baseline ResNet-50 trên tập test cho thấy thứ hạng F1 đi theo số nhãn được dự đoán, che người chỉ tệ hơn rất ít so với che một vùng ngẫu nhiên, và dự đoán hầu như không đổi theo người mục tiêu khi hoán đổi. Pilot để VLM tự gán nhãn cho thấy mức tăng đến từ một nhãn phổ biến. Trên 7.280 người của tập test, pipeline đạt 26,8 đến 30,9 mAP qua các biến thể và seed, cao hơn các baseline ResNet-50. Dấu hiệu chỉ giúp ổn định sau khi xóa từ chỉ cảm xúc, và biến thể đó đạt 30,0 mAP và 33,7 macro-F1 trên test. Trên mọi người của eval và test, lời giải thích chỉ trích các con số có trong bằng chứng nhưng gần như luôn nêu người là quan trọng nhất bất kể phép đo, nên phát biểu về modality của chúng không trung thực hơn một lựa chọn hằng số. Các bước tiếp theo là tính modality quan trọng nhất từ bằng chứng thay vì để VLM chọn, một prompt trích dấu hiệu chặn từ chỉ cảm xúc ngay khi sinh, và thêm seed.
+
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+
+\end{document}

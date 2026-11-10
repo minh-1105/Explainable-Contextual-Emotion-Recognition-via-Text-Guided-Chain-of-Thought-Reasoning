@@ -1,0 +1,1017 @@
+{
+ "arxiv": {
+  "2410.02244": {
+   "title": "Visual Prompting in LLMs for Enhancing Emotion Recognition",
+   "authors": [
+    "Qixuan Zhang",
+    "Zhifeng Wang",
+    "Dylan Zhang",
+    "Wenjia Niu",
+    "Sabrina Caldwell",
+    "Tom Gedeon",
+    "Yang Liu",
+    "Zhenyue Qin"
+   ],
+   "published": "2024-10-03",
+   "updated": "2024-10-03",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2406.11161": {
+   "title": "Emotion-LLaMA: Multimodal Emotion Recognition and Reasoning with Instruction Tuning",
+   "authors": [
+    "Zebang Cheng",
+    "Zhi-Qi Cheng",
+    "Jun-Yan He",
+    "Jingdong Sun",
+    "Kai Wang",
+    "Yuxiang Lin",
+    "Zheng Lian",
+    "Xiaojiang Peng",
+    "Alexander Hauptmann"
+   ],
+   "published": "2024-06-17",
+   "updated": "2024-11-02",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2309.13136": {
+   "title": "Contextual Emotion Estimation from Image Captions",
+   "authors": [
+    "Vera Yang",
+    "Archita Srivastava",
+    "Yasaman Etesam",
+    "Chuxuan Zhang",
+    "Angelica Lim"
+   ],
+   "published": "2023-09-22",
+   "updated": "2023-09-22",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2310.19995": {
+   "title": "Emotional Theory of Mind: Bridging Fast Visual Processing with Slow Linguistic Reasoning",
+   "authors": [
+    "Yasaman Etesam",
+    "Özge Nilay Yalçın",
+    "Chuxuan Zhang",
+    "Angelica Lim"
+   ],
+   "published": "2023-10-30",
+   "updated": "2024-06-15",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2306.15401": {
+   "title": "Explainable Multimodal Emotion Recognition",
+   "authors": [
+    "Zheng Lian",
+    "Haiyang Sun",
+    "Licai Sun",
+    "Hao Gu",
+    "Zhuofan Wen",
+    "Siyuan Zhang",
+    "Shun Chen",
+    "Mingyu Xu",
+    "Ke Xu",
+    "Kang Chen",
+    "Lan Chen",
+    "Shan Liang",
+    "Ya Li",
+    "Jiangyan Yi",
+    "Bin Liu",
+    "Jianhua Tao"
+   ],
+   "published": "2023-06-27",
+   "updated": "2024-05-23",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2405.08992": {
+   "title": "Contextual Emotion Recognition using Large Vision Language Models",
+   "authors": [
+    "Yasaman Etesam",
+    "Özge Nilay Yalçın",
+    "Chuxuan Zhang",
+    "Angelica Lim"
+   ],
+   "published": "2024-05-14",
+   "updated": "2025-01-31",
+   "journal_ref": null,
+   "doi": "10.1109/IROS58592.2024.10802538"
+  },
+  "2509.21950": {
+   "title": "Customizing Visual Emotion Evaluation for MLLMs: An Open-vocabulary, Multifaceted, and Scalable Approach",
+   "authors": [
+    "Daiqing Wu",
+    "Dongbao Yang",
+    "Sicheng Zhao",
+    "Can Ma",
+    "Yu Zhou"
+   ],
+   "published": "2025-09-26",
+   "updated": "2026-02-28",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2305.13500": {
+   "title": "Learning Emotion Representations from Verbal and Nonverbal Communication",
+   "authors": [
+    "Sitao Zhang",
+    "Yimu Pan",
+    "James Z. Wang"
+   ],
+   "published": "2023-05-22",
+   "updated": "2023-05-22",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2406.16442": {
+   "title": "EmoLLM: Multimodal Emotional Understanding Meets Large Language Models",
+   "authors": [
+    "Qu Yang",
+    "Mang Ye",
+    "Bo Du"
+   ],
+   "published": "2024-06-24",
+   "updated": "2024-06-29",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2503.05379": {
+   "title": "R1-Omni: Explainable Omni-Multimodal Emotion Recognition with Reinforcement Learning",
+   "authors": [
+    "Jiaxing Zhao",
+    "Xihan Wei",
+    "Liefeng Bo"
+   ],
+   "published": "2025-03-07",
+   "updated": "2025-03-10",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2003.06692": {
+   "title": "EmotiCon: Context-Aware Multimodal Emotion Recognition using Frege's Principle",
+   "authors": [
+    "Trisha Mittal",
+    "Pooja Guhan",
+    "Uttaran Bhattacharya",
+    "Rohan Chandra",
+    "Aniket Bera",
+    "Dinesh Manocha"
+   ],
+   "published": "2020-03-14",
+   "updated": "2020-03-14",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2003.13401": {
+   "title": "Context Based Emotion Recognition using EMOTIC Dataset",
+   "authors": [
+    "Ronak Kosti",
+    "Jose M. Alvarez",
+    "Adria Recasens",
+    "Agata Lapedriza"
+   ],
+   "published": "2020-03-30",
+   "updated": "2020-03-30",
+   "journal_ref": null,
+   "doi": "10.1109/TPAMI.2019.2916866"
+  },
+  "2502.05660": {
+   "title": "Evaluating Vision-Language Models for Emotion Recognition",
+   "authors": [
+    "Sree Bhattacharyya",
+    "James Z. Wang"
+   ],
+   "published": "2025-02-08",
+   "updated": "2025-02-08",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2404.07078": {
+   "title": "VLLMs Provide Better Context for Emotion Understanding Through Common Sense Reasoning",
+   "authors": [
+    "Alexandros Xenos",
+    "Niki Maria Foteinopoulou",
+    "Ioanna Ntinou",
+    "Ioannis Patras",
+    "Georgios Tzimiropoulos"
+   ],
+   "published": "2024-04-10",
+   "updated": "2025-07-15",
+   "journal_ref": null,
+   "doi": null
+  },
+  "1908.05913": {
+   "title": "Context-Aware Emotion Recognition Networks",
+   "authors": [
+    "Jiyoung Lee",
+    "Seungryong Kim",
+    "Sunok Kim",
+    "Jungin Park",
+    "Kwanghoon Sohn"
+   ],
+   "published": "2019-08-16",
+   "updated": "2019-08-16",
+   "journal_ref": null,
+   "doi": null
+  },
+  "1808.09568": {
+   "title": "ARBEE: Towards Automated Recognition of Bodily Expression of Emotion In the Wild",
+   "authors": [
+    "Yu Luo",
+    "Jianbo Ye",
+    "Reginald B. Adams,",
+    "Jia Li",
+    "Michelle G. Newman",
+    "James Z. Wang"
+   ],
+   "published": "2018-08-28",
+   "updated": "2019-07-09",
+   "journal_ref": null,
+   "doi": "10.1007/s11263-019-01215-y"
+  },
+  "2407.11300": {
+   "title": "Large Vision-Language Models as Emotion Recognizers in Context Awareness",
+   "authors": [
+    "Yuxuan Lei",
+    "Dingkang Yang",
+    "Zhaoyu Chen",
+    "Jiawei Chen",
+    "Peng Zhai",
+    "Lihua Zhang"
+   ],
+   "published": "2024-07-16",
+   "updated": "2024-07-16",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2509.19595": {
+   "title": "Anatomy of a Feeling: Narrating Embodied Emotions via Large Vision-Language Models",
+   "authors": [
+    "Mohammad Saim",
+    "Phan Anh Duong",
+    "Cat Luong",
+    "Aniket Bhanderi",
+    "Tianyu Jiang"
+   ],
+   "published": "2025-09-23",
+   "updated": "2025-09-23",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2403.05963": {
+   "title": "Robust Emotion Recognition in Context Debiasing",
+   "authors": [
+    "Dingkang Yang",
+    "Kun Yang",
+    "Mingcheng Li",
+    "Shunli Wang",
+    "Shuaibing Wang",
+    "Lihua Zhang"
+   ],
+   "published": "2024-03-09",
+   "updated": "2024-06-02",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2404.17205": {
+   "title": "Two in One Go: Single-stage Emotion Recognition with Decoupled Subject-context Transformer",
+   "authors": [
+    "Xinpeng Li",
+    "Teng Wang",
+    "Jian Zhao",
+    "Shuyi Mao",
+    "Jinbao Wang",
+    "Feng Zheng",
+    "Xiaojiang Peng",
+    "Xuelong Li"
+   ],
+   "published": "2024-04-26",
+   "updated": "2024-04-29",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2201.11903": {
+   "title": "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+   "authors": [
+    "Jason Wei",
+    "Xuezhi Wang",
+    "Dale Schuurmans",
+    "Maarten Bosma",
+    "Brian Ichter",
+    "Fei Xia",
+    "Ed Chi",
+    "Quoc Le",
+    "Denny Zhou"
+   ],
+   "published": "2022-01-28",
+   "updated": "2023-01-10",
+   "journal_ref": null,
+   "doi": null
+  },
+  "1512.03385": {
+   "title": "Deep Residual Learning for Image Recognition",
+   "authors": [
+    "Kaiming He",
+    "Xiangyu Zhang",
+    "Shaoqing Ren",
+    "Jian Sun"
+   ],
+   "published": "2015-12-10",
+   "updated": "2015-12-10",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2605.06126": {
+   "title": "AffectGPT-RL: Revealing Roles of Reinforcement Learning in Open-Vocabulary Emotion Recognition",
+   "authors": [
+    "Zheng Lian",
+    "Fan Zhang",
+    "Lan Chen",
+    "Yazhou Zhang",
+    "Rui Liu",
+    "Jinyang Wu",
+    "Haoyu Chen",
+    "Xiaobai Li",
+    "Xiaojiang Peng",
+    "Bin He",
+    "Jianhua Tao"
+   ],
+   "published": "2026-05-07",
+   "updated": "2026-05-07",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2505.17510": {
+   "title": "Large Language Models Do Multi-Label Classification Differently",
+   "authors": [
+    "Marcus Ma",
+    "Georgios Chochlakis",
+    "Niyantha Maruthu Pandiyan",
+    "Jesse Thomason",
+    "Shrikanth Narayanan"
+   ],
+   "published": "2025-05-23",
+   "updated": "2025-09-22",
+   "journal_ref": null,
+   "doi": "10.18653/v1/2025.emnlp-main.126"
+  },
+  "2510.23506": {
+   "title": "Emotion-Coherent Reasoning for Multimodal LLMs via Emotional Rationale Verifier",
+   "authors": [
+    "Hyeongseop Rha",
+    "Jeong Hun Yeo",
+    "Yeonju Kim",
+    "Yong Man Ro"
+   ],
+   "published": "2025-10-27",
+   "updated": "2026-01-05",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2609.36775": {
+   "title": "DSPO: Diversity-aware Subjective Policy Optimization for Robust Emotional Reasoning",
+   "authors": [
+    "Cheng Ye",
+    "Weidong Chen",
+    "Bingyan Xu",
+    "Zhendong Mao"
+   ],
+   "published": "2026-09-29",
+   "updated": "2026-09-29",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2307.08678": {
+   "title": "Do Models Explain Themselves? Counterfactual Simulatability of Natural Language Explanations",
+   "authors": [
+    "Yanda Chen",
+    "Ruiqi Zhong",
+    "Narutatsu Ri",
+    "Chen Zhao",
+    "He He",
+    "Jacob Steinhardt",
+    "Zhou Yu",
+    "Kathleen McKeown"
+   ],
+   "published": "2023-07-17",
+   "updated": "2023-07-17",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2604.05900": {
+   "title": "AICA-Bench: Holistically Examining the Capabilities of VLMs in Affective Image Content Analysis",
+   "authors": [
+    "Dong She",
+    "Xianrong Yao",
+    "Liqun Chen",
+    "Jinghe Yu",
+    "Yang Gao",
+    "Zhanpeng Jin"
+   ],
+   "published": "2026-04-07",
+   "updated": "2026-04-07",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2307.13702": {
+   "title": "Measuring Faithfulness in Chain-of-Thought Reasoning",
+   "authors": [
+    "Tamera Lanham",
+    "Anna Chen",
+    "Ansh Radhakrishnan",
+    "Benoit Steiner",
+    "Carson Denison",
+    "Danny Hernandez",
+    "Dustin Li",
+    "Esin Durmus",
+    "Evan Hubinger",
+    "Jackson Kernion",
+    "Kamilė Lukošiūtė",
+    "Karina Nguyen",
+    "Newton Cheng",
+    "Nicholas Joseph",
+    "Nicholas Schiefer",
+    "Oliver Rausch",
+    "Robin Larson",
+    "Sam McCandlish",
+    "Sandipan Kundu",
+    "Saurav Kadavath",
+    "Shannon Yang",
+    "Thomas Henighan",
+    "Timothy Maxwell",
+    "Timothy Telleen-Lawton",
+    "Tristan Hume",
+    "Zac Hatfield-Dodds",
+    "Jared Kaplan",
+    "Jan Brauner",
+    "Samuel R. Bowman",
+    "Ethan Perez"
+   ],
+   "published": "2023-07-17",
+   "updated": "2023-07-17",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2606.15779": {
+   "title": "Faithful Action-unit Causal Reasoning for Counterfactually Faithful Emotion Explanations",
+   "authors": [
+    "Van Thong Huynh",
+    "Hong Hai Nguyen",
+    "Thuy Pham",
+    "Trong Nghia Nguyen",
+    "Soo-Hyung Kim"
+   ],
+   "published": "2026-06-14",
+   "updated": "2026-06-14",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2504.07521": {
+   "title": "Why We Feel: Breaking Boundaries in Emotional Reasoning with Multimodal Large Language Models",
+   "authors": [
+    "Yuxiang Lin",
+    "Jingdong Sun",
+    "Zhi-Qi Cheng",
+    "Jue Wang",
+    "Haomin Liang",
+    "Zebang Cheng",
+    "Yifei Dong",
+    "Jun-Yan He",
+    "Xiaojiang Peng",
+    "Xian-Sheng Hua"
+   ],
+   "published": "2025-04-10",
+   "updated": "2025-04-17",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2610.08162": {
+   "title": "The Failure Is in the Readout: Fine-Grained Emotion Recognition Benchmarks Measure Elicitation, Not Perception",
+   "authors": [
+    "Tobias Hallmen",
+    "Fabian Deuser",
+    "Robin-Nico Kampa",
+    "Norbert Oswald",
+    "Elisabeth André"
+   ],
+   "published": "2026-10-06",
+   "updated": "2026-10-06",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2305.04388": {
+   "title": "Language Models Don't Always Say What They Think: Unfaithful Explanations in Chain-of-Thought Prompting",
+   "authors": [
+    "Miles Turpin",
+    "Julian Michael",
+    "Ethan Perez",
+    "Samuel R. Bowman"
+   ],
+   "published": "2023-05-07",
+   "updated": "2023-12-09",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2010.04119": {
+   "title": "Leakage-Adjusted Simulatability: Can Models Generate Non-Trivial Explanations of Their Behavior in Natural Language?",
+   "authors": [
+    "Peter Hase",
+    "Shiyue Zhang",
+    "Harry Xie",
+    "Mohit Bansal"
+   ],
+   "published": "2020-10-08",
+   "updated": "2020-10-08",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2404.18624": {
+   "title": "Do Vision & Language Decoders use Images and Text equally? How Self-consistent are their Explanations?",
+   "authors": [
+    "Letitia Parcalabescu",
+    "Anette Frank"
+   ],
+   "published": "2024-04-29",
+   "updated": "2025-05-01",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2502.13923": {
+   "title": "Qwen2.5-VL Technical Report",
+   "authors": [
+    "Shuai Bai",
+    "Keqin Chen",
+    "Xuejing Liu",
+    "Jialin Wang",
+    "Wenbin Ge",
+    "Sibo Song",
+    "Kai Dang",
+    "Peng Wang",
+    "Shijie Wang",
+    "Jun Tang",
+    "Humen Zhong",
+    "Yuanzhi Zhu",
+    "Mingkun Yang",
+    "Zhaohai Li",
+    "Jianqiang Wan",
+    "Pengfei Wang",
+    "Wei Ding",
+    "Zheren Fu",
+    "Yiheng Xu",
+    "Jiabo Ye",
+    "Xi Zhang",
+    "Tianbao Xie",
+    "Zesen Cheng",
+    "Hang Zhang",
+    "Zhibo Yang",
+    "Haiyang Xu",
+    "Junyang Lin"
+   ],
+   "published": "2025-02-19",
+   "updated": "2025-02-19",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2606.25325": {
+   "title": "Omni-Perception Policy Optimization for Multimodal Emotion Reasoning",
+   "authors": [
+    "Zhiyuan Han",
+    "Beier Zhu",
+    "Wenwen Tong",
+    "Pengyang Shao",
+    "Peipei Song",
+    "Xinyi Wang",
+    "Jiangnan Chen",
+    "Lewei Lu",
+    "Xun Yang"
+   ],
+   "published": "2026-06-24",
+   "updated": "2026-07-20",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2609.17953": {
+   "title": "EDCT-Bench: Uncovering Faithfulness Gaps in VLMs via Explanation-Driven Counterfactual Testing",
+   "authors": [
+    "Sihao Ding",
+    "Santosh Vasa",
+    "Aditi Ramadwar",
+    "Thomas Monninger"
+   ],
+   "published": "2026-09-16",
+   "updated": "2026-09-16",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2305.18029": {
+   "title": "Faithfulness Tests for Natural Language Explanations",
+   "authors": [
+    "Pepa Atanasova",
+    "Oana-Maria Camburu",
+    "Christina Lioma",
+    "Thomas Lukasiewicz",
+    "Jakob Grue Simonsen",
+    "Isabelle Augenstein"
+   ],
+   "published": "2023-05-29",
+   "updated": "2023-06-30",
+   "journal_ref": "The 61st Annual Meeting of the Association for Computational Linguistics (ACL 2023)",
+   "doi": null
+  },
+  "2609.06704": {
+   "title": "Counterfactual Tests for Measuring Chain-of-Thought Faithfulness in Visual Language Models",
+   "authors": [
+    "Bayar Menzat",
+    "Maximilian Süss",
+    "Ruizhi Wang",
+    "Benno Steinegger",
+    "Thomas Lukasiewicz",
+    "Oana-Maria Camburu"
+   ],
+   "published": "2026-09-06",
+   "updated": "2026-09-06",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2103.00020": {
+   "title": "Learning Transferable Visual Models From Natural Language Supervision",
+   "authors": [
+    "Alec Radford",
+    "Jong Wook Kim",
+    "Chris Hallacy",
+    "Aditya Ramesh",
+    "Gabriel Goh",
+    "Sandhini Agarwal",
+    "Girish Sastry",
+    "Amanda Askell",
+    "Pamela Mishkin",
+    "Jack Clark",
+    "Gretchen Krueger",
+    "Ilya Sutskever"
+   ],
+   "published": "2021-02-26",
+   "updated": "2021-02-26",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2304.08485": {
+   "title": "Visual Instruction Tuning",
+   "authors": [
+    "Haotian Liu",
+    "Chunyuan Li",
+    "Qingyang Wu",
+    "Yong Jae Lee"
+   ],
+   "published": "2023-04-17",
+   "updated": "2023-12-11",
+   "journal_ref": null,
+   "doi": null
+  },
+  "1702.08608": {
+   "title": "Towards A Rigorous Science of Interpretable Machine Learning",
+   "authors": [
+    "Finale Doshi-Velez",
+    "Been Kim"
+   ],
+   "published": "2017-02-28",
+   "updated": "2017-03-02",
+   "journal_ref": null,
+   "doi": null
+  },
+  "2608.26193": {
+   "title": "AffectOmni: RL-Verifiable People-Centric Grounded Affective Reasoning for Social and Art-Related Scenes",
+   "authors": [
+    "Yibo Wang",
+    "Rui Yang",
+    "Jisheng Dang",
+    "Bimei Wang",
+    "Yitao Wu",
+    "Pengfei Cao",
+    "Wencan Zhang",
+    "Hong Peng",
+    "Bin Hu",
+    "Tat-Seng Chua"
+   ],
+   "published": "2026-08-24",
+   "updated": "2026-08-24",
+   "journal_ref": null,
+   "doi": null
+  }
+ },
+ "crossref": {
+  "10.1109/TPAMI.2019.2916866": {
+   "title": "Context Based Emotion Recognition using EMOTIC Dataset",
+   "authors": [
+    "Ronak Kosti",
+    "Jose Alvarez",
+    "Adria Recasens",
+    "Agata Lapedriza"
+   ],
+   "container": "IEEE Transactions on Pattern Analysis and Machine Intelligence",
+   "year": 2019,
+   "volume": null,
+   "issue": null,
+   "pages": "1-1",
+   "publisher": "Institute of Electrical and Electronics Engineers (IEEE)",
+   "type": "journal-article"
+  },
+  "10.1109/CVPRW.2017.285": {
+   "title": "EMOTIC: Emotions in Context Dataset",
+   "authors": [
+    "Ronak Kosti",
+    "Jose M. Alvarez",
+    "Adria Recasens",
+    "Agata Lapedriza"
+   ],
+   "container": "2017 IEEE Conference on Computer Vision and Pattern Recognition Workshops (CVPRW)",
+   "year": 2017,
+   "volume": null,
+   "issue": null,
+   "pages": "2309-2317",
+   "publisher": "IEEE",
+   "type": "proceedings-article"
+  },
+  "10.1007/978-3-031-19836-6_9": {
+   "title": "Emotion Recognition for Multiple Context Awareness",
+   "authors": [
+    "Dingkang Yang",
+    "Shuai Huang",
+    "Shunli Wang",
+    "Yang Liu",
+    "Peng Zhai",
+    "Liuzhen Su",
+    "Mingcheng Li",
+    "Lihua Zhang"
+   ],
+   "container": "Lecture Notes in Computer Science",
+   "year": 2022,
+   "volume": null,
+   "issue": null,
+   "pages": "144-162",
+   "publisher": "Springer Nature Switzerland",
+   "type": "book-chapter"
+  },
+  "10.1038/s41597-023-02435-1": {
+   "title": "On reliability of annotations in contextual emotion imagery",
+   "authors": [
+    "Carlos A. Martínez-Miwa",
+    "Mario Castelán"
+   ],
+   "container": "Scientific Data",
+   "year": 2023,
+   "volume": "10",
+   "issue": "1",
+   "pages": null,
+   "publisher": "Springer Science and Business Media LLC",
+   "type": "journal-article"
+  },
+  "10.1177/1529100619832930": {
+   "title": "Emotional Expressions Reconsidered: Challenges to Inferring Emotion From Human Facial Movements",
+   "authors": [
+    "Lisa Feldman Barrett",
+    "Ralph Adolphs",
+    "Stacy Marsella",
+    "Aleix M. Martinez",
+    "Seth D. Pollak"
+   ],
+   "container": "Psychological Science in the Public Interest",
+   "year": 2019,
+   "volume": "20",
+   "issue": "1",
+   "pages": "1-68",
+   "publisher": "SAGE Publications",
+   "type": "journal-article"
+  },
+  "10.1177/0963721411422522": {
+   "title": "Context in Emotion Perception",
+   "authors": [
+    "Lisa Feldman Barrett",
+    "Batja Mesquita",
+    "Maria Gendron"
+   ],
+   "container": "Current Directions in Psychological Science",
+   "year": 2011,
+   "volume": "20",
+   "issue": "5",
+   "pages": "286-290",
+   "publisher": "SAGE Publications",
+   "type": "journal-article"
+  },
+  "10.1007/978-981-92-3504-9_49": {
+   "title": "EmoCoT: An Agentic Framework for Instance-Level Emotion Understanding",
+   "authors": [
+    "Yiwen Chen",
+    "Qiang Sun"
+   ],
+   "container": "Lecture Notes in Computer Science",
+   "year": 2026,
+   "volume": null,
+   "issue": null,
+   "pages": "598-611",
+   "publisher": "Springer Nature Singapore",
+   "type": "book-chapter"
+  },
+  "10.1109/IROS58592.2024.10802538": {
+   "title": "Contextual Emotion Recognition using Large Vision Language Models",
+   "authors": [
+    "Yasaman Etesam",
+    "Özge Nilay Yalçın",
+    "Chuxuan Zhang",
+    "Angelica Lim"
+   ],
+   "container": "2024 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)",
+   "year": 2024,
+   "volume": null,
+   "issue": null,
+   "pages": "4769-4776",
+   "publisher": "IEEE",
+   "type": "proceedings-article"
+  },
+  "10.1145/3664647.3680623": {
+   "title": "Two in One Go: Single-stage Emotion Recognition with Decoupled Subject-context Transformer",
+   "authors": [
+    "Xinpeng Li",
+    "Teng Wang",
+    "Jian Zhao",
+    "Shuyi Mao",
+    "Jinbao Wang",
+    "Feng Zheng",
+    "Xiaojiang Peng",
+    "Xuelong Li"
+   ],
+   "container": "Proceedings of the 32nd ACM International Conference on Multimedia",
+   "year": 2024,
+   "volume": null,
+   "issue": null,
+   "pages": "9340-9349",
+   "publisher": "ACM",
+   "type": "proceedings-article"
+  },
+  "10.1109/CVPR52733.2024.01183": {
+   "title": "Robust Emotion Recognition in Context Debiasing",
+   "authors": [
+    "Dingkang Yang",
+    "Kun Yang",
+    "Mingcheng Li",
+    "Shunli Wang",
+    "Shuaibing Wang",
+    "Lihua Zhang"
+   ],
+   "container": "2024 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)",
+   "year": 2024,
+   "volume": null,
+   "issue": null,
+   "pages": "12447-12457",
+   "publisher": "IEEE",
+   "type": "proceedings-article"
+  },
+  "10.18653/v1/2024.emnlp-main.257": {
+   "title": "Visual Prompting in LLMs for Enhancing Emotion Recognition",
+   "authors": [
+    "Qixuan Zhang",
+    "Zhifeng Wang",
+    "Dylan Zhang",
+    "Wenjia Niu",
+    "Sabrina Caldwell",
+    "Tom Gedeon",
+    "Yang Liu",
+    "Zhenyue Qin"
+   ],
+   "container": "Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing",
+   "year": 2024,
+   "volume": null,
+   "issue": null,
+   "pages": "4484-4499",
+   "publisher": "Association for Computational Linguistics",
+   "type": "proceedings-article"
+  },
+  "10.18653/v1/2023.ijcnlp-main.66": {
+   "title": "Examining Consistency of Visual Commonsense Reasoning based on Person Grounding",
+   "authors": [
+    "Huiju Kim",
+    "Youjin Kang",
+    "SangKeun Lee"
+   ],
+   "container": "Proceedings of the 13th International Joint Conference on Natural Language Processing and the 3rd Conference of the Asia-Pacific Chapter of the Association for Computational Linguistics (Volume 1: Long Papers)",
+   "year": 2023,
+   "volume": null,
+   "issue": null,
+   "pages": "1026-1039",
+   "publisher": "Association for Computational Linguistics",
+   "type": "proceedings-article"
+  },
+  "10.18653/v1/2020.acl-main.386": {
+   "title": "Towards Faithfully Interpretable NLP Systems: How Should We Define and Evaluate Faithfulness?",
+   "authors": [
+    "Alon Jacovi",
+    "Yoav Goldberg"
+   ],
+   "container": "Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics",
+   "year": 2020,
+   "volume": null,
+   "issue": null,
+   "pages": "4198-4205",
+   "publisher": "Association for Computational Linguistics",
+   "type": "proceedings-article"
+  },
+  "10.18653/v1/2025.emnlp-main.126": {
+   "title": "Large Language Models Do Multi-Label Classification Differently",
+   "authors": [
+    "Marcus Ma",
+    "Georgios Chochlakis",
+    "Niyantha Maruthu Pandiyan",
+    "Jesse Thomason",
+    "Shrikanth Narayanan"
+   ],
+   "container": "Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing",
+   "year": 2025,
+   "volume": null,
+   "issue": null,
+   "pages": "2472-2495",
+   "publisher": "Association for Computational Linguistics",
+   "type": "proceedings-article"
+  },
+  "10.18653/v1/2025.findings-naacl.97": {
+   "title": "Evaluating Vision-Language Models for Emotion Recognition",
+   "authors": [
+    "Sree Bhattacharyya",
+    "James Z. Wang"
+   ],
+   "container": "Findings of the Association for Computational Linguistics: NAACL 2025",
+   "year": 2025,
+   "volume": null,
+   "issue": null,
+   "pages": "1798-1820",
+   "publisher": "Association for Computational Linguistics",
+   "type": "proceedings-article"
+  },
+  "10.1109/IJCNN64981.2025.11227260": {
+   "title": "VLLMs Provide Better Context for Emotion Understanding Through Common Sense Reasoning",
+   "authors": [
+    "Alexandros Xenos",
+    "Niki M. Foteinopoulou",
+    "Ioanna Ntinou",
+    "Ioannis Patras",
+    "Georgios Tzimiropoulos"
+   ],
+   "container": "2025 International Joint Conference on Neural Networks (IJCNN)",
+   "year": 2025,
+   "volume": null,
+   "issue": null,
+   "pages": "1-10",
+   "publisher": "IEEE",
+   "type": "proceedings-article"
+  },
+  "10.1007/s11263-019-01215-y": {
+   "title": "ARBEE: Towards Automated Recognition of Bodily Expression of Emotion in the Wild",
+   "authors": [
+    "Yu Luo",
+    "Jianbo Ye",
+    "Reginald B. Adams",
+    "Jia Li",
+    "Michelle G. Newman",
+    "James Z. Wang"
+   ],
+   "container": "International Journal of Computer Vision",
+   "year": 2019,
+   "volume": "128",
+   "issue": "1",
+   "pages": "1-25",
+   "publisher": "Springer Science and Business Media LLC",
+   "type": "journal-article"
+  },
+  "10.18653/v1/2020.acl-main.408": {
+   "title": "ERASER: A Benchmark to Evaluate Rationalized NLP Models",
+   "authors": [
+    "Jay DeYoung",
+    "Sarthak Jain",
+    "Nazneen Fatema Rajani",
+    "Eric Lehman",
+    "Caiming Xiong",
+    "Richard Socher",
+    "Byron C. Wallace"
+   ],
+   "container": "Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics",
+   "year": 2020,
+   "volume": null,
+   "issue": null,
+   "pages": "4443-4458",
+   "publisher": "Association for Computational Linguistics",
+   "type": "proceedings-article"
+  }
+ },
+ "acl_bib": {
+  "2023.ijcnlp-main.66": "@inproceedings{kim-etal-2023-examining,\n    title = \"Examining Consistency of Visual Commonsense Reasoning based on Person Grounding\",\n    author = \"Kim, Huiju  and\n      Kang, Youjin  and\n      Lee, SangKeun\",\n    editor = \"Park, Jong C.  and\n      Arase, Yuki  and\n      Hu, Baotian  and\n      Lu, Wei  and\n      Wijaya, Derry  and\n      Purwarianti, Ayu  and\n      Krisnadhi, Adila Alfa\",\n    booktitle = \"Proceedings of the 13th International Joint Conference on Natural Language Processing and the 3rd Conference of the {A}sia-Pacific Chapter of the {A}ssociation for {C}omputational {L}inguistics (Volume 1: Long Papers)\",\n    month = nov,\n    year = \"2023\",\n    address = \"Nusa Dua, Bali\",\n    publisher = \"Association for Computational Linguistics\",\n    url = \"https://aclanthology.org/2023.ijcnlp-main.66/\",\n    doi = \"10.18653/v1/2023.ijcnlp-main.66\",\n    pages = \"1026--1039\"\n}\n\n",
+  "2020.acl-main.386": "@inproceedings{jacovi-goldberg-2020-towards,\n    title = \"Towards Faithfully Interpretable {NLP} Systems: How Should We Define and Evaluate Faithfulness?\",\n    author = \"Jacovi, Alon  and\n      Goldberg, Yoav\",\n    editor = \"Jurafsky, Dan  and\n      Chai, Joyce  and\n      Schluter, Natalie  and\n      Tetreault, Joel\",\n    booktitle = \"Proceedings of the 58th Annual Meeting of the {A}ssociation for {C}omputational {L}inguistics\",\n    month = jul,\n    year = \"2020\",\n    address = \"Online\",\n    publisher = \"Association for Computational Linguistics\",\n    url = \"https://aclanthology.org/2020.acl-main.386/\",\n    doi = \"10.18653/v1/2020.acl-main.386\",\n    pages = \"4198--4205\"\n}\n\n",
+  "2024.emnlp-main.257": "@inproceedings{zhang-etal-2024-visual,\n    title = \"Visual Prompting in {LLM}s for Enhancing Emotion Recognition\",\n    author = \"Zhang, Qixuan  and\n      Wang, Zhifeng  and\n      Zhang, Dylan  and\n      Niu, Wenjia  and\n      Caldwell, Sabrina  and\n      Gedeon, Tom  and\n      Liu, Yang  and\n      Qin, Zhenyue\",\n    editor = \"Al-Onaizan, Yaser  and\n      Bansal, Mohit  and\n      Chen, Yun-Nung\",\n    booktitle = \"Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing\",\n    month = nov,\n    year = \"2024\",\n    address = \"Miami, Florida, USA\",\n    publisher = \"Association for Computational Linguistics\",\n    url = \"https://aclanthology.org/2024.emnlp-main.257/\",\n    doi = \"10.18653/v1/2024.emnlp-main.257\",\n    pages = \"4484--4499\"\n}\n\n",
+  "2025.emnlp-main.126": "@inproceedings{ma-etal-2025-large-language,\n    title = \"Large Language Models Do Multi-Label Classification Differently\",\n    author = \"Ma, Marcus  and\n      Chochlakis, Georgios  and\n      Pandiyan, Niyantha Maruthu  and\n      Thomason, Jesse  and\n      Narayanan, Shrikanth\",\n    editor = \"Christodoulopoulos, Christos  and\n      Chakraborty, Tanmoy  and\n      Rose, Carolyn  and\n      Peng, Violet\",\n    booktitle = \"Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing\",\n    month = nov,\n    year = \"2025\",\n    address = \"Suzhou, China\",\n    publisher = \"Association for Computational Linguistics\",\n    url = \"https://aclanthology.org/2025.emnlp-main.126/\",\n    doi = \"10.18653/v1/2025.emnlp-main.126\",\n    pages = \"2472--2495\",\n    ISBN = \"979-8-89176-332-6\"\n}\n\n",
+  "2025.findings-naacl.97": "@inproceedings{bhattacharyya-wang-2025-evaluating,\n    title = \"Evaluating Vision-Language Models for Emotion Recognition\",\n    author = \"Bhattacharyya, Sree  and\n      Wang, James Z.\",\n    editor = \"Chiruzzo, Luis  and\n      Ritter, Alan  and\n      Wang, Lu\",\n    booktitle = \"Findings of the {A}ssociation for {C}omputational {L}inguistics: {NAACL} 2025\",\n    month = apr,\n    year = \"2025\",\n    address = \"Albuquerque, New Mexico\",\n    publisher = \"Association for Computational Linguistics\",\n    url = \"https://aclanthology.org/2025.findings-naacl.97/\",\n    doi = \"10.18653/v1/2025.findings-naacl.97\",\n    pages = \"1798--1820\",\n    ISBN = \"979-8-89176-195-7\"\n}\n\n"
+ },
+ "pmlr_lei": [
+  "<meta name=\"citation_publisher\" content=\"PMLR\"/><meta name=\"citation_title\" content=\"Large Vision-Language Models as Emotion Recognizers in Context Awareness\"/><meta name=\"citation_language\" content=\"en\"/>",
+  "<meta name=\"citation_abstract_html_url\" content=\"https://proceedings.mlr.press/v260/lei25a.html\"/><meta name=\"citation_pdf_url\" content=\"https://raw.githubusercontent.com/mlresearch/v260/main/assets/lei25a/lei25a.pdf\"><meta name=\"citation_firstpage\" content=\"111\"><meta name=\"citation_lastpage\" content=\"126\"><meta name=\"citation_author\" content=\"Yuxuan Lei\"><meta name=\"citation_author\" content=\"Dingkang Yang\"><meta name=\"citation_author\" content=\"Zhaoyu Chen\"><meta name=\"citation_author\" content=\"Jiawei Chen\"><meta name=\"citation_author\" content=\"Peng Zhai\"><meta name=\"citation_author\" content=\"Lihua Zhang\"><meta name=\"citation_publication_date\" content=\"2025/01/14\"><meta name=\"citation_inbook_title\" content=\"Asian Conference on Machine Learning\"/><meta name=\"citation_conference_title\" content=\"Asian Conference on Machine Learning\"/><meta name=\"citation_issn\" content=\"2640-3498\"><meta name=\"twitter:card\" content=\"summary\"/>"
+ ]
+}

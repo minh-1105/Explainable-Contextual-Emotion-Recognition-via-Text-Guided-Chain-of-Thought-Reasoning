@@ -1,0 +1,7 @@
+majority macro E-D all labels: +0.0616
+  drop Engagement    : +0.0557
+  drop Fatigue       : +0.0706
+  drop Sadness       : +0.0693
+  drop Sympathy      : +0.0237
+support>=5: E-D=+0.0650 CI95=[+0.0263,+0.1075]
+no Sympathy: E-D=+0.0237 CI95=[-0.0008,+0.0522]

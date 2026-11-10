@@ -1,0 +1,18 @@
+[train] people=23706 annotators/person=1.00 (dist {1: 23706})
+  labels/person union=1.96 >=2votes=0.00 majority=1.96
+[val] people=3334 annotators/person=4.81 (dist {5: 2615, 4: 647, 9: 24, 3: 41, 2: 3, 8: 3, 16: 1})
+  labels/person union=6.16 >=2votes=2.93 majority=1.48
+  share of union labels picked by only 1 annotator: 52.4%
+[test] people=7280 annotators/person=2.69 (dist {3: 5079, 1: 134, 2: 2038, 5: 22, 4: 6, 0: 1})
+  labels/person union=4.42 >=2votes=1.34 majority=1.37
+  share of union labels picked by only 1 annotator: 69.7%
+[pilot direct] n=300 truth!=union: 0
+  GT=union    micro P=76.1% R=21.4% F1=33.4% | macroF1=15.8% over 26 labels
+  GT=majority micro P=36.6% R=42.1% F1=39.2% | macroF1=17.5% over 17 labels
+  recall by #votes on GT label: 1 votes: 103/984=10%, 2 votes: 103/413=25%, 3 votes: 104/279=37%, 4 votes: 66/139=47%, 5 votes: 18/30=60%, 6 votes: 1/1=100%, 7 votes: 0/1=0%, 10 votes: 0/1=0%, 14 votes: 0/1=0%
+  predicted labels by #votes: 0: 24%, 1: 20%, 2: 20%, 3: 20%, 4: 13%, 5: 3%, 6: 0%
+[pilot structured] n=300 truth!=union: 0
+  GT=union    micro P=79.3% R=25.5% F1=38.6% | macroF1=17.1% over 26 labels
+  GT=majority micro P=41.2% R=54.3% F1=46.9% | macroF1=23.7% over 17 labels
+  recall by #votes on GT label: 1 votes: 106/984=11%, 2 votes: 120/413=29%, 3 votes: 136/279=49%, 4 votes: 85/139=61%, 5 votes: 24/30=80%, 6 votes: 0/1=0%, 7 votes: 0/1=0%, 10 votes: 0/1=0%, 14 votes: 0/1=0%
+  predicted labels by #votes: 0: 21%, 1: 18%, 2: 20%, 3: 23%, 4: 14%, 5: 4%

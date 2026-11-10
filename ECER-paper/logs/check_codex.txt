@@ -1,0 +1,2 @@
+[val] empty-majority: 391/3334 = 11.7% | in multi-person images: 258/2035 | same-image pairs with different union sets: 1992/2017 = 98.8%
+[test] empty-majority: 1394/7280 = 19.1% | in multi-person images: 955/4674 | same-image pairs with different union sets: 4867/4994 = 97.5%

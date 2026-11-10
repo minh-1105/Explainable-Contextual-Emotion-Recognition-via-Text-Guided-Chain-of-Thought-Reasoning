@@ -1,0 +1,2 @@
+[val] people=3334 union!=combined_categories: 0 | mean card official=6.157 union=6.157 majority=1.484 | single-vote share=52.4%
+[test] people=7280 union!=combined_categories: 0 | mean card official=4.416 union=4.416 majority=1.372 | single-vote share=69.7%

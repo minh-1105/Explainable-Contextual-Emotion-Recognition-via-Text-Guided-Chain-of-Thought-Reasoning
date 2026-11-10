@@ -1,0 +1,273 @@
+{
+ "lanham2023": {
+  "arxiv": "2307.13702",
+  "title": "Measuring Faithfulness in Chain-of-Thought Reasoning",
+  "jref": null,
+  "doi": null,
+  "comment": null,
+  "updated": "2023-07-17T01:08:39Z",
+  "crossref_exact_title": [],
+  "openalex_locations": [
+   [
+    "W4385327568",
+    "preprint",
+    "arXiv (Cornell University)",
+    "submittedVersion",
+    "http://arxiv.org/abs/2307.13702"
+   ],
+   [
+    "W4385327568",
+    "preprint",
+    "arXiv (Cornell University)",
+    null,
+    "https://doi.org/10.48550/arxiv.2307.13702"
+   ]
+  ]
+ },
+ "doshivelez2017": {
+  "arxiv": "1702.08608",
+  "title": "Towards A Rigorous Science of Interpretable Machine Learning",
+  "jref": null,
+  "doi": null,
+  "comment": null,
+  "updated": "2017-03-02T19:32:10Z",
+  "crossref_exact_title": [],
+  "openalex_locations": [
+   [
+    "W2594475271",
+    "preprint",
+    "arXiv (Cornell University)",
+    "submittedVersion",
+    "http://arxiv.org/abs/1702.08608"
+   ],
+   [
+    "W2594475271",
+    "preprint",
+    "arXiv (Cornell University)",
+    null,
+    "https://doi.org/10.48550/arxiv.1702.08608"
+   ]
+  ]
+ },
+ "lian2023emer": {
+  "arxiv": "2306.15401",
+  "title": "Explainable Multimodal Emotion Recognition",
+  "jref": null,
+  "doi": null,
+  "comment": null,
+  "updated": "2024-05-23T11:42:08Z",
+  "crossref_exact_title": [],
+  "openalex_locations": [
+   [
+    "W4382491679",
+    "preprint",
+    "arXiv (Cornell University)",
+    "submittedVersion",
+    "http://arxiv.org/abs/2306.15401"
+   ],
+   [
+    "W4382491679",
+    "preprint",
+    "arXiv (Cornell University)",
+    null,
+    "https://doi.org/10.48550/arxiv.2306.15401"
+   ]
+  ]
+ },
+ "zhao2025r1omni": {
+  "arxiv": "2503.05379",
+  "title": "R1-Omni: Explainable Omni-Multimodal Emotion Recognition with Reinforcement Learning",
+  "jref": null,
+  "doi": null,
+  "comment": null,
+  "updated": "2025-03-10T07:11:14Z",
+  "crossref_exact_title": [],
+  "openalex_locations": []
+ },
+ "yang2024emollm": {
+  "arxiv": "2406.16442",
+  "title": "EmoLLM: Multimodal Emotional Understanding Meets Large Language Models",
+  "jref": null,
+  "doi": null,
+  "comment": "9 pages",
+  "updated": "2024-06-29T14:32:46Z",
+  "crossref_exact_title": [],
+  "openalex_locations": [
+   [
+    "W4400024097",
+    "preprint",
+    "arXiv (Cornell University)",
+    "submittedVersion",
+    "http://arxiv.org/abs/2406.16442"
+   ],
+   [
+    "W4400024097",
+    "preprint",
+    "arXiv (Cornell University)",
+    null,
+    "https://doi.org/10.48550/arxiv.2406.16442"
+   ]
+  ]
+ },
+ "bai2025qwen25vl": {
+  "arxiv": "2502.13923",
+  "title": "Qwen2.5-VL Technical Report",
+  "jref": null,
+  "doi": null,
+  "comment": null,
+  "updated": "2025-02-19T18:00:14Z",
+  "crossref_exact_title": [],
+  "openalex_locations": [
+   [
+    "W4407794264",
+    "preprint",
+    "arXiv (Cornell University)",
+    "submittedVersion",
+    "http://arxiv.org/abs/2502.13923"
+   ],
+   [
+    "W4407794264",
+    "preprint",
+    "arXiv (Cornell University)",
+    null,
+    "https://doi.org/10.48550/arxiv.2502.13923"
+   ]
+  ]
+ },
+ "huynh2026facr": {
+  "arxiv": "2606.15779",
+  "title": "Faithful Action-unit Causal Reasoning for Counterfactually Faithful Emotion Explanations",
+  "jref": null,
+  "doi": null,
+  "comment": null,
+  "updated": "2026-06-14T12:27:58Z",
+  "crossref_exact_title": [],
+  "openalex_locations": [
+   [
+    "W7164907764",
+    "preprint",
+    "arXiv (Cornell University)",
+    "submittedVersion",
+    "https://arxiv.org/abs/2606.15779"
+   ],
+   [
+    "W7164907764",
+    "preprint",
+    "arXiv (Cornell University)",
+    null,
+    "https://doi.org/10.48550/arxiv.2606.15779"
+   ]
+  ]
+ },
+ "ding2026edct": {
+  "arxiv": "2609.17953",
+  "title": "EDCT-Bench: Uncovering Faithfulness Gaps in VLMs via Explanation-Driven Counterfactual Testing",
+  "jref": null,
+  "doi": null,
+  "comment": null,
+  "updated": "2026-09-16T00:25:31Z",
+  "crossref_exact_title": [],
+  "openalex_locations": [
+   [
+    "W7213563773",
+    "preprint",
+    "arXiv (Cornell University)",
+    "submittedVersion",
+    "https://arxiv.org/abs/2609.17953"
+   ]
+  ]
+ },
+ "hallmen2026readout": {
+  "arxiv": "2610.08162",
+  "title": "The Failure Is in the Readout: Fine-Grained Emotion Recognition Benchmarks Measure Elicitation, Not Perception",
+  "jref": null,
+  "doi": null,
+  "comment": "Preprint. 19 pages, 6 figures",
+  "updated": "2026-10-06T11:14:23Z",
+  "crossref_exact_title": [],
+  "openalex_locations": [
+   [
+    "W7220946570",
+    "preprint",
+    "arXiv (Cornell University)",
+    "submittedVersion",
+    "https://arxiv.org/abs/2610.08162"
+   ],
+   [
+    "W7220946570",
+    "preprint",
+    "arXiv (Cornell University)",
+    null,
+    "https://doi.org/10.48550/arxiv.2610.08162"
+   ]
+  ]
+ },
+ "ye2026dspo": {
+  "arxiv": "2609.36775",
+  "title": "DSPO: Diversity-aware Subjective Policy Optimization for Robust Emotional Reasoning",
+  "jref": null,
+  "doi": null,
+  "comment": "17 pages, 5 figures",
+  "updated": "2026-09-29T05:46:55Z",
+  "crossref_exact_title": [],
+  "openalex_locations": [
+   [
+    "W7215133714",
+    "preprint",
+    "arXiv (Cornell University)",
+    "submittedVersion",
+    "https://arxiv.org/abs/2609.36775"
+   ]
+  ]
+ },
+ "menzat2026vct": {
+  "arxiv": "2609.06704",
+  "title": "Counterfactual Tests for Measuring Chain-of-Thought Faithfulness in Visual Language Models",
+  "jref": null,
+  "doi": null,
+  "comment": "Accepted to Findings of the Association for Computational Linguistics: EMNLP 2026",
+  "updated": "2026-09-06T16:21:14Z",
+  "crossref_exact_title": [],
+  "openalex_locations": [
+   [
+    "W7211996385",
+    "preprint",
+    "arXiv (Cornell University)",
+    "submittedVersion",
+    "https://arxiv.org/abs/2609.06704"
+   ],
+   [
+    "W7211996385",
+    "preprint",
+    "arXiv (Cornell University)",
+    null,
+    "https://doi.org/10.48550/arxiv.2609.06704"
+   ]
+  ]
+ },
+ "lian2026affectgptrl": {
+  "arxiv": "2605.06126",
+  "title": "AffectGPT-RL: Revealing Roles of Reinforcement Learning in Open-Vocabulary Emotion Recognition",
+  "jref": null,
+  "doi": null,
+  "comment": null,
+  "updated": "2026-05-07T12:31:22Z",
+  "crossref_exact_title": [],
+  "openalex_locations": [
+   [
+    "W7160599555",
+    "preprint",
+    "arXiv (Cornell University)",
+    "submittedVersion",
+    "https://arxiv.org/abs/2605.06126"
+   ],
+   [
+    "W7160599555",
+    "preprint",
+    "arXiv (Cornell University)",
+    null,
+    "https://doi.org/10.48550/arxiv.2605.06126"
+   ]
+  ]
+ }
+}
