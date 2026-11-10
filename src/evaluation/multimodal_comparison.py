@@ -127,7 +127,7 @@ class ComparisonStudy:
         for part in self.splits:
             with np.load(self.path(f"{self.resnet_run}/predictions_{part}.npz"), allow_pickle=False) as data:
                 assert data["sample_ids"].tolist() == self.splits[part]
-                assert data["class_names"].tolist() == EMOTION_LABELS
+                assert data["class_names"].tolist() == list(EMOTION_LABELS)
                 self.targets[part], self.images[part] = data["targets"].copy(), data["image_ids"].copy()
                 for name in RESNETS:
                     self.probs[part][name] = data[name].copy()
@@ -175,7 +175,7 @@ class ComparisonStudy:
         self.read_json(f"{self.resnet_run}/config.json")
         self.write("source_artifacts.json", {"files": self.artifacts, "source_run": self.source_run,
                                             "resnet_run": self.resnet_run})
-        print("Đã kiểm tra nhãn, thứ tự mẫu, 21 prediction và chia theo ảnh.", flush=True)
+        print(f"Đã kiểm tra nhãn, thứ tự mẫu, {len(self.model_info) - len(RESNETS)} prediction và chia theo ảnh.", flush=True)
 
     def reproduce(self):
         """Stop on any metric or threshold mismatch before doing new analysis."""
@@ -185,10 +185,12 @@ class ComparisonStudy:
         for grid, candidates in self.config["threshold_grids"].items():
             for key, info in self.model_info.items():
                 chosen = select_per_class_thresholds(self.targets["dev"], self.probs["dev"][key], candidates)
-                np.testing.assert_array_equal(chosen, self.thresholds[key][grid], err_msg=f"{key} {grid}")
+                # Legacy ResNet serialized decimal-rounded grid points; 04 stores NumPy grid points.
+                np.testing.assert_allclose(chosen, self.thresholds[key][grid], atol=1e-12, rtol=0,
+                                           err_msg=f"{key} {grid}")
                 if info["origin"] == "ResNet":
                     field = "thresholds" if grid == "extended" else "legacy_thresholds"
-                    np.testing.assert_array_equal(chosen, selected[field][key])
+                    np.testing.assert_array_equal(self.thresholds[key][grid], selected[field][key])
                 for part in self.splits:
                     result = self.evaluate(key, grid, part)
                     if info["origin"] == "04":
@@ -274,6 +276,8 @@ class ComparisonStudy:
                 result = self.evaluate(name, grid)
                 self.results[name, grid] = result
                 self.rows.append({"model": name, "origin": "eval only", "grid": grid, "summary": False,
+                                  "thresholds_at_grid_min": threshold_boundary_report(
+                                      self.targets["dev"], self.thresholds[name][grid], self.config["threshold_grids"][grid])["at_min"],
                                   **{k: v for k, v in result.items() if k != "per_class"}})
         for name, selection in self.top_k.items():
             result = self.evaluate(name, predictions=per_sample_top_k(self.probs["eval"][name], selection["k"]))
