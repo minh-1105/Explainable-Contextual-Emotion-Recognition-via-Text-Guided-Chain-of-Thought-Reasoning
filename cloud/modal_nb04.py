@@ -1,7 +1,7 @@
 import modal
 
 REPO_URL = "https://github.com/minh-1105/Explainable-Contextual-Emotion-Recognition-via-Text-Guided-Chain-of-Thought-Reasoning.git"
-NOTEBOOK = "notebooks/04_VLM_Pilot.ipynb"
+NOTEBOOK = "notebooks/04_Qwen3_Multimodal.ipynb"
 
 volume = modal.Volume.from_name("ecer-nb04")
 image = (
@@ -69,6 +69,7 @@ def run(branch: str = "main"):
     logging.info("branch %s commit %s", branch, commit)
     source = out_dir / "input.ipynb"
     nbformat.write(modal_notebook(nbformat.read(f"/repo/{NOTEBOOK}", as_version=4)), source)
+    executed = out_dir / Path(NOTEBOOK).name
 
     def commit_loop():
         while True:
@@ -78,9 +79,9 @@ def run(branch: str = "main"):
     threading.Thread(target=commit_loop, daemon=True).start()
     try:
         papermill.execute_notebook(
-            str(source), str(out_dir / "04_VLM_Pilot.ipynb"), kernel_name="python3", cwd="/repo",
+            str(source), str(executed), kernel_name="python3", cwd="/repo",
             log_output=True, progress_bar=False, request_save_on_cell_execute=True,
         )
     finally:
         volume.commit()
-    logging.info("executed notebook: %s", out_dir / "04_VLM_Pilot.ipynb")
+    logging.info("executed notebook: %s", executed)
