@@ -1,0 +1,19 @@
+{
+  "experiment_name": "person_only",
+  "backbone": "resnet50",
+  "pretrained": true,
+  "freeze_backbone": false,
+  "image_size": 224,
+  "batch_size": 16,
+  "num_workers": 2,
+  "epochs": 30,
+  "learning_rate": 0.0001,
+  "weight_decay": 0.0001,
+  "category_policy": "union",
+  "crop_padding": 0.05,
+  "strict_images": true,
+  "dropout": 0.3,
+  "decision_threshold": 0.5,
+  "seed": 42,
+  "best_metric": "val_map"
+}

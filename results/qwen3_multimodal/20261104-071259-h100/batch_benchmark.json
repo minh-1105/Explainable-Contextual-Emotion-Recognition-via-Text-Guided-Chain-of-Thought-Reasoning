@@ -1,0 +1,28 @@
+{
+  "16": {
+    "seconds_per_person": 0.8376323580741882,
+    "schema_rate": 1.0,
+    "same_as_single": 0.5625,
+    "truncated_rate": 0.0,
+    "peak_vram_gb": 11.380842496
+  },
+  "32": {
+    "seconds_per_person": 0.2685539871454239,
+    "schema_rate": 1.0,
+    "same_as_single": 0.59375,
+    "truncated_rate": 0.0,
+    "peak_vram_gb": 13.832544256
+  },
+  "48": {
+    "seconds_per_person": 0.21709424257278442,
+    "schema_rate": 1.0,
+    "same_as_single": 0.5833333333333334,
+    "truncated_rate": 0.0,
+    "peak_vram_gb": 16.241831936
+  },
+  "projection": {
+    "batch_size": 48,
+    "remaining_people": 0,
+    "hours": 0.0
+  }
+}

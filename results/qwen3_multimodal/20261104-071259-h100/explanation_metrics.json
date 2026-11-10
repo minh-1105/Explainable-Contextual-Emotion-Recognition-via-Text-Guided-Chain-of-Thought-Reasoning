@@ -1,0 +1,78 @@
+{
+  "eval": {
+    "n_generated": 1691,
+    "n_usable": 1667,
+    "truncated_rate": 0.014192785334121822,
+    "stated_modality_counts": {
+      "person": 1660,
+      "context": 7,
+      "graph": 0
+    },
+    "measured_top_modality_counts": {
+      "person": 633,
+      "context": 672,
+      "graph": 362
+    },
+    "modality_agreement": 0.3827234553089382,
+    "modality_agreement_always_majority": 0.40311937612477505,
+    "cited_numbers_total": 8188,
+    "cited_numbers_in_evidence": 0.9998778700537372,
+    "explanations_naming_unpredicted_emotion": 0.01739652069586083,
+    "eraser": {
+      "stated_modality": {
+        "comprehensiveness": 0.0721901932401565,
+        "sufficiency": 0.12262219935655594
+      },
+      "always_majority_modality": {
+        "comprehensiveness": 0.07812531534086123,
+        "sufficiency": 0.12005728483200073
+      },
+      "random_modality": {
+        "comprehensiveness": 0.06617727446993119,
+        "sufficiency": 0.13281464080015817
+      },
+      "measured_top_modality": {
+        "comprehensiveness": 0.15693595087184695,
+        "sufficiency": 0.04535199701786041
+      }
+    }
+  },
+  "test": {
+    "n_generated": 7280,
+    "n_usable": 7193,
+    "truncated_rate": 0.010851648351648351,
+    "stated_modality_counts": {
+      "person": 7158,
+      "context": 35,
+      "graph": 0
+    },
+    "measured_top_modality_counts": {
+      "person": 2793,
+      "context": 2735,
+      "graph": 1665
+    },
+    "modality_agreement": 0.3878771027387738,
+    "modality_agreement_always_majority": 0.38829417489225637,
+    "cited_numbers_total": 35560,
+    "cited_numbers_in_evidence": 0.999718785151856,
+    "explanations_naming_unpredicted_emotion": 0.01988043931600167,
+    "eraser": {
+      "stated_modality": {
+        "comprehensiveness": 0.07663281557770998,
+        "sufficiency": 0.12467926740646362
+      },
+      "always_majority_modality": {
+        "comprehensiveness": 0.07659284615648135,
+        "sufficiency": 0.12460106611251831
+      },
+      "random_modality": {
+        "comprehensiveness": 0.06952954618131656,
+        "sufficiency": 0.13356826454401016
+      },
+      "measured_top_modality": {
+        "comprehensiveness": 0.15932268695675467,
+        "sufficiency": 0.0472700372338295
+      }
+    }
+  }
+}
