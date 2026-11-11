@@ -1,0 +1,546 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "model": "full_seed42",
+      "grid": "legacy",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "full_seed42",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "full_seed43",
+      "grid": "legacy",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "full_seed43",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "full_seed44",
+      "grid": "legacy",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "full_seed44",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "vit_only_seed42",
+      "grid": "legacy",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "vit_only_seed42",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "vit_only_seed43",
+      "grid": "legacy",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "vit_only_seed43",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "vit_only_seed44",
+      "grid": "legacy",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "vit_only_seed44",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_person_image_seed42",
+      "grid": "legacy",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_person_image_seed42",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_person_image_seed43",
+      "grid": "legacy",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_person_image_seed43",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_person_image_seed44",
+      "grid": "legacy",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_person_image_seed44",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_context_image_seed42",
+      "grid": "legacy",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_context_image_seed42",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_context_image_seed43",
+      "grid": "legacy",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_context_image_seed43",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_context_image_seed44",
+      "grid": "legacy",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_context_image_seed44",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_person_cues_seed42",
+      "grid": "legacy",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_person_cues_seed42",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_person_cues_seed43",
+      "grid": "legacy",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_person_cues_seed43",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_person_cues_seed44",
+      "grid": "legacy",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_person_cues_seed44",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_context_cues_seed42",
+      "grid": "legacy",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_context_cues_seed42",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_context_cues_seed43",
+      "grid": "legacy",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_context_cues_seed43",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_context_cues_seed44",
+      "grid": "legacy",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_context_cues_seed44",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "full_no_affect_seed42",
+      "grid": "legacy",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "full_no_affect_seed42",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "full_no_affect_seed43",
+      "grid": "legacy",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "full_no_affect_seed43",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "full_no_affect_seed44",
+      "grid": "legacy",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "full_no_affect_seed44",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "person_only",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "context_only",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "person_context",
+      "grid": "legacy",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "full_seed42",
+      "grid": "extended",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "full_seed42",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "full_seed43",
+      "grid": "extended",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "full_seed43",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "full_seed44",
+      "grid": "extended",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "full_seed44",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "vit_only_seed42",
+      "grid": "extended",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "vit_only_seed42",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "vit_only_seed43",
+      "grid": "extended",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "vit_only_seed43",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "vit_only_seed44",
+      "grid": "extended",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "vit_only_seed44",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_person_image_seed42",
+      "grid": "extended",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_person_image_seed42",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_person_image_seed43",
+      "grid": "extended",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_person_image_seed43",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_person_image_seed44",
+      "grid": "extended",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_person_image_seed44",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_context_image_seed42",
+      "grid": "extended",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_context_image_seed42",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_context_image_seed43",
+      "grid": "extended",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_context_image_seed43",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_context_image_seed44",
+      "grid": "extended",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_context_image_seed44",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_person_cues_seed42",
+      "grid": "extended",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_person_cues_seed42",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_person_cues_seed43",
+      "grid": "extended",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_person_cues_seed43",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_person_cues_seed44",
+      "grid": "extended",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_person_cues_seed44",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_context_cues_seed42",
+      "grid": "extended",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_context_cues_seed42",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_context_cues_seed43",
+      "grid": "extended",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_context_cues_seed43",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "no_context_cues_seed44",
+      "grid": "extended",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "no_context_cues_seed44",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "full_no_affect_seed42",
+      "grid": "extended",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "full_no_affect_seed42",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "full_no_affect_seed43",
+      "grid": "extended",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "full_no_affect_seed43",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "full_no_affect_seed44",
+      "grid": "extended",
+      "part": "dev",
+      "passed": true
+    },
+    {
+      "model": "full_no_affect_seed44",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "person_only",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "context_only",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    },
+    {
+      "model": "person_context",
+      "grid": "extended",
+      "part": "eval",
+      "passed": true
+    }
+  ],
+  "reference": "04 mới và ResNet đã lưu; không so H100"
+}

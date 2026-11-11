@@ -1,0 +1,20 @@
+{
+  "val": {
+    "people": 3334,
+    "parse_rate": 1.0,
+    "schema_rate": 0.9973005398920216,
+    "truncated_rate": 0.0
+  },
+  "train": {
+    "people": 23706,
+    "parse_rate": 1.0,
+    "schema_rate": 0.9963722264405636,
+    "truncated_rate": 0.0
+  },
+  "test": {
+    "people": 7280,
+    "parse_rate": 0.9998626373626374,
+    "schema_rate": 0.9962912087912088,
+    "truncated_rate": 0.0
+  }
+}

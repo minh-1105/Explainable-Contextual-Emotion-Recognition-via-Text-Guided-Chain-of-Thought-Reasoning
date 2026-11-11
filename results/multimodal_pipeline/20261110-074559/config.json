@@ -1,0 +1,143 @@
+{
+  "qwen_model_id": "Qwen/Qwen3-VL-4B-Instruct",
+  "max_pixels": 409600,
+  "max_new_tokens_cues": 192,
+  "max_person_cues": 3,
+  "max_context_cues": 3,
+  "max_relations": 2,
+  "cue_import_from": "outputs/qwen3_multimodal/20261104-071259-h100",
+  "image_backbone": "vit_b_16_imagenet1k_v1",
+  "bert_model_id": "google-bert/bert-base-uncased",
+  "bert_max_length": 32,
+  "max_graph_nodes": 9,
+  "feature_import_from": null,
+  "category_policy": "union",
+  "split_seed": 42,
+  "validation_dev_fraction": 0.5,
+  "fusion_dim": 256,
+  "graph_layers": 2,
+  "fusion_layers": 2,
+  "epochs": 20,
+  "batch_size": 32,
+  "learning_rate": 0.0003,
+  "weight_decay": 0.0001,
+  "pos_weight_max": 10.0,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "variants": {
+    "full": {
+      "nodes": "cues",
+      "drop_token": null,
+      "drop_node_types": []
+    },
+    "vit_only": {
+      "nodes": "cues",
+      "drop_token": "graph",
+      "drop_node_types": []
+    },
+    "no_person_image": {
+      "nodes": "cues",
+      "drop_token": "person",
+      "drop_node_types": []
+    },
+    "no_context_image": {
+      "nodes": "cues",
+      "drop_token": "context",
+      "drop_node_types": []
+    },
+    "no_person_cues": {
+      "nodes": "cues",
+      "drop_token": null,
+      "drop_node_types": [
+        "person"
+      ]
+    },
+    "no_context_cues": {
+      "nodes": "cues",
+      "drop_token": null,
+      "drop_node_types": [
+        "context"
+      ]
+    },
+    "full_no_affect": {
+      "nodes": "affect_free",
+      "drop_token": null,
+      "drop_node_types": []
+    }
+  },
+  "threshold_grids": {
+    "legacy": [
+      0.05,
+      0.1,
+      0.15000000000000002,
+      0.2,
+      0.25,
+      0.3,
+      0.35000000000000003,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6000000000000001,
+      0.6500000000000001,
+      0.7000000000000001,
+      0.7500000000000001,
+      0.8,
+      0.8500000000000001,
+      0.9000000000000001,
+      0.9500000000000001
+    ],
+    "extended": [
+      1e-08,
+      3.0000000000000004e-08,
+      1e-07,
+      3e-07,
+      1e-06,
+      3e-06,
+      1e-05,
+      3.0000000000000004e-05,
+      0.0001,
+      0.00030000000000000003,
+      0.001,
+      0.003,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.1,
+      0.15000000000000002,
+      0.2,
+      0.25,
+      0.3,
+      0.35000000000000003,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6000000000000001,
+      0.6500000000000001,
+      0.7000000000000001,
+      0.7500000000000001,
+      0.8,
+      0.8500000000000001,
+      0.9000000000000001,
+      0.9500000000000001
+    ]
+  },
+  "explain_variant": "full",
+  "explain_seed": 42,
+  "explain_threshold_grid": "legacy",
+  "max_new_tokens_explanation": 256,
+  "explanation_batch_size": 32,
+  "explanation_reuse_from": "outputs/qwen3_multimodal/20261104-071259-h100",
+  "primary_variant": "full",
+  "bootstrap_grid": "extended",
+  "bootstrap_resamples": 2000,
+  "bootstrap_seed": 42,
+  "resnet_run": "outputs/resnet_evaluation/20261101-034030",
+  "git_commit": "snapshot-sha256:259a472fe3c87a0306bc2ff87cc050063b7c7781ac351411619d1a9eae38407b"
+}

@@ -1,0 +1,16 @@
+transformers=5.22.0
+torch=2.11.0+cu130
+gpu=NVIDIA H200
+git_commit=snapshot-sha256:259a472fe3c87a0306bc2ff87cc050063b7c7781ac351411619d1a9eae38407b
+transformers=5.22.0
+torch=2.11.0+cu130
+gpu=NVIDIA H100 80GB HBM3
+git_commit=snapshot-sha256:4cb86ab68912c1113a9cb23b8aa6b50ba6787dbbbe2fc3fc67c85f25e4030fcd
+transformers=5.22.0
+torch=2.11.0+cu130
+gpu=NVIDIA H100 80GB HBM3
+git_commit=snapshot-sha256:e723050c95d4dddda7e5020b0d2aeda9cecf875cf689e4ed3120cc1e1b2a9397
+transformers=5.22.0
+torch=2.11.0+cu130
+gpu=NVIDIA H100 80GB HBM3
+git_commit=snapshot-sha256:a8ee0b65df039c80dd3bf72cf8402ba9eb379ddf58f399333e1fa22bff78fa75
