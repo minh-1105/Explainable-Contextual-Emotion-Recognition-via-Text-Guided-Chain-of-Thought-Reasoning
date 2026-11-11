@@ -1,0 +1,323 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{textcomp}
+\usepackage[font=footnotesize,labelsep=period]{caption}
+\captionsetup[table]{justification=raggedright,singlelinecheck=false}
+\newcommand{\ev}[2]{#2}
+\newcommand{\mf}{macro-F\textsubscript{1}}
+\newcommand{\mi}{micro-F\textsubscript{1}}
+\newcommand{\tablegap}{\setlength{\tabcolsep}{4pt}}
+\begin{document}
+\title{Explainable Contextual Emotion Recognition via Text-Guided Chain-of-Thought Reasoning}
+\author{\IEEEauthorblockN{N. Q. Sang}
+\IEEEauthorblockA{Artificial Intelligence, FPT University\\
+sangquang2904@gmail.com}}
+\maketitle
+
+\begin{abstract}
+Textual descriptions offer an inspectable representation for contextual emotion recognition, but an articulate explanation need not describe classifier behavior. We study a staged chain of visible-cue extraction, multilabel classification, modality interventions, and verbal explanation on EMOTIC. Frozen text and visual encoders feed trainable semantic and multimodal Transformers. Across seeds 42--44, the full model achieves mean test mAP 30.10 and \mf{} 33.90, compared with 27.15 and 31.59 for its visual-only variant and 27.35 and 30.94 for the strongest trained ResNet-50 baseline. Image-level paired bootstrap intervals exclude zero for every seed against the visual-only variant and all three ResNet-50 baselines. Removing person cues lowers test mAP to 28.49, whereas removing either visual token, the context cues, or a fixed affect-related vocabulary changes it by less than one point. Explanations from the seed-42 checkpoint match 99.92\% of extracted numeric citations to an allowed evidence value, yet name the person stream in 7149 of 7184 usable test responses and agree with the largest-drop modality in only 31.83\%, below the 51.00\% of a constant most-frequent-modality reference. These results separate predictive utility of textual cues from limited explanation faithfulness. The experiments do not compare step-by-step reasoning with direct answering.
+\end{abstract}
+\begin{IEEEkeywords}
+contextual emotion recognition, textual cues, multimodal learning, explanation faithfulness, EMOTIC
+\end{IEEEkeywords}
+
+\section{Introduction}\label{sec:introduction}
+Emotion recognition in unconstrained images concerns a person's apparent emotion rather than direct access to an internal psychological state. EMOTIC combines person annotations with scene information for categorical emotion prediction \cite{emotic}. Context-aware networks combine human and environmental features \cite{caer}, while EmotiCon studies complementary interpretations of context \cite{emoticon}. These approaches motivate examining how the target person, surrounding image, and textual descriptions contribute to recognition.
+
+A vision-language model can describe posture, actions, objects, and interactions in ordinary language. Those descriptions expose information that an analyst can inspect and a separate classifier can consume. Caption-based emotion estimation \cite{captions} and narrative descriptions for emotional theory of mind \cite{etom} provide relevant precedents. However, an inspectable representation does not establish that a subsequent explanation faithfully describes how a classifier used it.
+
+In the title, \emph{text-guided chain-of-thought reasoning} has an operational meaning: visible cues are expressed as text, a classifier combines textual and visual features, interventions produce modality-sensitivity evidence, and a language model verbalizes that evidence. This is a staged computational chain, not a claim that prose reveals an internal reasoning trace. Chain-of-thought prompting, which elicits intermediate reasoning steps \cite{cot}, is related motivation; the current experiments contain no step-by-step-versus-direct-answering comparison. The explanation follows classification and does not determine its labels.
+
+We ask whether text improves a matched visual classifier, which textual and visual streams the fusion model depends on, and whether explanations identify the modality to which the classifier is most sensitive. Our contribution is an implementation and empirical analysis of this chain, separating predictive utility from explanation behavior. We report seven retrained variants over three seeds, compare them with three trained ResNet-50 baselines, distinguish seed variation from image-sampling uncertainty, and compare explanations with constant and intervention-derived references. Textual cues, particularly person cues, carry consistent predictive value, but explanations do not identify the important stream. We make no state-of-the-art or causal-reasoning claim.
+
+\section{Related Work}\label{sec:related}
+\subsection{Visual and contextual recognition}
+EMOTIC studies apparent emotion using person and contextual information \cite{emotic}. CAER-Net separates face and context encoding and adaptively combines their features \cite{caer}. EmotiCon incorporates multimodal, semantic, and interaction-related context \cite{emoticon}. ARBEE develops data and modeling for perceived emotion from body movements \cite{arbee}, while EmotionCLIP learns representations from verbal and nonverbal communication \cite{emotionclip}. These works motivate complementary information sources without establishing their benefits for our implementation.
+
+Context can introduce spurious associations. Yang et al. propose counterfactual emotion inference to mitigate contextual bias \cite{debias}. The Decoupled Subject-Context Transformer jointly addresses localization and emotion classification through interacting subject and context queries \cite{decoupled}. Our ablations remove projected tokens or cue nodes, not localized content or subject queries; they measure dependence on our representation rather than reproduce those interventions.
+
+\subsection{Language-mediated emotion recognition}
+Yang et al. investigate emotion estimation from image captions \cite{captions}; Etesam et al. connect narrative visual descriptions with language reasoning \cite{etom}. Their contextual VLM study examines caption-to-language and vision-language approaches under different adaptation settings \cite{contextvlm}. Lei et al. examine fine-tuning, in-context learning, and chain-of-thought for contextual recognition \cite{lei}. Set-of-Vision prompting spatially marks targets while preserving image context \cite{visualprompt}. Our target-marked extraction is related in purpose, but we do not isolate the effect of the red box.
+
+Xenos et al. combine generated descriptions with visual input in a downstream fusion architecture \cite{commonsense}, a close precedent for language-mediated classification. Emotion-LLaMA integrates audio, visual, and textual features with instruction tuning \cite{emotionllama}. EmoLLM studies emotional understanding through a dedicated benchmark and emotion-oriented modeling \cite{emollm}. EMER extends recognition to explanatory outputs \cite{emer}; Zhao et al. investigate reinforcement learning for omni-modal emotion recognition and reasoning \cite{r1omni}. Their inputs and protocols differ from ours, so their published scores are not imported as directly comparable baselines. Evaluation of emotions evoked by images \cite{evaluatevlm} likewise differs from recognizing an annotated person's apparent emotion.
+
+\subsection{Behavioral faithfulness}
+Interpretability requires an explicit evaluation target \cite{interpretability}, and faithfulness differs from other desirable explanation properties \cite{faithfulness}. Turpin et al. show that chain-of-thought explanations can omit influences on answers \cite{turpin}; Lanham et al. intervene on reasoning text to examine answer dependence \cite{lanham}. Counterfactual editing and reconstruction provide further explanation tests \cite{faithfulnesstests}. Work on vision-language decoders examines whether modality contributions differ between answers and explanations \cite{decoderfaithfulness}.
+
+Leakage-adjusted simulatability asks whether explanations help predict model behavior beyond revealing the answer \cite{simulatability}. Counterfactual simulatability examines whether explanations predict outputs for changed inputs \cite{counterfactual}. ERASER provides a rationale benchmark and faithfulness evaluation framework \cite{eraser}. Our probability-drop diagnostics follow this behavioral perspective, but operate on modality tokens rather than the original benchmark's textual rationales. They do not validate free-text grounding.
+
+\section{Methodology}\label{sec:method}
+\subsection{Target representation and cue extraction}
+Each annotated person supplies a full image, body box, crop, and multilabel target. We predict \ev{labels}{26} categories using union targets: a label is positive if any available category annotation assigns it. Continuous affect targets are not modeled. Validation partitions keep all people from the same image together.
+
+The frozen \ev{qwen}{Qwen3-VL-4B} instruction model receives the full image with the target box marked in red. Its prompt requests visible person cues, context cues, target relations, and a situation sentence, without supplying the emotion-label list or ground truth. It explicitly forbids emotion inference. This is a request, not a guarantee of affect-free or visually grounded descriptions.
+
+Requested limits are \ev{max-person-cues}{3} person cues, \ev{max-context-cues}{3} context cues, and \ev{max-relations}{2} relations. The structural check validates keys, string lists, nonempty person/context lists, and a nonempty situation. It does not enforce list-length caps; encoding truncates lists to their configured limits. Invalid output becomes a generic fallback situation node. Schema success therefore differs from semantic correctness and full prompt compliance.
+
+\subsection{Encoders and classifier}
+Frozen BERT-base-uncased \cite{bert} encodes each cue, relation, and situation separately with its initial-token representation, capped at \ev{bert-max-length}{32} input tokens. At most \ev{max-graph-nodes}{9} nodes carry person, context, relation, or situation types. A trainable projection and type embedding feed a Transformer encoder \cite{transformer}; masked mean pooling and normalization produce a semantic token. The \emph{semantic graph} is full self-attention over typed nodes, with no explicit relation edges or edge-specific message passing. There is no relation-only or topology ablation.
+
+A frozen ImageNet-pretrained \ev{vit}{ViT-B/16} \cite{vit} encodes person-crop (with 5\% padding) and full-image features. Projected visual and semantic tokens join a learned classification token and modality embeddings in a fusion Transformer. A sigmoid head predicts categories. Features from both pretrained encoders are cached.
+
+The fusion dimension is \ev{fusion-dim}{256}, with \ev{graph-layers}{2} semantic layers and \ev{fusion-layers}{2} fusion layers. The downstream classifier uses class-weighted binary cross-entropy with positive weights capped at 10 and AdamW \cite{adamw}: learning rate \ev{lr}{0.0003}, weight decay \ev{weight-decay}{0.0001}, batch size \ev{batch-size}{32}, and \ev{epochs}{20} epochs. Checkpoints maximize dev mAP; per-category thresholds maximize dev F score. Thresholds are searched on two grids: a legacy grid from 0.05 to 0.95 and an extended grid starting at $10^{-8}$; the extended grid is the primary one. Test labels select neither checkpoints nor thresholds.
+
+\subsection{Ablations and evidence}
+Seven variants are each trained with seeds 42, 43, and 44. ViT-only zeroes the semantic token, no-person-image zeroes the crop token, and no-context-image zeroes the full-image token, during training and inference. No-person-cues and no-context-cues mask the person or context cue nodes inside the semantic graph. No-context-image retains contextual text; no-person-image retains person text and an image containing the target. These are representation ablations, not complete information removal.
+
+The word-deletion variant removes a fixed vocabulary of \ev{affect-words}{22} affect-related words from every cue before BERT encoding and retrains. We avoid calling this affect-free: synonyms remain and visible descriptors such as smiling can be removed. The operation changes \ev{affect-changed}{18.92}\% of records across the combined train, validation, and test cue sets, not that percentage of test alone.
+
+Explanation interventions instead use a fixed classifier and replace each modality token, including its embedding, by zero. For predicted label set $P_i$, original score $p_{ic}$, and score $p_{ic}^{-m}$ without modality $m$, define
+\begin{equation}
+D_i(m)=\frac{\sum_{c\in P_i}(p_{ic}-p_{ic}^{-m})}{|P_i|}.
+\end{equation}
+The measured modality is $\arg\max_m D_i(m)$. If no label passes its threshold, evidence uses the highest-scoring label. This criterion averages over predictions, not ground truth, and its maximum need not be positive. Zero-token interventions can be outside the training distribution and are not causal interventions on scenes.
+
+\subsection{Explanation and evaluation}
+Evidence contains cues, original category scores, and scores without each modality. The VLM receives this package \emph{and the target-marked image}, then names a modality and explains the prediction. The prompt requests evidence-only explanations, but does not technically prevent independent image use. This post-hoc output does not feed back into classification.
+
+Usable responses parse and name a recognized modality. Agreement compares that name with $\arg\max_m D_i(m)$. A constant reference names the most frequent measured modality on the evaluated split; it is a descriptive same-split reference, not an independently chosen deployment rule.
+
+Comprehensiveness is $D_i(m)$ for the chosen modality. Sufficiency is the mean original-minus-retained-only score on $P_i$, retaining that modality and the classification token while zeroing the others. Higher comprehensiveness and lower sufficiency gaps are preferable under these definitions. References comprise the stated modality, constant modality, uniform average over modalities, and measured-top modality. The uniform reference is an exact average, not a sampled random assignment. Measured-top comprehensiveness is optimized by construction.
+
+Numeric matching extracts decimals and percentages and compares them, with the implemented tolerance, to any original score, intervened score, or absolute difference in the package. It does not validate the associated emotion, modality, sign, or sentence meaning. The unpredicted-emotion diagnostic matches whole-word label names; it misses synonyms and the slash-separated Doubt/Confusion label. Neither diagnostic establishes general factual accuracy or visual grounding.
+
+\section{Experiments and Results}\label{sec:experiments}
+\subsection{Data and exploratory analysis}\label{sec:data}
+We use the PAMI annotations, resolving their images across the PAMI and CVPR image archives; the separate CVPR annotation split is not added to training. The unit is an annotated target person, so an image can contribute several samples. We reconstruct the frozen validation image partition from the run configuration and compute Table~\ref{tab:data} and Fig.~\ref{fig:data} using the project's dataset loader and its union-target builder. No category logic is reimplemented. The descriptive test summaries introduce no new predictions and select no model, threshold, or preprocessing choice.
+
+\begin{table*}[t]
+\centering
+\caption{EDA of the people actually used. Labels: mean positive union-target categories per person. Entries: median category-annotation entries per person exposed by the loader, not verified distinct annotators. Shared: percentage of people whose image has multiple annotated people. Dev/eval partition validation by image.}
+\label{tab:data}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+Split & Images & People & Labels & Entries & Shared (\%) \\
+\midrule
+Train & \ev{eda-train-images}{17077} & \ev{eda-train-people}{23706} & \ev{eda-train-mean_labels}{1.956} & \ev{eda-train-median_category_annotation_entries}{1} & \ev{eda-train-people_in_multi_person_images_pct}{46.82} \\
+Dev & \ev{eda-dev-images}{1044} & \ev{eda-dev-people}{1643} & \ev{eda-dev-mean_labels}{6.130} & \ev{eda-dev-median_category_annotation_entries}{5} & \ev{eda-dev-people_in_multi_person_images_pct}{60.19} \\
+Eval & \ev{eda-eval-images}{1044} & \ev{eda-eval-people}{1691} & \ev{eda-eval-mean_labels}{6.183} & \ev{eda-eval-median_category_annotation_entries}{5} & \ev{eda-eval-people_in_multi_person_images_pct}{61.86} \\
+Test & \ev{eda-test-images}{4389} & \ev{eda-test-people}{7280} & \ev{eda-test-mean_labels}{4.416} & \ev{eda-test-median_category_annotation_entries}{3} & \ev{eda-test-people_in_multi_person_images_pct}{64.20} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+Targets are both multilabel and imbalanced. In training, Engagement occurs in \ev{eda-train-engagement-support}{13021} people (\ev{eda-train-engagement-prevalence}{54.93}\%), whereas Embarrassment occurs in \ev{eda-train-embarrassment-support}{156} (\ev{eda-train-embarrassment-prevalence}{0.66}\%). Their test prevalences are \ev{eda-test-engagement-prevalence}{77.35}\% and \ev{eda-test-embarrassment-prevalence}{1.88}\%, respectively. Every category has positive support in every partition, but the frequency profile is not constant across them. Macro averaging gives sparse and common categories equal category weight; this makes rare-label errors consequential despite their small share of people. mAP evaluates ranking, whereas \mf{} also depends on the fixed category thresholds. A constant ranking's AP equals category prevalence, which explains the nonzero mAP of the constant-label comparator without requiring image information.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/data_eda.png}
+\caption{Exploratory description of union targets for the frozen PAMI partitions. Left: per-person category prevalence, ordered by training support. Right: distribution of positive-category counts per person. Test descriptions are retrospective and do not inform selection.}
+\label{fig:data}
+\end{figure*}
+
+Annotation-target density differs markedly between partitions (Table~\ref{tab:data}). Union aggregation combines available category-annotation entries, whose median multiplicity also differs. These entries need not represent independent annotators; neither their count nor the marginal label distribution establishes agreement or annotation reliability. The test split includes \ev{eda-test-empty-targets}{1} person with an empty union target, retained in the descriptive counts and the frozen evaluation. The cardinality and prevalence differences contextualize the eval-to-test gap but do not identify its cause or quantify a label-shift contribution. Multiple people sharing an image motivate keeping validation images together and resampling images for uncertainty, rather than assuming independent person samples.
+
+\subsection{Frozen protocol}\label{sec:protocol}
+Eval means held-out validation throughout. Checkpoints, thresholds, the constant-label baseline, and the late-fusion weight use development data before evaluation. The test set is scored once for the frozen candidates; test scores are not a basis for selecting a replacement configuration.
+
+Ranking quality is measured by mAP; thresholded predictions use \mf{} and \mi{}. AP averages over categories with positive support. Macro F scores average over all supplied columns with undefined divisions set to zero. Unless stated otherwise, thresholded scores use the extended grid. Variant means and population SD summarize seeds 42--44. SD over 3 seeds is not a confidence interval for expected retraining performance.
+
+Paired bootstrap intervals resample whole images, preserving their people, using \ev{resamples}{2000} draws and nominal \ev{confidence}{95}\% coverage. Each seed is compared separately; intervals condition on trained models and fixed thresholds and are not adjusted for multiple comparisons. A separate comparison stage recomputes all 90 stored eval metric sets of the multimodal and ResNet models from saved predictions, reproducing them to within $10^{-9}$, before running eval-only analyses. Reproducing the complete pipeline additionally requires the image data, pretrained encoders, trained checkpoints, and cached features or their regeneration.
+
+Explanations use the single full checkpoint with seed 42. Its eval/test mAP is 39.90/30.49 and \mf{} is 42.69/34.11. Explanation quality is not a mean across classifier seeds.
+
+\begin{table*}[t]
+\centering
+\caption{Frozen variants: mean $\pm$ population SD over seeds 42--44. Scores are percentages. Eval is held-out validation; word deletion removes a fixed vocabulary rather than all affective information.}
+\label{tab:variants}
+\small
+\tablegap
+\begin{tabular}{lrrrrr}
+\toprule
+Variant & Eval mAP & Eval \mf{} & Test mAP & Test \mf{} & Test \mi{} \\
+\midrule
+Full & 40.06 $\pm$ 0.30 & 43.49 $\pm$ 0.59 & 30.10 $\pm$ 0.32 & 33.90 $\pm$ 0.24 & 48.80 $\pm$ 0.44 \\
+ViT-only & 37.67 $\pm$ 0.68 & 40.69 $\pm$ 0.60 & 27.15 $\pm$ 0.30 & 31.59 $\pm$ 0.22 & 48.13 $\pm$ 1.16 \\
+No person image & 40.17 $\pm$ 0.51 & 43.34 $\pm$ 0.65 & 30.21 $\pm$ 0.15 & 33.62 $\pm$ 0.16 & 48.77 $\pm$ 0.84 \\
+No context image & 40.37 $\pm$ 0.40 & 43.22 $\pm$ 0.50 & 30.10 $\pm$ 0.35 & 33.46 $\pm$ 0.25 & 47.94 $\pm$ 0.86 \\
+No person cues & 39.99 $\pm$ 0.16 & 42.22 $\pm$ 0.32 & 28.49 $\pm$ 0.05 & 32.19 $\pm$ 0.11 & 49.37 $\pm$ 0.79 \\
+No context cues & 40.82 $\pm$ 0.16 & 43.70 $\pm$ 0.75 & 30.28 $\pm$ 0.27 & 33.85 $\pm$ 0.36 & 49.40 $\pm$ 0.53 \\
+Word deletion & 40.40 $\pm$ 0.32 & 43.41 $\pm$ 0.36 & 29.97 $\pm$ 0.27 & 33.41 $\pm$ 0.42 & 48.96 $\pm$ 0.42 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\subsection{Prediction and retrained ablations}\label{sec:prediction}
+Removing the semantic token produces the largest and most consistent loss (Table~\ref{tab:variants}, Fig.~\ref{fig:prediction}): ViT-only is the lowest variant on eval and test, and the full model exceeds it on test by about 3 mAP points with intervals excluding zero for all three seeds (Table~\ref{tab:bootstrap}). Masking person cues is the second consistent loss: test mAP falls to 28.49, and full minus no-person-cues excludes zero for every seed on both metrics. Textual cues, and person cues in particular, therefore carry predictive information that frozen ViT features do not supply.
+
+The remaining ablations are close to the full model. Zeroing the person image, the context image, or the context cues changes mean test mAP by less than 0.2 points; their seed-specific intervals mostly contain zero or change sign between seeds. On eval, no-context-cues has the highest mean mAP (40.82). Context cues therefore do not show a reliable benefit in this representation, and the visual streams overlap with each other and with the text.
+
+Word deletion changes mean test mAP from 30.10 to 29.97. Full minus word deletion contains zero for mAP on every seed, while the small \mf{} differences exclude zero for seeds 43 and 44. The classifier thus does not depend on the VLM writing emotion names into its cues. This does not demonstrate absence of emotion semantics, a benefit from graph topology, or a predictive benefit caused by chain-of-thought prompting.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/prediction.png}
+\caption{mAP across the frozen variants and, on test, the trained ResNet-50 baselines. Error bars are population SD across training seeds, not bootstrap confidence intervals; ResNet baselines have one seed. The dashed line marks the full model.}
+\label{fig:prediction}
+\end{figure*}
+
+\begin{table*}[t]
+\centering
+\caption{Test paired image-bootstrap differences (full minus B) in percentage points for seed 42, with the number of seeds (of 3) whose nominal 95\% interval excludes zero. Intervals condition on trained models and do not incorporate retraining uncertainty.}
+\label{tab:bootstrap}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+B & $\Delta$ mAP [95\% CI] & Seeds & $\Delta$ \mf{} [95\% CI] & Seeds \\
+\midrule
+ViT-only & +2.96 [2.49, 3.49] & 3/3 & +2.64 [2.08, 3.23] & 3/3 \\
+No person image & +0.14 [$-$0.28, 0.56] & 0/3 & +0.30 [$-$0.15, 0.71] & 0/3 \\
+No context image & +0.78 [0.13, 1.49] & 2/3 & +0.96 [0.27, 1.65] & 1/3 \\
+No person cues & +2.06 [1.41, 2.67] & 3/3 & +1.80 [1.28, 2.29] & 3/3 \\
+No context cues & $-$0.12 [$-$0.47, 0.20] & 1/3 & $-$0.17 [$-$0.57, 0.24] & 1/3 \\
+Word deletion & +0.16 [$-$0.16, 0.47] & 0/3 & +0.16 [$-$0.21, 0.50] & 2/3 \\
+ResNet person & +5.10 [4.31, 5.98] & 3/3 & +11.04 [10.01, 11.99] & 3/3 \\
+ResNet context & +3.15 [2.13, 4.06] & 3/3 & +3.18 [2.25, 4.14] & 3/3 \\
+ResNet person + context & +4.52 [3.79, 5.36] & 3/3 & +13.32 [12.37, 14.26] & 3/3 \\
+Constant labels & --- & --- & +8.99 [8.11, 9.77] & 3/3 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+For no-context-image, the seed-42 mAP interval excludes zero in favor of the full model, but the seed-44 interval excludes zero in the opposite direction; for no-context-cues, the seed-43 \mf{} interval favors the full model while the seed-44 mAP interval favors the ablation. These mixed results are why we summarize such ablations as not reliably different rather than as gains or losses.
+
+\subsection{Visual baselines and targeting}\label{sec:baselines}
+The visual baselines use ImageNet-pretrained \ev{resnet}{ResNet-50} \cite{resnet}: person-only, full-image context-only, and concatenated person/context encoders. They train for \ev{resnet-epochs}{30} epochs with \ev{resnet-image}{224}-pixel square inputs and \ev{crop-padding}{5}\% crop padding. Unlike frozen ViT, their backbones are trainable. They are complete-system comparators, not controlled estimates of text contribution. Each has a single training seed, and its checkpoint was selected on the full validation split, which includes eval.
+
+\begin{table}[t]
+\centering
+\caption{Single-run ResNet baselines. Validation mAP is the maximum in the training log; test uses validation-selected thresholds. Scores are percentages.}
+\label{tab:resnet}
+\small
+\tablegap
+\begin{tabular}{lrrr}
+\toprule
+Input & Val mAP & Test mAP & Test \mf{} \\
+\midrule
+Person & \ev{resnet-person_only-val-map}{39.45} & \ev{resnet-person_only-test-map}{25.39} & \ev{resnet-person_only-test-macro_f1}{23.07} \\
+Context & \ev{resnet-context_only-val-map}{37.87} & \ev{resnet-context_only-test-map}{27.35} & \ev{resnet-context_only-test-macro_f1}{30.94} \\
+Person + context & \ev{resnet-person_context-val-map}{40.14} & \ev{resnet-person_context-test-map}{25.97} & \ev{resnet-person_context-test-macro_f1}{20.79} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:resnet} shows a validation-to-test ranking change: the joint model has the largest best validation mAP, but context-only leads on test mAP and \mf{}. Context-only still sees the target in the full image. On test, the full multimodal model exceeds all three ResNet baselines on both metrics, with intervals excluding zero for every seed (Table~\ref{tab:bootstrap}); against the strongest, context-only, the seed-42 differences are +3.15 mAP and +3.18 \mf{} points. These intervals do not estimate variability from retraining ResNet.
+
+The constant baseline selects \ev{constant-k}{26} labels, predicting every category for every test person. Its test mAP, \mf{}, and \mi{} are \ev{constant-test-map}{16.98}, \ev{constant-test-macro_f1}{25.12}, and \ev{constant-test-micro_f1}{29.03}. Constant-ranking AP reduces to category prevalence. Selecting the number of constant labels by macro F score favors adding positive-support categories; beating this baseline is a sanity result, not strong evidence of contextual reasoning.
+
+Saved visual-baseline notebook outputs provide targeting diagnostics for the joint ResNet. Zeroing its person stream and masking the target in the full image gives test mAP \ev{region-delta_person-map}{20.35}; masking the background while preserving the target region gives \ev{region-delta_context-map}{24.71}. Zeroing the person stream and masking a random equally sized region gives \ev{region-delta_random-map}{20.95}, versus intact mAP \ev{resnet-person_context-test-map}{25.97}. These results have no saved uncertainty intervals. The random condition is not random masking alone, and the experiment does not evaluate multimodal text grounding.
+
+In target swap, the image stays fixed while another annotated person's crop replaces the source crop. Predictions have strictly higher sample F score for the new target than the source in \ev{swap-swap_accuracy}{40.47}\% of \ev{swap-num_pairs}{9988} directed pairs from \ev{swap-num_images}{1783} images. Ties comprise \ev{swap-tie_rate}{22.97}\%, and mean target-minus-source F score is \ev{swap-mean_target_minus_source_f1}{0.01405}. This is a targeting diagnostic, not recognition accuracy or a calibrated chance test. Overlapping labels and ties counted as failures limit its interpretation.
+
+\subsection{Eval comparison with ResNet and late fusion}\label{sec:eval}
+A separate CPU-only comparison stage evaluates saved predictions on the 1691 eval people (Table~\ref{tab:eval}). Ensembling, late fusion, and per-group analyses are eval-only post-hoc analyses: the ensemble averages the three full seeds, late fusion is $w\cdot\text{ensemble}+(1-w)\cdot\text{ResNet person+context}$, and $w=0.5$ and all thresholds are fixed on dev (dev mAP 40.34 for ResNet alone, 41.54 for the ensemble alone, 44.79 fused). None of these combinations is scored on test.
+
+\begin{table}[t]
+\centering
+\caption{Eval (held-out validation) results from saved predictions, extended threshold grid. Full and ViT-only are means over three seeds. The ensemble averages the three full seeds; late fusion mixes it with ResNet person + context. Both are post-hoc and eval-only. Scores are percentages.}
+\label{tab:eval}
+\small
+\tablegap
+\begin{tabular}{lrr}
+\toprule
+Model & mAP & \mf{} \\
+\midrule
+Full (3 seeds) & 40.06 & 43.49 \\
+ViT-only (3 seeds) & 37.67 & 40.69 \\
+Ensemble & 41.32 & 44.18 \\
+Late fusion ($w=0.5$) & 45.38 & 45.08 \\
+\midrule
+ResNet person & 40.30 & 40.33 \\
+ResNet context & 38.73 & 41.39 \\
+ResNet person + context & 40.61 & 39.57 \\
+Constant ($k=26$) & 23.78 & 32.60 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+On eval, the full model is level with the ResNet baselines in mAP but higher in \mf{}. Against ResNet person + context, the full-model mAP intervals contain zero for all three seeds, whereas the \mf{} differences (+3.12 to +4.54 points) exclude zero for every seed. The ResNet checkpoints were selected on a validation split that contains eval, so their eval scores may be optimistic; the test comparison is not affected. Late fusion gives the largest eval gain over ResNet person + context, +4.77 mAP [3.59, 6.42] and +5.51 \mf{} [3.80, 7.27], indicating that the two model families make partly complementary errors. Using fusion on test would constitute a new configuration.
+
+Per-category AP differences between the full-model mean and ResNet person + context are positive for 12 of 26 categories, largest for Annoyance (+6.5), Affection (+4.7), and Disapproval (+4.4), and most negative for Peace ($-$9.0), Disconnection ($-$8.0), and Doubt/Confusion ($-$7.0). Grouped by the number of annotated people per image, the full model exceeds ResNet person + context on images with one (44.2 vs.\ 42.7 mAP) or two people (38.8 vs.\ 36.2) but trails it on images with three or four people (37.1 vs.\ 42.1, 127 images). Cues and the semantic graph may mix information between people in crowded images. The group with five or more people contains only 23 images.
+
+\subsection{Explanation results}\label{sec:explanations}
+The seed-42 checkpoint produces 1671 usable responses from 1691 eval people and 7184 from 7280 test people. Thus usable-response metrics exclude 20 eval and 96 test outputs rather than treating all generated responses as successful; 1.12\% of eval and 1.26\% of test responses were truncated.
+
+\begin{table}[t]
+\centering
+\caption{Single-checkpoint explanation diagnostics. Rates use usable responses, except that numeric matching uses extracted numeric mentions.}
+\label{tab:explanations}
+\small
+\tablegap
+\begin{tabular}{lrr}
+\toprule
+Diagnostic & Eval & Test \\
+\midrule
+\multicolumn{3}{l}{\emph{Stated modality (responses)}} \\
+\quad Person & 1664 & 7149 \\
+\quad Context & 7 & 35 \\
+\quad Graph & 0 & 0 \\
+\multicolumn{3}{l}{\emph{Largest-drop modality (responses)}} \\
+\quad Person & 476 & 2268 \\
+\quad Context & 900 & 3664 \\
+\quad Graph & 295 & 1252 \\
+\midrule
+Modality agreement (\%) & 28.61 & 31.83 \\
+Constant agreement (\%) & 53.86 & 51.00 \\
+Numeric matches (\%) & 99.99 & 99.92 \\
+Extracted numeric mentions & 8086 & 35101 \\
+Unpredicted label mentions (\%) & 0.48 & 0.88 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:explanations} shows a strong preference for naming the person modality; graph is never named. The modality whose removal most reduces predicted-label scores is most often context (900 of 1671 eval and 3664 of 7184 test responses), so explanations that almost always name person agree with the measured modality in only 28.61\% and 31.83\% of cases. A constant reference that always names context reaches 53.86\% and 51.00\%. Explanations therefore do not identify the modality to which the classifier is most sensitive.
+
+\begin{table*}[t]
+\centering
+\caption{Token-intervention diagnostics on usable explanations from the main checkpoint. Comp.: comprehensiveness (higher preferable); suff.: sufficiency gap (lower preferable). These are not free-text grounding scores.}
+\label{tab:interventions}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+Selection rule & Eval comp. & Eval suff. & Test comp. & Test suff. \\
+\midrule
+Stated modality & 0.0207 & 0.0624 & 0.0213 & 0.0612 \\
+Most frequent measured modality & 0.0453 & 0.0356 & 0.0441 & 0.0364 \\
+Uniform modality average & 0.0281 & 0.0583 & 0.0283 & 0.0577 \\
+Measured largest-drop modality & 0.0649 & 0.0158 & 0.0655 & 0.0149 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+The stated modality is worse than the uniform reference in both comprehensiveness and sufficiency, and worse than the constant reference by a wider margin (Table~\ref{tab:interventions}, Fig.~\ref{fig:faithfulness}). Measured-top selection has substantially higher comprehensiveness and a smaller sufficiency gap. Its comprehensiveness advantage is expected by definition. The comparison identifies a gap between the explanation's selection and the diagnostic, not a human-explanation benchmark.
+
+High numeric matching is narrower than factual accuracy: an allowed number can describe the wrong emotion, modality, or direction. Low unpredicted-label mention rates cover only literal names. No human assessment of grounding, usefulness, or psychological correctness is present. The evidence establishes constrained numeric verbalization without modality selectivity, rather than faithful accounts of classifier reasoning.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/faithfulness.png}
+\caption{Agreement and comprehensiveness for seed-42 explanations. The constant reference uses the most frequent measured modality on each split; the largest-drop reference follows directly from the intervention criterion.}
+\label{fig:faithfulness}
+\end{figure*}
+
+\subsection{Discussion and limitations}\label{sec:discussion}
+Predictive utility and explanation faithfulness answer different questions. Text improves recognition relative to a matched frozen visual representation and to trained ResNet-50 baselines, yet the verbal explanation does not identify the important stream. Conversely, intervention agreement would not establish that a cue is visible or an inferred emotion psychologically true. The staged chain is an inspectable organization of information, not a validated model of human emotional reasoning.
+
+The full variant predicts 10.25 labels per test person on average across seeds. Compared with observed target cardinality in Table~\ref{tab:data}, this shows a difference between predicted and observed label-set sizes under fixed dev thresholds. The EDA also exposes unequal target density and category frequencies across partitions. These descriptions do not isolate the cause of the eval-to-test performance decline; annotation agreement and voting reliability remain unmeasured.
+
+Cue extraction parses \ev{cue-parse_rate}{100.00}\% of train/validation records and passes the structural check on \ev{cue-schema_rate}{99.65}\%; test rates are \ev{test-cue-parse_rate}{99.99}\% and \ev{test-cue-schema_rate}{99.63}\%. These describe structure, not visible-content correctness. Recorded batching times are \ev{batch-16-seconds}{0.838}, \ev{batch-32-seconds}{0.269}, and \ev{batch-48-seconds}{0.217} seconds/person for batches \ev{batch-16}{16}, \ev{batch-32}{32}, and \ev{batch-48}{48}; exact agreement with saved reference cues is \ev{batch-16-same}{56.25}\%, \ev{batch-32-same}{59.38}\%, and \ev{batch-48-same}{58.33}\%. Different sample counts and execution conditions prevent a controlled speedup or output-equivalence claim.
+
+Attribution remains limited by overlapping inputs. Text mixes person, context, and relation content; full-image features include the target. Token and node ablations cannot uniquely identify relational contribution or localize an explanatory region. The explanation model independently sees the image, zeroing can produce unfamiliar representations, and the measured-top criterion depends on predicted categories. No intervention validates sentence semantics. Seed-specific intervals do not support claims about arbitrary retraining, and single-seed ResNet results whose checkpoints were selected on data including eval restrict cross-family comparison on eval.
+
+Stronger evidence would require independent grounding judgments, meaningful region or relation interventions, an explanation prompt constrained to the largest-drop modality, and an explicit direct-versus-intermediate-reasoning comparison. These are not completed experiments. Such studies would require new development and evaluation data rather than choices guided by the present test outcomes.
+
+\section{Conclusion}\label{sec:conclusion}
+We evaluated a staged contextual emotion recognition chain that exposes textual cues, fuses them with visual features, and verbalizes classifier intervention evidence. Textual cues encoded as a semantic graph improve recognition over frozen visual features alone and over three trained ResNet-50 baselines on test, consistently across three seeds; the contribution comes from the cues as a whole and from person cues, while context cues, the individual visual tokens, and literal emotion words make little reliable difference. On eval, late fusion with a ResNet baseline suggests complementary errors, but this was not evaluated on test. Explanations closely reproduce allowed numeric values yet almost always name the person stream and fall below a constant-modality reference. The experiments establish neither a step-by-step prompting advantage over direct answering nor causal or human-validated explanation faithfulness.
+
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+\end{document}
